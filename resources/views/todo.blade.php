@@ -1,96 +1,117 @@
-<!-- < ?php
-//use App\Http\Middleware\checkAuth;
-//include_once('/var/www/ToDo/include/auth.php');
+<?php
+    //use App\Http\Middleware\checkAuth;
+    //include_once('/var/www/ToDo/include/auth.php');
+    //define('ROOT_DIR', '/var/www/ToDo');
+    define('PATH', '/var/www/ToDo/');
+?>
 
-? >
-
-
-<html>
-    <head>
-        <title>
-            < T I T L E >
-        </title>
-    </head>
-    <body>
-        <div>
-            А что дальше?
-        </div>
-    </body>
-</html>
- -->
-
- <html lang="en">
-<head>
 <html lang="ru">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="icon" href="/v2/favicon.ico" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <link rel="icon" href="/v2/favicon.ico" />  -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
 
         <title>ToDo</title>
-    <!-- <title>Laravel Ajax jquery Validation Tutorial</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
     </head>
     <body>
         <div class="container panel panel-default ">
-                <h2 class="panel-heading">Laravel Ajax jquery Validation</h2>
-            <form id="contactForm">
-                <div class="form-group">
-                    <input type="text" name="name" class="form-control" placeholder="Enter Name" id="name">
+            <h2 class="panel-heading">Авторизация</h2>
+            <form id="authForm">
+                <div class="form-group col-md-4">
+                    <input
+                        class="form-control"
+                        type="text"
+                        name="email"
+                        placeholder="Введите Email"
+                        id="email"
+                    >
                 </div>
-
-                <div class="form-group">
-                    <input type="text" name="email" class="form-control" placeholder="Enter Email" id="email">
+                <div class="form-group col-md-4">
+                    <input
+                        class="form-control"
+                        type="text"
+                        name="password"
+                        placeholder="Введите пароль"
+                        id="password"
+                    >
                 </div>
-
-                <div class="form-group">
-                    <input type="text" name="mobile_number" class="form-control" placeholder="Enter Mobile Number" id="mobile_number">
+                <div class="form-group col-md-4">
+                    <button class="btn btn-success" id="login">Вход</button>
                 </div>
-
-                <div class="form-group">
-                    <input type="text" name="subject" class="form-control" placeholder="Enter subject" id="subject">
-                </div>
-
-                <div class="form-group"> 
-                  <textarea class="form-control" name="message" placeholder="Message" id="message"></textarea>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success" id="submit">Submit</button>
+                <div class="form-group col-md-4">
+                    <button class="btn btn-success" id="registration">Регистрация</button>
                 </div>
             </form>
         </div>
 
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/include/util.js"></script>
+
 
         <script>
-            $('#contactForm').on('submit',function(event){
+            /*import {Util} from './include/util.js'
+
+            $('#authForm').on('login',function(event){
                 event.preventDefault();
 
-                let name = $('#name').val();
-                let email = $('#email').val();
-                let mobile_number = $('#mobile_number').val();
-                let subject = $('#subject').val();
-                let message = $('#message').val();
+                let email    = $('#email').val();
+                let password = $('#password').val();
+                console.log("email = '" + email + "';");
+                console.log("password = '" + password + "'");
+                return;
 
+                /*
+                Util.http.post(
+                    {
+                        url: "/users",
+                        data: {
+                            action:   'login',
+                            email:    email,
+                            password: password,
+                        }
+                    },
+                    function(response){
+                        if ('message' in response) {
+                            console.log("OK!   " + response.message);
+                        }
+                    },
+                    function(response){
+                        if ('message' in response) {
+                            console.log("ERROR!   " + response.message);
+                        }
+                    },
+                    function() {
+                    }
+                );
+                */
+                /*
                 $.ajax({
-                    url:  "/contact-form",
+                    url:  "/users",
                     type: "POST",
                     data: {
-                        "_token": "{{ csrf_token() }}",
-                        name:name,
-                        email:email,
-                        mobile_number:mobile_number,
-                        subject:subject,
-                        message:message,
+                            action:   'login',
+                            email:    email,
+                            password: password,
                     },
                     success:function(response){
                         console.log(response);
                     },
                 });
+                
+                $.post(
+                    "/users",
+                    {
+                        action:   'login',
+                        email:    email,
+                        password: password,
+                    },
+                    onSuccess=>function(response){
+                        console.log(response);
+                    },
+                );
             });
-        </script>
+            */
+         </script>
     </body>
 </html>

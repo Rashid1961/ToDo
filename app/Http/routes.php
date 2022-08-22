@@ -128,6 +128,9 @@ Route::group(['prefix' => '/'], function () {
         //return view('welcome');
         return view('todo');
     });
+
+    Route::post('/users.php', '\UsersController@indexAction');
+
 });
-Route::get('contact-form', 'ContactController@create');
-Route::post('contact-form', 'ContactController@store');
+//Route::get('contact-form', 'ContactController@create');
+//Route::post('user-login', 'ContactController@store');
