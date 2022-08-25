@@ -10,16 +10,17 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
+//use App\Models\Auth;
 use App\Models\Users;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UserProfileController extends Controller
+class UsersController extends Controller
 {
 
 

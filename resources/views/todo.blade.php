@@ -1,117 +1,97 @@
 <?php
-    //use App\Http\Middleware\checkAuth;
-    //include_once('/var/www/ToDo/include/auth.php');
-    //define('ROOT_DIR', '/var/www/ToDo');
-    define('PATH', '/var/www/ToDo/');
 ?>
 
 <html lang="ru">
     <head>
         <meta charset="utf-8">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- <link rel="icon" href="/v2/favicon.ico" />  -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
 
         <title>ToDo</title>
     </head>
     <body>
+
+        <!-- <img
+            src="images/users/noUserImage.jpg"
+            alt="картинка где-то затерялась("
+            width="150px"
+            height="150px" 
+        /> -->
+
         <div class="container panel panel-default ">
-            <h2 class="panel-heading">Авторизация</h2>
-            <form id="authForm">
+            <!-- <h2 class="panel-heading">id: {{$id}} name:{{$name}}</h2> -->
+            <form id="main">
+
+                <div id="img-list">
+                </div>
+
                 <div class="form-group col-md-4">
-                    <input
-                        class="form-control"
-                        type="text"
-                        name="email"
-                        placeholder="Введите Email"
-                        id="email"
-                    >
+                    <button class="btn btn-success" id="lists-user">Загрузить</button>
                 </div>
                 <div class="form-group col-md-4">
-                    <input
-                        class="form-control"
-                        type="text"
-                        name="password"
-                        placeholder="Введите пароль"
-                        id="password"
-                    >
+                    <!-- <button class="btn btn-success" id="exit">Выход</button> -->
+                    <a href="{{ url('/auth/logout') }}">Выход</a>
                 </div>
-                <div class="form-group col-md-4">
-                    <button class="btn btn-success" id="login">Вход</button>
-                </div>
-                <div class="form-group col-md-4">
-                    <button class="btn btn-success" id="registration">Регистрация</button>
-                </div>
+
             </form>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="/include/util.js"></script>
 
 
         <script>
-            /*import {Util} from './include/util.js'
-
-            $('#authForm').on('login',function(event){
-                event.preventDefault();
-
-                let email    = $('#email').val();
-                let password = $('#password').val();
-                console.log("email = '" + email + "';");
-                console.log("password = '" + password + "'");
-                return;
-
-                /*
-                Util.http.post(
-                    {
-                        url: "/users",
-                        data: {
-                            action:   'login',
-                            email:    email,
-                            password: password,
-                        }
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },                
+                statusCode: { 
+                    0: function(){ 
+                        alert('Сеть недоступна.');
                     },
-                    function(response){
-                        if ('message' in response) {
-                            console.log("OK!   " + response.message);
-                        }
+                    403: function(){
+                      alert( 'Доступ запрещен (403).');
                     },
-                    function(response){
-                        if ('message' in response) {
-                            console.log("ERROR!   " + response.message);
-                        }
+                    404: function(){ 
+                        alert('Запрашиваемая страница не найдена (404).');
                     },
-                    function() {
+                    500: function(){
+	                	alert('Внутренняя ошибка сервера (500).');
                     }
-                );
-                */
-                /*
+                }
+            });
+            var userLists = [];
+            //$('#lists-user').click(function() {
                 $.ajax({
-                    url:  "/users",
-                    type: "POST",
+                    url:    '/ListsUser',
+                    method: 'post',
+                    dataType: 'json',
+                    async:   false,
                     data: {
-                            action:   'login',
-                            email:    email,
-                            password: password,
+                        'action': 'getUserLists'
                     },
-                    success:function(response){
-                        console.log(response);
+                    success: function(response){
+                        userLists = response;
+                        console.log(userLists[0].image);
                     },
                 });
-                
-                $.post(
-                    "/users",
-                    {
-                        action:   'login',
-                        email:    email,
-                        password: password,
-                    },
-                    onSuccess=>function(response){
-                        console.log(response);
-                    },
-                );
-            });
-            */
+            //});
+            imgList =
+                '<img' +
+                    ' src=' + userLists[0].image +
+                    ' alt="картинка где-то затерялась("' +
+                    ' width="150px"' +
+                    ' height="150px"' + 
+                '/>';
+            $("#img-list").append(imgList);
+
+            // $('#exit').click(function(event){
+            //     //event.preventDefault();
+            //     $.ajax({
+            //         url:    '/logout',
+            //         method: 'get',
+            //     });
+            // });
          </script>
     </body>
 </html>
