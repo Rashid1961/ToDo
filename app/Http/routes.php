@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -11,26 +10,19 @@
 |
 */
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
-
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
         $user = [
             "id"    => auth()->user()->id,
             "name"  => auth()->user()->name,
-            "email" => auth()->user()->email
+            "email" => auth()->user()->email,
+            "image" => auth()->user()->image,
         ];
         $view = view('todo', $user);
         return $view;
-    })->middleware('auth');
+    });
+    Route::get('auth/logout', 'Auth\AuthController@logout');
+    Route::post('/ListsUser', 'ListsController@action');
+});
 
-    Route::post('/ListsUser', 'ListsController@action')->middleware('auth');
-
-
-    Route::get('auth/logout', 'Auth\AuthController@logout')->middleware('auth');
-    //Route::post('/Users', 'UsersController@indexAction');
-
-    Route::auth();
-
-//Route::get('/home', 'HomeController@index');
+Route::auth();
