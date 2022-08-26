@@ -67,14 +67,6 @@
                                     Вход
                                 </button>
                             </div>
-                            <div class="row text-center">
-                                <a
-                                    class="btn btn-link text-center"
-                                    href="{{ url('/password/reset') }}"
-                                >
-                                    Забыли пароль?
-                                </a>
-                            </div>
                         </div>
                     </form>
                 </div>

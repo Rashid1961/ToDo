@@ -21,7 +21,6 @@ Route::group(['middleware' => 'auth'], function () {
         $view = view('todo', $user);
         return $view;
     });
-    Route::get('auth/logout', 'Auth\AuthController@logout');
     Route::post('/ListsUser', 'ListsController@action');
 });
 

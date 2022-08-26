@@ -28,27 +28,25 @@
         </style>
     </head>
     <body>
-        <!-- <div class="block" style="position:sticky"> -->
-        <nav class="navbar navbar-default navbar-static-top">
+        <!-- Шапка -->
+        <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
                         ToDo
                     </a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
+                        <li style="color: #777; margin: 15 10 0 0;">{{$name}}</li>
                         <li>
-                            <!-- <div hidden id="img-user">{{$image}}</div> -->
                             <img
                                 src={{$image}} 
-                                width="20px"
-                                height="20px"
-                                style="border-radius: 50%"
-                                alt="Изображения нет"
+                                width="30px"
+                                height="30px"
+                                style="border-radius: 50%; margin: 10 0 0 0;"
+                                alt="Ивините, изображения нет"
                             />
-
                         </li>
                         <li>
                             <a
@@ -61,33 +59,36 @@
                 </div> 
             </div>
         </nav>
-        <!-- </div> -->
-
-
-
-        <!-- <div hidden id="img-user">{{$image}}</div> -->
-        <!-- <div class="container panel panel-default"> -->
-        <div class="container">
-            
+        <!-- Списки пользователя -->
+        <div class="container" style="margin-top: 50; margin-left: auto;">
             <form id="main">
-
-                <div class="row" id="lists">
-
-                </div>
-
-                <!-- <div class="form-group col-md-4">
-                    <a
-                        href="{{ url('/auth/logout') }}"
-                        style="color:#000000; text-decoration:none"
-                    >Выход</a>
-                </div> -->
-
+                <table id="lists" width="100%">
+                    <caption>Ваши списки</caption>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Id</th>
+                            <th style="text-align: center;">Наименование списка</th>
+                            <th style="text-align: center;">Изображение</th>
+                            <th style="text-align: center;">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="one-list">
+                    </tbody>
+                </table>
             </form>
         </div>
 
         <!-- JavaScripts -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"
+            integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb"
+            crossorigin="anonymous">
+        </script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous">
+        </script>
         {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 
         <!-- <script
@@ -104,16 +105,6 @@
             crossorigin="anonymous"></script> -->
 
         <script>
-            var imgUser =
-                '<img' +
-                    ' src=' + $("#img-user").text() +
-                    ' width="20px"' +
-                    ' height="20px"' +
-                    ' style="border-radius: 50%"' +
-                    ' alt="Изображения нет"' +
-                '/>';
-            //$("#img-user").replaceWith(imgUser);
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -144,46 +135,128 @@
                 },
                 success: function(response){
                     userLists = response;
-                    console.log(userLists[0].image);
+                    //console.log(userLists[0].image);
                 },
             });
-            $("#lists").append('<ul>');
-            var lists = '';
-            for (let i = 0; i < userLists.length; i++) {
-                lists = 
-                    '<div class="col-2">' +
-                        userLists[i].id +
-                    '</div>' +
-                    '<div class="col-7">' +
-                        userLists[i].title +
-                    '</div>' +
-                    '<div class="col-3">' +
-                        '<a' +
-                            ' href=' + userLists[i].image +
-                            ' target="_blank"' +
-                        '>' +
-                            '<img' +
-                                ' src=' + userLists[i].image +
-                                ' width="150px"' +
-                                ' height="150px"' +
-                                ' href="#"' +
-                                ' alt="Изображения нет"' +
-                                ' title="Посмотреть в отдельной вкладке"' +
-                            '/>' +
-                        '</a>' +
-                    '</div>' +
-                    '<hr/>';
-                $("#lists").append(lists);
+            var titleList=[];
+            var idList=[];
+            var iCur = '';
+            var titleListCur = '';
+            var elementCur = null;
+            if (userLists.length == 0) {
+                $("#one-list").append(
+                    '<tr>' +
+                        '<td colspan="4" style="text-align: center;">' +
+                            'У Вас нет пока ни одного списка' +
+                        '</td>' +
+                    '</tr>'
+                );
             }
-            $("#lists").append('<ul>');
-
-            // $('#exit').click(function(event){
-            //     //event.preventDefault();
-            //     $.ajax({
-            //         url:    '/logout',
-            //         method: 'get',
-            //     });
-            // });
+            else {
+                for (let i = 0; i < userLists.length; i++) {
+                    idList[i] = userLists[i].id;
+                    titleList[i] = userLists[i].title;
+                    $("#one-list").append(
+                        '<tr id="list-' + idList[i] + '">' +
+                            '<td style="text-align: center;">' + idList[i] + '</td>' +
+                            '<td' +
+                                ' id="title-list-' + i + '"' +
+                            '>' +
+                                titleList[i] + 
+                            '</td>' +
+                            //'<td>' +
+                            //    '<div' +
+                            //        ' id="title-list-' + i +'"' +
+                            //    '>' +
+                            //        titleList[i] +
+                            //    '</div>' +
+                            //'</td>' +
+                            '<td style="text-align: center;">' + 
+                                '<a id="image-list-' + i + '"' +
+                                    ' href=' + userLists[i].image +
+                                    //' target="_blank"' +
+                                '>' +
+                                    '<img' +
+                                        ' src=' + userLists[i].image +
+                                        ' width="150px"' +
+                                        ' height="150px"' +
+                                        ' href="#"' +
+                                        ' alt="Изображения нет"' +
+                                        ' title="Посмотреть в отдельной вкладке"' +
+                                    '/>' +
+                                '</a>' +
+                            '</td>' +
+                            '<td style="text-align: center;">' + 
+                                '<div class="row" style="margin-bottom: 10;">' +
+                                    '<button' +
+                                    ' id="edit-list-' + i + '"'+
+                                    ' type="button"' +
+                                    ' class="btn btn-primary"' +
+                                    '>' +
+                                        'Изменить' +
+                                    '</button>' +
+                                '</div>' +
+                                '<div class="row">' +
+                                    '<button' +
+                                        ' id="del-list-' + i + '"' +
+                                        ' type="button"' +
+                                        ' class="btn btn-danger"' +
+                                    '>' +
+                                        'Удалить' +
+                                    '</button>' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                            '<td colspan="4">' +
+                                '<hr/>' +
+                            '</td>' +
+                        '</tr>'
+                    );
+                }
+            }
+            $("#one-list").append(
+                '<tr>' +
+                    '<td colspan="4" style="text-align: center;">' +
+                        '<button id="append-list" type="button" class="btn btn-success">' +
+                            'Добавить список' +
+                        '</button>' +
+                    '</td>' +
+                '</tr>'
+            );
+            $(":button").click(function() {
+                let clickId = this.id;
+                if (clickId === "append-list") {
+                    // Добавить лист
+                }
+                else if(clickId.substring(0, 10) === "edit-list-") {
+                    // Редактировать "Наименование списка"
+                    iCur = clickId.substring(10);
+                    titleListCur = titleList[iCur];
+                    $("#title-list-" + iCur).html(
+                        '<input' +
+                            //' id="title-list-input-' + iCur + '"' +
+                            ' type="text"' +
+                            ' style="width: 100%"' +
+                            ' name="titleListCur"' + 
+                            ' value="' + titleListCur + '"' +
+                            ' maxlength="100"' +  
+                            ' onblur="changeTitle(iCur, titleListCur.value)"' +
+                        '/>'
+                    );
+                    $("#title-list-" + iCur + ">input").focus();
+                }
+                else if(clickId.substring(0, 9) === "del-list-") {
+                    // Удалить лист
+                }
+            });
+            function changeTitle(idx, titleListValue) {
+                console.log("idx = '" + idx + "'");
+                console.log("newTitle = '" + titleListValue + "'");
+                titleList[idx] = titleListValue;
+                console.log("titleList[idx] = '" + titleList[idx] + "'");
+                $("#title-list-" + idx).html(titleList[idx]);
+            }
          </script>
     </body>
 </html>
