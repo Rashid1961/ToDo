@@ -19,7 +19,13 @@ class Lists
                 SELECT
                     l.id,
                     l.title,
-                    l.image
+                    l.image,
+                    (
+                        SELECT
+                            count(*)
+                        FROM items AS i
+                        WHERE i.id_list = l.id
+                    ) AS number_items
                 FROM lists AS l
                 WHERE l.id_user = ?
             ", [$id]

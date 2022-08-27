@@ -38,7 +38,7 @@
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li style="color: #777; margin: 15 10 0 0;">{{$name}}</li>
+                        <li style="color: #000; margin: 15 10 0 0;">{{$name}}</li>
                         <li>
                             <img
                                 src={{$image}} 
@@ -62,18 +62,24 @@
         <!-- Списки пользователя -->
         <div class="container" style="margin-top: 50; margin-left: auto;">
             <form id="main">
-                <table id="lists" width="100%">
-                    <caption>Ваши списки</caption>
-                    <thead>
+                <!-- Перечень списков -->
+                <table class="table table-striped" id="lists" width="100%">
+                    <caption style="font-size: 250%; color:#000;">Ваши списки</caption>
+                    <thead hidden>
                         <tr>
-                            <th style="text-align: center;">Id</th>
-                            <th style="text-align: center;">Наименование списка</th>
                             <th style="text-align: center;">Изображение</th>
+                            <th style="text-align: center;">Наименование списка</th>
                             <th style="text-align: center;">Действия</th>
                         </tr>
                     </thead>
                     <tbody id="one-list">
                     </tbody>
+                </table>
+
+                <!-- Пункты списка -->
+                <table class="table table-striped" id="items-list" width="100%">
+                    <caption style="font-size: 250%; color:#000;">Пункты списка</caption>
+
                 </table>
             </form>
         </div>
@@ -146,8 +152,8 @@
             if (userLists.length == 0) {
                 $("#one-list").append(
                     '<tr>' +
-                        '<td colspan="4" style="text-align: center;">' +
-                            'У Вас нет пока ни одного списка' +
+                        '<td colspan="3" style="text-align: center;">' +
+                            'У Вас пока нет ни одного списка' +
                         '</td>' +
                     '</tr>'
                 );
@@ -158,20 +164,7 @@
                     titleList[i] = userLists[i].title;
                     $("#one-list").append(
                         '<tr id="list-' + idList[i] + '">' +
-                            '<td style="text-align: center;">' + idList[i] + '</td>' +
-                            '<td' +
-                                ' id="title-list-' + i + '"' +
-                            '>' +
-                                titleList[i] + 
-                            '</td>' +
-                            //'<td>' +
-                            //    '<div' +
-                            //        ' id="title-list-' + i +'"' +
-                            //    '>' +
-                            //        titleList[i] +
-                            //    '</div>' +
-                            //'</td>' +
-                            '<td style="text-align: center;">' + 
+                            '<td style="text-align: center; width: 170px;">' + 
                                 '<a id="image-list-' + i + '"' +
                                     ' href=' + userLists[i].image +
                                     //' target="_blank"' +
@@ -186,30 +179,45 @@
                                     '/>' +
                                 '</a>' +
                             '</td>' +
-                            '<td style="text-align: center;">' + 
-                                '<div class="row" style="margin-bottom: 10;">' +
+                            '<td' +
+                                ' id="title-list-' + i + '"' +
+                                ' style="vertical-align: middle; word-wrap:break-word;"' +
+                            '>' +
+                                '<div class="row" style="margin: 0; font-size: 200%;">' +
+                                    titleList[i] +
+                                '</div>' +
+                                '<div class="row" style="margin: 0; color: #777;">' +
+                                    'Количество пунтов: ' + userLists[i].number_items +
+                                '</div>' +
+                            '</td>' +
+                            '<td style="text-align: right; vertical-align: middle; width: 150px;">' + 
+                                '<div class="row" style="margin: 10 10 5 10;">' +
+                                    '<button' +
+                                    ' id="expand-list-' + i + '"'+
+                                    ' type="button"' +
+                                    ' class="btn btn-primary"' +
+                                    '>' +
+                                        'Развернуть список' +
+                                    '</button>' +
+                                '</div>' +
+                                '<div class="row" style="margin: 5 10 5 10;">' +
                                     '<button' +
                                     ' id="edit-list-' + i + '"'+
                                     ' type="button"' +
                                     ' class="btn btn-primary"' +
                                     '>' +
-                                        'Изменить' +
+                                        'Изменить наименование' +
                                     '</button>' +
                                 '</div>' +
-                                '<div class="row">' +
+                                '<div class="row" style="margin: 5 10 10 10;">' +
                                     '<button' +
                                         ' id="del-list-' + i + '"' +
                                         ' type="button"' +
                                         ' class="btn btn-danger"' +
                                     '>' +
-                                        'Удалить' +
+                                        'Удалить список' +
                                     '</button>' +
                                 '</div>' +
-                            '</td>' +
-                        '</tr>' +
-                        '<tr>' +
-                            '<td colspan="4">' +
-                                '<hr/>' +
                             '</td>' +
                         '</tr>'
                     );
@@ -227,7 +235,12 @@
             $(":button").click(function() {
                 let clickId = this.id;
                 if (clickId === "append-list") {
-                    // Добавить лист
+                    // Добавить список
+                }
+                else if(clickId.substring(0, 12) === "expand-list-") {
+                    // Развернуть список
+                    $('#lists').hide();
+                    $("#items-list").show();
                 }
                 else if(clickId.substring(0, 10) === "edit-list-") {
                     // Редактировать "Наименование списка"
@@ -247,7 +260,7 @@
                     $("#title-list-" + iCur + ">input").focus();
                 }
                 else if(clickId.substring(0, 9) === "del-list-") {
-                    // Удалить лист
+                    // Удалить список
                 }
             });
             function changeTitle(idx, titleListValue) {
@@ -258,5 +271,11 @@
                 $("#title-list-" + idx).html(titleList[idx]);
             }
          </script>
+
+        <style>
+        /*    .hidden {
+                 display:none;
+            }*/
+        </style>
     </body>
 </html>
