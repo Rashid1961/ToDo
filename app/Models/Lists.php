@@ -2,17 +2,14 @@
 
 namespace App\Models;
 
-//use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
-//use Illuminate\Database\Eloquent\ModelNotFoundException;
-//use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-//use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
 
 class Lists
 {
-    static function getUserLists($id)
+    /**
+     *  Списки пользователя и количество пунктов в них
+     */
+    static function getUserLists($uid)
     {
         $rows = DB::select(
             "
@@ -28,10 +25,44 @@ class Lists
                     ) AS number_items
                 FROM lists AS l
                 WHERE l.id_user = ?
-            ", [$id]
+            ", [$uid]
         );
 
         if (count($rows) == 0) return [];
         else return $rows;
+    }
+
+    /**
+     *  Изменение наименования списка
+     */
+    static function changeTitleList ($uid, $listid, $titleList) {
+        $retVal = 0;
+        $row = DB::selectOne(
+            "
+                SELECT
+                    *
+                FROM lists AS l
+                WHERE   l.id = ?
+            ", [$listid]
+        );
+        if ($row) {
+            if ($row->id_user == $uid) {
+                DB::update(
+                    "
+                    UPDATE lists
+                    SET   title = ?
+                    WHERE id=?
+                    ",
+                    [$titleList, $listid]
+                );
+            }
+            else {
+                $retVal = -1; // Список не принадлежит пользователю $uid
+            }
+        }
+        else {
+            $retVal = -2; // Список отсутствует в таблице lists
+        }
+        return $retVal;
     }
 }

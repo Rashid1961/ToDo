@@ -4,13 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-//use Illuminate\Support\Facades\DB;
 
 use App\Models\Lists;
-
-//use Illuminate\Database\Eloquent\ModelNotFoundException;
-//use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-//use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ListsController extends Controller
 {
@@ -20,15 +15,20 @@ class ListsController extends Controller
         $action = $request->action;
 
         if (!$action) $action = $request->input('action');
-        $params = $request->input('params', []);
 
         // Получение списков пользователя
         if ($action === 'getUserLists') {
-            $response = Lists::getUserLists($uid);
-            return $response;
+            return Lists::getUserLists($uid);
         }
 
-        return 'Действие не найдено';
+        // Переименование списка
+        if ($action === 'changeTitleList') {
+            $listid = $request->input('listid');
+            $titleList = $request->input('listtitle');
+            return Lists::changeTitleList($uid, $listid, $titleList);
+        }
+
+        return 'Действие "' . $action . '" не найдено';
     }
     
 }

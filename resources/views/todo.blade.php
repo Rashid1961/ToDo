@@ -38,10 +38,10 @@
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li style="color: #000; margin: 15 10 0 0;">{{$name}}</li>
+                        <li id="user-name" style="color: #000; margin: 15 10 0 0;"></li>
                         <li>
                             <img
-                                src={{$image}} 
+                                src="" 
                                 width="30px"
                                 height="30px"
                                 style="border-radius: 50%; margin: 10 0 0 0;"
@@ -64,22 +64,16 @@
             <form id="main">
                 <!-- Перечень списков -->
                 <table class="table table-striped" id="lists" width="100%">
-                    <caption style="font-size: 250%; color:#000;">Ваши списки</caption>
-                    <thead hidden>
-                        <tr>
-                            <th style="text-align: center;">Изображение</th>
-                            <th style="text-align: center;">Наименование списка</th>
-                            <th style="text-align: center;">Действия</th>
-                        </tr>
-                    </thead>
+                    <caption style="font-size: 200%; color:#000;">Ваши списки</caption>
                     <tbody id="one-list">
                     </tbody>
                 </table>
 
                 <!-- Пункты списка -->
                 <table class="table table-striped" id="items-list" width="100%">
-                    <caption style="font-size: 250%; color:#000;">Пункты списка</caption>
-
+                    <!-- <caption style="font-size: 250%; color:#000;">Пункты списка</caption> -->
+                    <tbody id="one-item">
+                    </tbody>
                 </table>
             </form>
         </div>
@@ -111,6 +105,8 @@
             crossorigin="anonymous"></script> -->
 
         <script>
+            $('#lists').hide();
+            $("#items-list").hide();
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -131,151 +127,169 @@
                 }
             });
             var userLists = [];
-            $.ajax({
-                url:    '/ListsUser',
-                method: 'post',
-                dataType: 'json',
-                async:   false,
-                data: {
-                    'action': 'getUserLists'
-                },
-                success: function(response){
-                    userLists = response;
-                    //console.log(userLists[0].image);
-                },
-            });
-            var titleList=[];
-            var idList=[];
             var iCur = '';
-            var titleListCur = '';
-            var elementCur = null;
-            if (userLists.length == 0) {
-                $("#one-list").append(
-                    '<tr>' +
-                        '<td colspan="3" style="text-align: center;">' +
-                            'У Вас пока нет ни одного списка' +
-                        '</td>' +
-                    '</tr>'
-                );
-            }
-            else {
-                for (let i = 0; i < userLists.length; i++) {
-                    idList[i] = userLists[i].id;
-                    titleList[i] = userLists[i].title;
+            showUserLists();
+
+            /**
+             *  Заполнение и отображение таблицы списков
+             */
+            function showUserLists() {
+                $.ajax({
+                    url:    '/Lists',
+                    method: 'post',
+                    dataType: 'json',
+                    async:   false,
+                    data: {
+                        'action': 'getUserLists'
+                    },
+                    success: function(response){
+                        userLists = response;
+                    },
+                });
+
+                $("#one-list").empty();
+                if (userLists.length == 0) {
                     $("#one-list").append(
-                        '<tr id="list-' + idList[i] + '">' +
-                            '<td style="text-align: center; width: 170px;">' + 
-                                '<a id="image-list-' + i + '"' +
-                                    ' href=' + userLists[i].image +
-                                    //' target="_blank"' +
-                                '>' +
-                                    '<img' +
-                                        ' src=' + userLists[i].image +
-                                        ' width="150px"' +
-                                        ' height="150px"' +
-                                        ' href="#"' +
-                                        ' alt="Изображения нет"' +
-                                        ' title="Посмотреть в отдельной вкладке"' +
-                                    '/>' +
-                                '</a>' +
-                            '</td>' +
-                            '<td' +
-                                ' id="title-list-' + i + '"' +
-                                ' style="vertical-align: middle; word-wrap:break-word;"' +
-                            '>' +
-                                '<div class="row" style="margin: 0; font-size: 200%;">' +
-                                    titleList[i] +
-                                '</div>' +
-                                '<div class="row" style="margin: 0; color: #777;">' +
-                                    'Количество пунтов: ' + userLists[i].number_items +
-                                '</div>' +
-                            '</td>' +
-                            '<td style="text-align: right; vertical-align: middle; width: 150px;">' + 
-                                '<div class="row" style="margin: 10 10 5 10;">' +
-                                    '<button' +
-                                    ' id="expand-list-' + i + '"'+
-                                    ' type="button"' +
-                                    ' class="btn btn-primary"' +
-                                    '>' +
-                                        'Развернуть список' +
-                                    '</button>' +
-                                '</div>' +
-                                '<div class="row" style="margin: 5 10 5 10;">' +
-                                    '<button' +
-                                    ' id="edit-list-' + i + '"'+
-                                    ' type="button"' +
-                                    ' class="btn btn-primary"' +
-                                    '>' +
-                                        'Изменить наименование' +
-                                    '</button>' +
-                                '</div>' +
-                                '<div class="row" style="margin: 5 10 10 10;">' +
-                                    '<button' +
-                                        ' id="del-list-' + i + '"' +
-                                        ' type="button"' +
-                                        ' class="btn btn-danger"' +
-                                    '>' +
-                                        'Удалить список' +
-                                    '</button>' +
-                                '</div>' +
+                        '<tr>' +
+                            '<td colspan="3" style="font-size: 175%; text-align: center;">' +
+                                'У Вас пока нет ни одного списка' +
                             '</td>' +
                         '</tr>'
                     );
                 }
-            }
-            $("#one-list").append(
-                '<tr>' +
-                    '<td colspan="4" style="text-align: center;">' +
-                        '<button id="append-list" type="button" class="btn btn-success">' +
-                            'Добавить список' +
-                        '</button>' +
-                    '</td>' +
-                '</tr>'
-            );
-            $(":button").click(function() {
-                let clickId = this.id;
-                if (clickId === "append-list") {
-                    // Добавить список
+                else {
+                    for (let i = 0; i < userLists.length; i++) {
+                        $("#one-list").append(
+                            '<tr id="list-' + i + '">' +
+                                '<td style="text-align: center; width: 170px;">' + 
+                                    '<a id="image-list-' + i + '"' +
+                                        ' href="' + userLists[i].image + //{{ url(`/image`) }}
+                                        ' target="_blank"' +
+                                    '>' +
+                                        '<img' +
+                                            ' src=' + userLists[i].image +
+                                            ' width="150px"' +
+                                            ' height="150px"' +
+                                            ' href="#"' +
+                                            ' alt="Изображения нет"' +
+                                            ' title="Посмотреть в отдельной вкладке"' +
+                                        '/>' +
+                                    '</a>' +
+                                '</td>' +
+                                '<td' +
+                                    ' style="vertical-align: middle;"' +
+                                '>' +
+                                    '<div' +
+                                        ' id="title-list-' + i + '"' + 
+                                        ' class="row text-break"'+
+                                        ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
+                                    '>' +
+                                        userLists[i].title +
+                                    '</div>' +
+                                    '<div class="row" style="margin: 0; color: #777;">' +
+                                        'Количество пунктов: ' + userLists[i].number_items +
+                                    '</div>' +
+                                '</td>' +
+                                '<td style="text-align: right; vertical-align: middle; width: 150px;">' + 
+                                    '<div class="row" style="margin: 10 10 5 10;">' +
+                                        '<button' +
+                                        ' id="expand-list-' + i + '"'+
+                                        ' type="button"' +
+                                        ' class="btn btn-block btn-primary"' +
+                                        '>' +
+                                            'Развернуть список' +
+                                        '</button>' +
+                                    '</div>' +
+                                    '<div class="row" style="margin: 5 10 5 10;">' +
+                                        '<button' +
+                                        ' id="edit-list-' + i + '"'+
+                                        ' type="button"' +
+                                        ' class="btn btn-block btn-primary"' +
+                                        '>' +
+                                            'Изменить наименование' +
+                                        '</button>' +
+                                    '</div>' +
+                                    '<div class="row" style="margin: 5 10 10 10;">' +
+                                        '<button' +
+                                            ' id="del-list-' + i + '"' +
+                                            ' type="button"' +
+                                            ' class="btn btn-block btn-danger"' +
+                                        '>' +
+                                            'Удалить список' +
+                                        '</button>' +
+                                    '</div>' +
+                                '</td>' +
+                            '</tr>'
+                        );
+                    }
                 }
-                else if(clickId.substring(0, 12) === "expand-list-") {
-                    // Развернуть список
-                    $('#lists').hide();
-                    $("#items-list").show();
-                }
-                else if(clickId.substring(0, 10) === "edit-list-") {
-                    // Редактировать "Наименование списка"
-                    iCur = clickId.substring(10);
-                    titleListCur = titleList[iCur];
-                    $("#title-list-" + iCur).html(
-                        '<input' +
-                            //' id="title-list-input-' + iCur + '"' +
-                            ' type="text"' +
-                            ' style="width: 100%"' +
-                            ' name="titleListCur"' + 
-                            ' value="' + titleListCur + '"' +
-                            ' maxlength="100"' +  
-                            ' onblur="changeTitle(iCur, titleListCur.value)"' +
-                        '/>'
-                    );
-                    $("#title-list-" + iCur + ">input").focus();
-                }
-                else if(clickId.substring(0, 9) === "del-list-") {
-                    // Удалить список
-                }
-            });
-            function changeTitle(idx, titleListValue) {
-                console.log("idx = '" + idx + "'");
-                console.log("newTitle = '" + titleListValue + "'");
-                titleList[idx] = titleListValue;
-                console.log("titleList[idx] = '" + titleList[idx] + "'");
-                $("#title-list-" + idx).html(titleList[idx]);
-            }
-         </script>
 
-        <style>
-        /*    .hidden {
-                 display:none;
-            }*/
-        </style>
+                $("#one-list").append(
+                    '<tr>' +
+                        '<td colspan="4" style="text-align: center;">' +
+                            '<button id="append-list" type="button" class="btn btn-success">' +
+                                'Добавить список' +
+                            '</button>' +
+                        '</td>' +
+                    '</tr>'
+                );
+                $('#lists').show();
+
+                $(":button").click(function() {
+                    let clickId = this.id;
+                    if (clickId === "append-list") {
+                        // Добавить список
+                        appendList();
+                    }
+                    else if(clickId.substring(0, 12) === "expand-list-") {
+                        // Развернуть список
+                        $('#lists').hide();
+                        $("#items-list").show();
+                    }
+                    else if(clickId.substring(0, 10) === "edit-list-") {
+                        // Изменить "Наименование списка"
+                        iCur = clickId.substring(10);
+                        $("#title-list-" + iCur).html(
+                            '<input' +
+                                ' type="text"' +
+                                ' style="width: 100%"' +
+                                ' value="' + userLists[iCur].title + '"' +
+                                ' maxlength="100"' +  
+                                ' onchange="changeTitleList()"' +
+                            '/>'
+                        );
+                        $("#title-list-" + iCur + ">input").focus();
+                    }
+                    else if(clickId.substring(0, 9) === "del-list-") {
+                        // Удалить список
+                    }
+                });
+            }
+
+            /** 
+             * Изменение наименования списка
+             */
+            function changeTitleList() {
+                let newTitle = document.getElementsByTagName("input")[0].value;
+                if (userLists[iCur].title != newTitle) {
+                    userLists[iCur].title = newTitle;
+                    $.ajax({
+                        url:    '/Lists',
+                        method: 'post',
+                        dataType: 'json',
+                        async:   true,
+                        data: {
+                            'action':    'changeTitleList',
+                            'listid':    userLists[iCur].id,
+                            'listtitle': userLists[iCur].title,
+                        },
+                        // success: function(response){
+                            // userLists = response;
+                        // },
+                    });
+                    $("#title-list-" + iCur).html(userLists[iCur].title);
+                }
+            }
+        </script>
     </body>
 </html>
