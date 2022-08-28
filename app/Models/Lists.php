@@ -9,7 +9,7 @@ class Lists
     /**
      *  Списки пользователя и количество пунктов в них
      */
-    static function getUserLists($uid)
+    static function getLists($uid)
     {
         $rows = DB::select(
             "
@@ -54,6 +54,38 @@ class Lists
                     WHERE id=?
                     ",
                     [$titleList, $listid]
+                );
+            }
+            else {
+                $retVal = -1; // Список не принадлежит пользователю $uid
+            }
+        }
+        else {
+            $retVal = -2; // Список отсутствует в таблице lists
+        }
+        return $retVal;
+    }
+
+    /**
+     * Удаление списка
+     */
+    static function deleteList ($uid, $listid) {
+        $retVal = 0;
+        $row = DB::selectOne(
+            "
+                SELECT
+                    *
+                FROM lists AS l
+                WHERE   l.id = ?
+            ", [$listid]
+        );
+        if ($row) {
+            if ($row->id_user == $uid) {
+                DB::delete(
+                    "
+                        DELETE FROM lists
+                        WHERE id = ?
+                    ", [$listid]
                 );
             }
             else {

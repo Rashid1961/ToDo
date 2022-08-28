@@ -12,17 +12,17 @@
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
-        return view("todo");
-        //$user = [
-        //    "id"    => auth()->user()->id,
-        //    "name"  => auth()->user()->name,
-        //    "email" => auth()->user()->email,
-        //    "image" => auth()->user()->image,
-        //];
-        //$view = view('todo', $user);
-        //return $view;
+        $user = [
+            "id"    => auth()->user()->id,
+            "name"  => auth()->user()->name,
+            "email" => auth()->user()->email,
+            "image" => auth()->user()->image,
+        ];
+        $view = view('todo', $user);
+        return $view;
     });
     Route::post('/Lists', 'ListsController@action');
+    
 });
 
 Route::auth();

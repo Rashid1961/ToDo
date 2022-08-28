@@ -38,10 +38,10 @@
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li id="user-name" style="color: #000; margin: 15 10 0 0;"></li>
+                        <li id="user-name" style="color: #000; margin: 15 10 0 0;">{{$name}}</li>
                         <li>
                             <img
-                                src="" 
+                                src="{{$image}}" 
                                 width="30px"
                                 height="30px"
                                 style="border-radius: 50%; margin: 10 0 0 0;"
@@ -50,6 +50,7 @@
                         </li>
                         <li>
                             <a
+                                id="exit"
                                 href="{{ url('/logout') }}"
                             >
                                 <i class="fa fa-btn fa-sign-out"></i>Выход
@@ -61,20 +62,26 @@
         </nav>
         <!-- Списки пользователя -->
         <div class="container" style="margin-top: 50; margin-left: auto;">
-            <form id="main">
-                <!-- Перечень списков -->
-                <table class="table table-striped" id="lists" width="100%">
-                    <caption style="font-size: 200%; color:#000;">Ваши списки</caption>
-                    <tbody id="one-list">
-                    </tbody>
-                </table>
+            <form class="form-horizontal" id="form-lists">
+                <div class="form-group">
+                    <!-- Перечень списков -->
+                    <table class="table" id="lists" width="100%">
+                        <caption style="font-size: 200%; color:#000;">Ваши списки</caption>
+                        <tbody id="one-list">
+                        </tbody>
+                    </table>
+                </div>
+            </form>
 
-                <!-- Пункты списка -->
-                <table class="table table-striped" id="items-list" width="100%">
-                    <!-- <caption style="font-size: 250%; color:#000;">Пункты списка</caption> -->
-                    <tbody id="one-item">
-                    </tbody>
-                </table>
+            <form class="form-horizontal" id="form-items">
+                <div class="form-group">
+                    <!-- Пункты списка -->
+                    <table class="table" id="items" width="100%">
+                        <caption style="font-size: 250%; color:#000;">Пункты списка</caption>
+                        <tbody id="one-item">
+                        </tbody>
+                    </table>
+                </div>
             </form>
         </div>
 
@@ -91,22 +98,9 @@
         </script>
         {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 
-        <!-- <script
-            src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-        ></script> -->
-        <!-- <script
-            src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossorigin="anonymous"
-        ></script> -->
-        <!-- <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
-            crossorigin="anonymous"></script> -->
-
         <script>
-            $('#lists').hide();
-            $("#items-list").hide();
+            $('.container').hide();
+            $('.container').children().hide();
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -140,7 +134,7 @@
                     dataType: 'json',
                     async:   false,
                     data: {
-                        'action': 'getUserLists'
+                        'action': 'getLists'
                     },
                     success: function(response){
                         userLists = response;
@@ -149,13 +143,7 @@
 
                 $("#one-list").empty();
                 if (userLists.length == 0) {
-                    $("#one-list").append(
-                        '<tr>' +
-                            '<td colspan="3" style="font-size: 175%; text-align: center;">' +
-                                'У Вас пока нет ни одного списка' +
-                            '</td>' +
-                        '</tr>'
-                    );
+                    noLists();
                 }
                 else {
                     for (let i = 0; i < userLists.length; i++) {
@@ -163,14 +151,13 @@
                             '<tr id="list-' + i + '">' +
                                 '<td style="text-align: center; width: 170px;">' + 
                                     '<a id="image-list-' + i + '"' +
-                                        ' href="' + userLists[i].image + //{{ url(`/image`) }}
+                                        ' href="' + userLists[i].image + '"' +
                                         ' target="_blank"' +
                                     '>' +
                                         '<img' +
                                             ' src=' + userLists[i].image +
                                             ' width="150px"' +
                                             ' height="150px"' +
-                                            ' href="#"' +
                                             ' alt="Изображения нет"' +
                                             ' title="Посмотреть в отдельной вкладке"' +
                                         '/>' +
@@ -187,7 +174,7 @@
                                         userLists[i].title +
                                     '</div>' +
                                     '<div class="row" style="margin: 0; color: #777;">' +
-                                        'Количество пунктов: ' + userLists[i].number_items +
+                                        'Пунктов: ' + userLists[i].number_items +
                                     '</div>' +
                                 '</td>' +
                                 '<td style="text-align: right; vertical-align: middle; width: 150px;">' + 
@@ -224,16 +211,15 @@
                     }
                 }
 
-                $("#one-list").append(
-                    '<tr>' +
-                        '<td colspan="4" style="text-align: center;">' +
-                            '<button id="append-list" type="button" class="btn btn-success">' +
-                                'Добавить список' +
-                            '</button>' +
-                        '</td>' +
-                    '</tr>'
+                $("#lists").after(
+                    '<div class="block" style="text-align: center; margin: 0;">' +
+                        '<button id="append-list" type="button" class="btn btn-success">' +
+                            'Добавить список' +
+                        '</button>' +
+                    '</div>'
                 );
-                $('#lists').show();
+                $('#form-lists').show();
+                $('.container').show();
 
                 $(":button").click(function() {
                     let clickId = this.id;
@@ -243,8 +229,12 @@
                     }
                     else if(clickId.substring(0, 12) === "expand-list-") {
                         // Развернуть список
-                        $('#lists').hide();
-                        $("#items-list").show();
+                        $('#form-lists').hide();
+                        $('#form-items').show();
+                        setTimeout(() => {
+                            $('#form-items').hide();
+                            $('#form-lists').show();
+                        }, 1000);
                     }
                     else if(clickId.substring(0, 10) === "edit-list-") {
                         // Изменить "Наименование списка"
@@ -267,28 +257,118 @@
             }
 
             /** 
+             * Строка таблицы при отсутствии списков
+             */
+            function noLists(){
+                $("#one-list").append(
+                    '<tr>' +
+                        '<td colspan="3" style="font-size: 150%; text-align: center;">' +
+                            'У Вас пока нет ни одного списка' +
+                        '</td>' +
+                    '</tr>'
+                );
+            }
+
+            /** 
              * Изменение наименования списка
              */
             function changeTitleList() {
                 let newTitle = document.getElementsByTagName("input")[0].value;
                 if (userLists[iCur].title != newTitle) {
-                    userLists[iCur].title = newTitle;
+                    let action = 'changeTitleList';
                     $.ajax({
                         url:    '/Lists',
                         method: 'post',
                         dataType: 'json',
                         async:   true,
                         data: {
-                            'action':    'changeTitleList',
+                            'action':    action,
                             'listid':    userLists[iCur].id,
-                            'listtitle': userLists[iCur].title,
+                            'listtitle': newTitle,
                         },
-                        // success: function(response){
-                            // userLists = response;
-                        // },
+                        success: function(response){
+                            if (response == 0) {
+                                userLists[iCur].title = newTitle;
+                            }
+                            else {
+                                errAction(action, response);
+                            }
+                        },
+                        complete: function() {
+                            $('#title-list-' + iCur).html(userLists[iCur].title);
+                        },
                     });
                     $("#title-list-" + iCur).html(userLists[iCur].title);
                 }
+            }
+
+            /**
+             * Удаление списка и всех его пунктов
+             */
+            function deleteList() {
+                let action = 'deleteList';
+                $.ajax({
+                    url:    '/Lists',
+                    method: 'post',
+                    dataType: 'json',
+                    async:   true,
+                    data: {
+                        'action':    action,
+                        'listid':    userLists[iCur].id,
+                    },
+                    success: function(response){
+                        if (response == 0) {
+                            userLists.splice(iCur, 1);
+                            $('#list-' + iCur).remove();
+                            if (userLists.length == 0) {
+                                noLists();
+                            }
+                            else {
+                                errAction(action, response);
+                            }
+                        }
+                    },
+                });
+            }
+
+            /**
+             * Вывод сообщений при ошибках
+             */
+            function errAction(action, response) {
+                let actions = [
+                    [
+                        'changeTitleList',
+                        'deleteList',
+                    ],
+                    [
+                        'Изменение наименования списка',
+                        'Удаление списка',
+                    ],
+                ];
+                let responses = [
+                    [
+                        -1,
+                        -2,
+                    ],
+                    [
+                        'Список не принадлежит текущему пользователю',
+                        'Список отсутствует в базе данных',
+                    ],
+                ];
+                let idxAction = actions[0].indexOf(action);
+                errAction = '"' + (idxAction == -1 ? ('Неизвестное (' + action + ')') :
+                                              actions[1][idxAction]) + '"';
+                let idxResponse = responses[0].indexOf(response);
+                errResponse = '"' + (idxResponse == -1 ? ('Неизвестная ('  + response + ')'):
+                                                  responses[1][idxResponse]) + '"';
+                $('.container').hide();
+                $("#exit")[0].click();
+                alert(
+                    'Ошибка выполнения действия:\n' +
+                    errAction +'"\n' +
+                    'Причина:\n' +
+                    errResponse
+                );
             }
         </script>
     </body>

@@ -17,8 +17,8 @@ class ListsController extends Controller
         if (!$action) $action = $request->input('action');
 
         // Получение списков пользователя
-        if ($action === 'getUserLists') {
-            return Lists::getUserLists($uid);
+        if ($action === 'getLists') {
+            return Lists::getLists($uid);
         }
 
         // Переименование списка
@@ -26,6 +26,12 @@ class ListsController extends Controller
             $listid = $request->input('listid');
             $titleList = $request->input('listtitle');
             return Lists::changeTitleList($uid, $listid, $titleList);
+        }
+
+        // Удаление списка
+        if ($action === 'deleteList') {
+            $listid = $request->input('listid');
+            return Lists::deleteList($uid, $listid);
         }
 
         return 'Действие "' . $action . '" не найдено';
