@@ -227,17 +227,13 @@
                         // Добавить список
                         appendList();
                     }
+                    // Развернуть список
                     else if(clickId.substring(0, 12) === "expand-list-") {
-                        // Развернуть список
-                        $('#form-lists').hide();
-                        $('#form-items').show();
-                        setTimeout(() => {
-                            $('#form-items').hide();
-                            $('#form-lists').show();
-                        }, 1000);
+                        iCur = clickId.substring(12);
+                        expandList();
                     }
+                    // Изменить "Наименование списка"
                     else if(clickId.substring(0, 10) === "edit-list-") {
-                        // Изменить "Наименование списка"
                         iCur = clickId.substring(10);
                         $("#title-list-" + iCur).html(
                             '<input' +
@@ -250,8 +246,10 @@
                         );
                         $("#title-list-" + iCur + ">input").focus();
                     }
+                    // Удалить список
                     else if(clickId.substring(0, 9) === "del-list-") {
-                        // Удалить список
+                        iCur = clickId.substring(9);
+                        deleteList();
                     }
                 });
             }
@@ -267,6 +265,16 @@
                         '</td>' +
                     '</tr>'
                 );
+            }
+
+            /** 
+             * Вывод элементов списка
+             */
+            function expandList() {
+                
+                $('#form-lists').hide();
+                $('#form-items').show();
+
             }
 
             /** 

@@ -83,6 +83,22 @@ class Lists
             if ($row->id_user == $uid) {
                 DB::delete(
                     "
+                        DELETE FROM tags_items
+                        WHERE id_item IN
+                            (
+                                SELECT id FROM items AS i
+                                WHERE id_list = ?
+                            )
+                    ", [$listid]
+                );
+                DB::delete(
+                    "
+                        DELETE FROM items
+                        WHERE id_list = ?
+                    ", [$listid]
+                );
+                DB::delete(
+                    "
                         DELETE FROM lists
                         WHERE id = ?
                     ", [$listid]
