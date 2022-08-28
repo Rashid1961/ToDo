@@ -35,8 +35,7 @@ class Lists
     /**
      *  Изменение наименования списка
      */
-    static function changeTitleList ($uid, $listid, $titleList) {
-        $retVal = 0;
+    static function changeTitleList ($uid, $listid, $title) {
         $row = DB::selectOne(
             "
                 SELECT
@@ -51,26 +50,23 @@ class Lists
                     "
                     UPDATE lists
                     SET   title = ?
-                    WHERE id=?
+                    WHERE id = ?
                     ",
-                    [$titleList, $listid]
+                    [$title, $listid]
                 );
+                return 0;
             }
             else {
-                $retVal = -1; // Список не принадлежит пользователю $uid
+                return -1;  // Список не принадлежит пользователю $uid
             }
         }
-        else {
-            $retVal = -2; // Список отсутствует в таблице lists
-        }
-        return $retVal;
+        return -2;          // Список отсутствует в таблице lists
     }
 
     /**
      * Удаление списка
      */
     static function deleteList ($uid, $listid) {
-        $retVal = 0;
         $row = DB::selectOne(
             "
                 SELECT
@@ -103,14 +99,45 @@ class Lists
                         WHERE id = ?
                     ", [$listid]
                 );
+                return 0;
             }
             else {
-                $retVal = -1; // Список не принадлежит пользователю $uid
+                return -1;  // Список не принадлежит пользователю $uid
             }
         }
-        else {
-            $retVal = -2; // Список отсутствует в таблице lists
-        }
-        return $retVal;
+        return -2;          // Список отсутствует в таблице lists
     }
+
+    /**
+     * Добавление списка
+     */
+    static function appendList ($uid, $title, $image) {
+        $row = DB::selectOne(
+            "
+                SELECT
+                    *
+                FROM lists AS l
+                WHERE   l.id_user = ?
+                    AND l.title = ?
+            ", [$uid, $title]
+        );
+        if ($row) {
+            return -3;      // Дублирование наименования списка
+        }
+        DB::insert(
+            "
+            INSERT INTO lists
+                (id_user, title, image)
+            VALUES
+                (?, ?, ?)
+            ",            
+            [$uid, $title, $image]
+        );
+        $row = DB::selectOne(
+            "
+            SELECT LAST_INSERT_ID() AS id
+            "
+        );
+        return $row->id;
+    }    
 }

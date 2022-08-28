@@ -34,6 +34,14 @@ class ListsController extends Controller
             return Lists::deleteList($uid, $listid);
         }
 
+        // Добавление списка
+        if ($action === 'appendList') {
+            $title = $request->input('title');
+            $image = $request->input('image');
+            return Lists::appendList($uid, $title, $image);
+        }
+        
+
         return 'Действие "' . $action . '" не найдено';
     }
     

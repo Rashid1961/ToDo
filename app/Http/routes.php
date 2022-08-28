@@ -10,19 +10,30 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', function () {
+    Route::get('/', function() {
         $user = [
-            "id"    => auth()->user()->id,
-            "name"  => auth()->user()->name,
-            "email" => auth()->user()->email,
-            "image" => auth()->user()->image,
+            'id'    => auth()->user()->id,
+            'name'  => auth()->user()->name,
+            'email' => auth()->user()->email,
+            'image' => auth()->user()->image,
         ];
         $view = view('todo', $user);
         return $view;
     });
+    Route::get('/ShowImage', function(Request $request) {
+        $data = [
+            'whatShow' => $request->input('whatShow'),
+            'image'    => $request->input('image'),
+        ];
+        print_r('\$data =');
+        print_r($data);
+        $view = view('showimage', $data);
+        return $view;
+    });
     Route::post('/Lists', 'ListsController@action');
-    
 });
 
 Route::auth();
