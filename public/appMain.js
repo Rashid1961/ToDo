@@ -1,6 +1,6 @@
-var noImageUser ="images/users/noUserImage.jpg";
-var noImageList ="images/lists/noListImage.jpg";
-var noImageItem ="images/items/noItemImage.jpg";
+var noImageUser = "images/users/noUserImage.jpg";
+var noImageList = "images/lists/noListImage.jpg";
+var noImageItem = "images/items/noItemImage.jpg";
 var userLists = [];
 var iCur = '';
 $(document).ready(function() {
@@ -55,10 +55,9 @@ function showLists() {
                 '<tr id="list-' + i + '">' +
                     '<td style="text-align: center; width: 170px;">' + 
                         '<a id="image-list-' + i + '"' +
-                            ' href="/ShowImage"' +
+                            ' href="/ShowImage?whatShow=Лист&image='
+                                    + userLists[i].image + '&name=' + userLists[i].title + '"' +
                             ' target="_blank"' +
-                            ' onclick="location.href=this.href+`?whatShow=list&image=' +
-                                       userLists[i].image + '`;return false;"' +
                         '>' +
                             '<img' +
                                 ' src=' + userLists[i].image +
@@ -134,60 +133,49 @@ function showLists() {
     );
     $('#form-lists').show();
     $('.container').show();
+
+    // Обработка нажатия кнопок
+    $(":button").click(function() {
+       let clickId = this.id;
+       // Добавить список
+       if (clickId === "append-list") {
+           appendList();
+       }
+       // Развернуть список
+       else if(clickId.substring(0, 12) === "expand-list-") {
+           iCur = clickId.substring(12);
+           expandList();
+       }
+       // Изменить "Наименование списка"
+       else if(clickId.substring(0, 10) === "edit-list-") {
+           iCur = clickId.substring(10);
+           $('#number-items-list-' + iCur).hide();
+           $("#title-list-" + iCur).html(
+               '<div class="row" style="margin: 0">' + 
+                   '<input' +
+                       ' type="text"' +
+                       ' style="margi: 0; width: 100%"' +
+                       ' value="' + userLists[iCur].title + '"' +
+                       ' minlength="5"' +
+                       ' maxlength="100"' +
+                       ' required' +
+                       ' onchange="changeTitleList()"' +
+                   '/>' +
+                   '<div style="font-size: 50%; color: #777;">' +
+                       'От 5 до 100 символов' +
+                   '</div>' +
+               '</div>'
+           );
+           $("#title-list-" + iCur + ">input").focus();
+       }
+       // Удалить список
+       else if(clickId.substring(0, 9) === "del-list-") {
+           iCur = clickId.substring(9);
+           deleteList();
+       }
+    });
 }
 
-/**
- * Обработка нажатия кнопок
- */
-$(":button").click(function() {
-    let clickId = this.id;
-    if (clickId === "append-list") {
-        // Добавить список
-        appendList();
-    }
-    // Развернуть список
-    else if(clickId.substring(0, 12) === "expand-list-") {
-        iCur = clickId.substring(12);
-        expandList();
-    }
-    // Изменить "Наименование списка"
-    else if(clickId.substring(0, 10) === "edit-list-") {
-        iCur = clickId.substring(10);
-        $('#number-items-list-' + iCur).hide();
-        $("#title-list-" + iCur).html(
-            '<div class="row" style="margin: 0">' + 
-                '<input' +
-                    ' type="text"' +
-                    ' style="margi: 0; width: 100%"' +
-                    ' value="' + userLists[iCur].title + '"' +
-                    ' minlength="5"' +
-                    ' maxlength="100"' +
-                    ' required' +
-                    ' onchange="changeTitleList()"' +
-                '/>' +
-                '<div style="font-size: 50%; color: #777;">' +
-                    'От 5 до 100 символов' +
-                '</div>' +
-            '</div>'
-        );
-        $("#title-list-" + iCur + ">input").focus();
-    }
-    // Удалить список
-    else if(clickId.substring(0, 9) === "del-list-") {
-        iCur = clickId.substring(9);
-        deleteList();
-    }
-    // Сохранить новый список
-    else if(clickId.substring(0, 10) === "save-list-") {
-        iCur = clickId.substring(10);
-        saveNewList();
-    }
-    // Не сохранять новый список
-    else if(clickId.substring(0, 12) === "cancel-list-") {
-        iCur = clickId.substring(12);
-        cancelNewList();
-    }
-});
 
 /** 
  * Строка таблицы при отсутствии списков
@@ -200,35 +188,6 @@ function noLists(){
             '</td>' +
         '</tr>'
     );
-}
-
-/** 
- * Вывод изображения в новой вкладке
- */
- function showImage(whatShow, idx) {
-    $.ajax({
-        url:      '/ShowImage',
-        method:   'get',
-        dataType: 'json',
-        async:    true,
-        data:  {
-            'whatShow': whatShow,
-            'image':    userLists[idx].image,
-        },
-        /*
-        success: function(response){
-            if (response == 0) {
-                userLists[iCur].title = newTitle;
-            }
-            else {
-                errAction(action, response);
-            }
-        },
-        complete: function() {
-            $('#title-list-' + iCur).html(userLists[iCur].title);
-        },
-        */
-    });
 }
 
 /** 
@@ -316,13 +275,14 @@ function appendList() {
         title:        'Новый список',
         image:        noImageList,
         number_items: 0,
-    });                
+    }) - 1;
     $("#one-list").append(
         '<tr id="list-' + iCur + '">' +
             '<td style="text-align: center; width: 170px;">' + 
                 '<a id="image-list-' + iCur + '"' +
-                    ' href="' + userLists[iCur].image + '"' +
-                    //' target="_blank"' +
+                    ' href="/ShowImage?whatShow=Лист&image='
+                    + userLists[iCur].image + '&name=' + userLists[iCur].title + '"' +
+                    ' target="_blank"' +
                 '>' +
                     '<img' +
                         ' src=' + userLists[iCur].image +
@@ -382,6 +342,21 @@ function appendList() {
         '</tr>'
     );
     $("#title-list-" + iCur + ">input").focus();
+
+    // Обработка нажатия кнопок
+    $(":button").click(function() {
+        let clickId = this.id;
+        // Сохранить новый список
+        if(clickId.substring(0, 10) === "save-list-") {
+            iCur = clickId.substring(10);
+            saveNewList();
+        }
+        // Не сохранять новый список
+        else if(clickId.substring(0, 12) === "cancel-list-") {
+            iCur = clickId.substring(12);
+            cancelNewList();
+        }
+    });
 }
 
 /**
@@ -421,6 +396,21 @@ function cancelNewList() {
     $('#append-list').show();
 }
 
+/**
+ * Проверка наименования нового списка
+ */
+ function checkNewList() {
+    let newTitle = document.getElementsByTagName("input")[0].value;
+    if (newTitle.length < 5) {
+        return false;
+    }
+    for(let i = 0; i < userLists.length; i++) {
+        if (!(i == iCur) && (userLists[i].title == newTitle)) {
+            return false;
+        }
+    }
+    //return true;
+}
 /**
  * Вывод сообщений при ошибках
  */

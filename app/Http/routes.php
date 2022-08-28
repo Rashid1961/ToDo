@@ -27,9 +27,9 @@ Route::group(['middleware' => 'auth'], function () {
         $data = [
             'whatShow' => $request->input('whatShow'),
             'image'    => $request->input('image'),
+            'name'     => $request->input('name'),
         ];
-        print_r('\$data =');
-        print_r($data);
+        //print_r($data);
         $view = view('showimage', $data);
         return $view;
     });
