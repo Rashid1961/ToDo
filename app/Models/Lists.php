@@ -112,6 +112,9 @@ class Lists
      * Добавление списка
      */
     static function appendList ($uid, $title, $image) {
+        if (count($title) < 5) {
+            return -4;      // Длина наименования (меньше 5 символов)
+        }
         $row = DB::selectOne(
             "
                 SELECT

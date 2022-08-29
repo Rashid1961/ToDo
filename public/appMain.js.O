@@ -153,21 +153,20 @@ function showLists() {
            $("#title-list-" + iCur).html(
                '<div class="row" style="margin: 0">' + 
                    '<input' +
-                        ' id="title-list-edit-' + iCur + '"' +
-                        ' type="text"' +
-                        ' style="margi: 0; width: 100%"' +
-                        ' value="' + userLists[iCur].title + '"' +
-                        ' minlength="5"' +
-                        ' maxlength="100"' +
-                        ' required' +
-                        ' onchange="changeTitleList()"' +
+                       ' type="text"' +
+                       ' style="margi: 0; width: 100%"' +
+                       ' value="' + userLists[iCur].title + '"' +
+                       ' minlength="5"' +
+                       ' maxlength="100"' +
+                       ' required' +
+                       ' onchange="changeTitleList()"' +
                    '/>' +
                    '<div style="font-size: 50%; color: #777;">' +
-                        'От 5 до 100 символов' +
+                       'От 5 до 100 символов' +
                    '</div>' +
                '</div>'
            );
-           $("#title-list-edit-" + iCur).focus();
+           $("#title-list-" + iCur + ">input").focus();
        }
        // Удалить список
        else if(clickId.substring(0, 9) === "del-list-") {
@@ -204,7 +203,7 @@ function expandList() {
  * Изменение наименования списка
  */
 function changeTitleList() {
-    let newTitle = $('#title-list-edit-' + iCur).val();
+    let newTitle = document.getElementsByTagName("input")[0].value;
     if (newTitle.length < 5) {
         return false;
     }
@@ -303,15 +302,14 @@ function appendList() {
                     ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
                 '>' +
                     '<div class="row" style="margin: 0">' + 
-                        '<input' + 
-                            ' id="title-list-new-' + iCur + '"' + 
+                        '<input' +
                             ' type="text"' +
                             ' style="margi: 0; width: 100%"' +
                             ' value="' + userLists[iCur].title + '"' +
                             ' minlength="5"' +
                             ' maxlength="100"' +
                             ' required' +
-                            //' onchange="checkNewList()"' +
+                            ' onchange="checkNewList()"' +
                         '/>' +
                         '<div style="font-size: 50%; color: #777;">' +
                             'От 5 до 100 символов' +
@@ -343,7 +341,7 @@ function appendList() {
             '</td>' +
         '</tr>'
     );
-    $("#title-list-new-" + iCur).focus();
+    $("#title-list-" + iCur + ">input").focus();
 
     // Обработка нажатия кнопок
     $(":button").click(function() {
@@ -365,49 +363,28 @@ function appendList() {
  * Сохранение нового списка
  */
 function saveNewList() {
-    let newTitle = $('#title-list-new-' + iCur).val();
-    //let checkNewList = true;
-    //if (newTitle.length < 5) {
-    //    alert('<5');
-    //    //errAction('checkNewListTitle', -4);
-    //    checkNewList = false; //return false;
-    //}
-    //for(let i = 0; i < userLists.length; i++) {
-    //    if (!(i == iCur) && (userLists[i].title == newTitle)) {
-    //        alert('Dup');
-    //        //errAction('checkNewListTitle', -3);
-    //        checkNewList = false; //return false;
-    //        break;
-    //    }
-    //}
-    //if (checkNewList = true) {
-        let action = 'appendList';
-        $.ajax({
-            url:      '/Lists',
-            method:   'post',
-            dataType: 'json',
-            async:    true,
-            data: {
-                'action': action,
-                'title':  newTitle, // userLists[iCur].title,
-                'image':  userLists[iCur].image,
-            },
-            success: function(response){
-                if (response > 0) {
-                    userLists[iCur].id = response;
-                    userLists[iCur].title = newTitle;
-                    $('#append-list').show();
-                }
-                else {
-                    errAction(action, response);
-                }
-            },
-        });
-    //    $('#append-list').show();
-    //}
-    //else {
-    //    errAction('checkNewListTitle', (newTitle.length < 5 ? -4 : -3));
-    //}
+    if (!checkNewList()) return false;
+    let action = 'appendList';
+    $.ajax({
+        url:      '/Lists',
+        method:   'post',
+        dataType: 'json',
+        async:    true,
+        data: {
+            'action': action,
+            'title':  userLists[iCur].title,
+            'image':  userLists[iCur].image,
+        },
+        success: function(response){
+            if (response > 0) {
+                userLists[iCur].id = response;
+            }
+            else {
+                errAction(action, response);
+            }
+        },
+    });
+    $('#append-list').show();
 }
 
 /**
@@ -415,27 +392,39 @@ function saveNewList() {
  */
 function cancelNewList() {
     userLists.pop();
-    $('#list-' + iCur).remove();
+    $('list-' + iCur).remove();
     $('#append-list').show();
 }
 
-
+/**
+ * Проверка наименования нового списка
+ */
+ function checkNewList() {
+    let newTitle = document.getElementsByTagName("input")[0].value;
+    if (newTitle.length < 5) {
+        return false;
+    }
+    for(let i = 0; i < userLists.length; i++) {
+        if (!(i == iCur) && (userLists[i].title == newTitle)) {
+            return false;
+        }
+    }
+    //return true;
+}
 /**
  * Вывод сообщений при ошибках
  */
-function errAction(action, response, needExit = false) {
+function errAction(action, response) {
     let actions = [
         [
             'changeTitleList',
             'deleteList',
             'appendList',
-            'checkNewListTitle',
         ],
         [
             'Изменение наименования списка',
             'Удаление списка',
             'Добавление нового списка',
-            'Проверка наименования нового списка'
         ],
     ];
     let responses = [
@@ -443,26 +432,21 @@ function errAction(action, response, needExit = false) {
             -1,
             -2,
             -3,
-            -4,
         ],
         [
             'Список не принадлежит текущему пользователю',
             'Список отсутствует в базе данных',
             'Дублирование наименования списка',
-            'Длина наименования (меньше 5 символов)'
         ],
     ];
-    
     let idxAction = actions[0].indexOf(action);
     errAction = '"' + (idxAction == -1 ? ('Неизвестное (' + action + ')') :
                                   actions[1][idxAction]) + '"';
     let idxResponse = responses[0].indexOf(response);
     errResponse = '"' + (idxResponse == -1 ? ('Неизвестная ('  + response + ')'):
                                       responses[1][idxResponse]) + '"';
-    if (needExit) {
-        $('.container').hide();
-        $("#exit")[0].click();
-    }
+    $('.container').hide();
+    $("#exit")[0].click();
     alert(
         'Ошибка выполнения действия:\n' +
         errAction +'"\n' +
