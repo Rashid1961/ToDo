@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth'], function () {
         return $view;
     });
     Route::post('/Lists', 'ListsController@action');
+    //Route::post('/List/getList','ListsController@create');
 });
 
 Route::auth();

@@ -6,7 +6,6 @@ var iCur = '';
 $(document).ready(function() {
     $('.container').hide();
     $('.container').children().hide();
-    $('#err-anim').hide();
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -26,39 +25,6 @@ $(document).ready(function() {
             }
         }
     });
-    $('#title-list-edit-' + iCur).blur(function() {
-        let newTitle = $('#title-list-edit-' + iCur).val();
-        if (newTitle.length < 5) {
-            return false;
-        }
-        if (userLists[iCur].title != newTitle) {
-            let action = 'changeTitleList';
-            $.ajax({
-                url:      '/Lists',
-                method:   'post',
-                dataType: 'json',
-                async:    true,
-                data:  {
-                    'action':    action,
-                    'listid':    userLists[iCur].id,
-                    'listtitle': newTitle,
-                },
-                success: function(response){
-                    if (response == 0) {
-                        userLists[iCur].title = newTitle;
-                        $('#title-list-' + iCur).html(userLists[iCur].title);
-                        $("#title-list-" + iCur).html(userLists[iCur].title);
-                        $('#number-items-list-' + iCur).show();
-                                }
-                    else {
-                        errAction(action, response);
-                        $("#title-list-edit-" + iCur).focus();
-                    }
-                },
-            });
-        }
-    });
-        
     showLists();
 });
 
@@ -194,7 +160,7 @@ function showLists() {
                         ' minlength="5"' +
                         ' maxlength="100"' +
                         ' required' +
-                        //' onblur="changeTitleList()"' +
+                        ' onchange="changeTitleList()"' +
                    '/>' +
                    '<div style="font-size: 50%; color: #777;">' +
                         'От 5 до 100 символов' +
@@ -237,12 +203,7 @@ function expandList() {
 /** 
  * Изменение наименования списка
  */
-$('#title-list-edit-' + iCur).blur(function() {
-//    10
-//     alert( "Handler for .blur() called." );
-//    11
-//    });
-//function changeTitleList() {
+function changeTitleList() {
     let newTitle = $('#title-list-edit-' + iCur).val();
     if (newTitle.length < 5) {
         return false;
@@ -262,24 +223,20 @@ $('#title-list-edit-' + iCur).blur(function() {
             success: function(response){
                 if (response == 0) {
                     userLists[iCur].title = newTitle;
-                    $('#title-list-' + iCur).html(userLists[iCur].title);
-                    $("#title-list-" + iCur).html(userLists[iCur].title);
-                    $('#number-items-list-' + iCur).show();
-                            }
+                }
                 else {
                     errAction(action, response);
-                    $("#title-list-edit-" + iCur).focus();
                 }
             },
             complete: function() {
-//                $('#title-list-' + iCur).html(userLists[iCur].title);
+                $('#title-list-' + iCur).html(userLists[iCur].title);
             },
         });
-//        $("#title-list-" + iCur).html(userLists[iCur].title);
-//        $('#number-items-list-' + iCur).show();
+        $("#title-list-" + iCur).html(userLists[iCur].title);
+        $('#number-items-list-' + iCur).show();
     }
-});
-*/
+}
+
 /**
  * Удаление списка и всех его пунктов
  */
@@ -301,9 +258,9 @@ function deleteList() {
                 if (userLists.length == 0) {
                     noLists();
                 }
-            }
-            else {
-                errAction(action, response);
+                else {
+                    errAction(action, response);
+                }
             }
         },
     });
@@ -497,49 +454,19 @@ function errAction(action, response, needExit = false) {
     ];
     
     let idxAction = actions[0].indexOf(action);
-    let errAct = '"' + (idxAction == -1 ? ('Неизвестное (' + action + ')') :
+    errAction = '"' + (idxAction == -1 ? ('Неизвестное (' + action + ')') :
                                   actions[1][idxAction]) + '"';
     let idxResponse = responses[0].indexOf(response);
-    let errResp = '"' + (idxResponse == -1 ? ('Неизвестная ('  + response + ')'):
+    errResponse = '"' + (idxResponse == -1 ? ('Неизвестная ('  + response + ')'):
                                       responses[1][idxResponse]) + '"';
-
-    /*
-    $('#err-msg').html(
-      'Ошибка выполнения действия:<br/>' +
-      errAct + '<br/>' +
-      'Причина:<br/>' +
-      errResp
-    );
-
-
-    $('#err-anim').show();
-    $(":button").click(function() {
-        let clickId = this.id;
-        // Кнопка "Продолжить" в сообщении об ошибке
-        if(clickId === "err-btn") {
-            if (needExit) {
-                $('.container').hide();
-                $("#exit")[0].click();
-            }
-            $('#err-anim').hide();
-        }
-    });
-    */
-    $.notification.show(
-        'error',
-        'Ошибка выполнения действия:<br/>' +
-          errAct + '<br/>' +
-          'Причина:<br/>' +
-          errResp
-    );
     if (needExit) {
         $('.container').hide();
         $("#exit")[0].click();
     }
-    // alert(
-        // 'Ошибка выполнения действия:\n' +
-        // errAct +'"\n' +
-        // 'Причина:\n' +
-        // errResp
-    // );
+    alert(
+        'Ошибка выполнения действия:\n' +
+        errAction +'"\n' +
+        'Причина:\n' +
+        errResponse
+    );
 }

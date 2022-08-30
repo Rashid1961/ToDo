@@ -15,7 +15,7 @@ class ListsController extends Controller
         $action = $request->action;
 
         if (!$action) $action = $request->input('action');
-
+        
         // Получение списков пользователя
         if ($action === 'getLists') {
             return Lists::getLists($uid);
@@ -40,8 +40,20 @@ class ListsController extends Controller
             $image = $request->input('image');
             return Lists::appendList($uid, $title, $image);
         }
-        
-
+/*        
+        function create(Request $request)
+        {
+            $uid = auth()->user()->id;
+            //$action = $request->action;
+    
+            //if (!$action) $action = $request->input('action');
+    
+            // Получение списков пользователя
+            //if ($action === 'getLists') {
+                return Lists::getLists($uid);
+            //}
+        }    
+*/    
         return 'Действие "' . $action . '" не найдено';
     }
     
