@@ -10,6 +10,9 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+//use App\Http\Controllers\ListsController;
+
 use Illuminate\Http\Request;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -23,18 +26,30 @@ Route::group(['middleware' => 'auth'], function () {
         $view = view('todo', $user);
         return $view;
     });
-    Route::get('/ShowImage', function(Request $request) {
-        $data = [
-            'whatShow' => $request->input('whatShow'),
-            'image'    => $request->input('image'),
-            'name'     => $request->input('name'),
-        ];
-        //print_r($data);
-        $view = view('showimage', $data);
-        return $view;
+    Route::group(['prefix' => '/Images/'], function () {
+        Route::get('/showImage', 'ImagesController@showImage');
+        //Route::get('/ShowImage', function(Request $request) {
+        //    $data = [
+        //        'id'       => $request->input('id'),
+        //        'whatShow' => $request->input('whatShow'),
+        //        'image'    => $request->input('image'),
+        //        'name'     => $request->input('name'),
+        //    ];
+        //    $view = view('showimage', $data);
+        //    return $view;
+        //});
     });
-    Route::post('/Lists', 'ListsController@action');
-    //Route::post('/List/getList','ListsController@create');
+
+    Route::group(['prefix' => '/Lists/'], function () {
+        Route::post('/getLists',        'ListsController@getLists');
+        Route::post('/changeTitleList', 'ListsController@changeTitleList');
+        Route::post('/deleteList',      'ListsController@deleteList');
+        Route::post('/appendList',      'ListsController@appendList');
+    });
+    
+    Route::group(['prefix' => '/Items/'], function () {
+        Route::post('/getItems', 'ItemsController@getItems');
+    });
 });
 
 Route::auth();

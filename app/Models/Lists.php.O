@@ -25,7 +25,6 @@ class Lists
                     ) AS number_items
                 FROM lists AS l
                 WHERE l.id_user = ?
-                ORDER BY l.title
             ", [$uid]
         );
 
@@ -36,47 +35,29 @@ class Lists
     /**
      *  Изменение наименования списка
      */
-    static function changeTitleList ($uid, $listId, $titleList) {
-        $titleList = trim($titleList);
-        if (mb_strlen($titleList) < 5) {
-            return -4;              // Длина наименования (меньше 5 символов)
-        }
+    static function changeTitleList ($uid, $listid, $title) {
         $row = DB::selectOne(
             "
                 SELECT
                     *
                 FROM lists AS l
-                WHERE l.id = ?
-            ", [$listId]
+                WHERE   l.id = ?
+            ", [$listid]
         );
         if ($row) {
             if ($row->id_user == $uid) {
-                $rowDup = DB::selectOne(
-                    "
-                        SELECT
-                            *
-                        FROM lists AS l
-                        WHERE l.id_user = ?
-                          AND l.title = ?
-
-                    ", [$uid, $titleList]
-                );
-                if ($rowDup) {
-                    return -3;      // Дублирование наименования списка
-                }
-        
                 DB::update(
                     "
                     UPDATE lists
                     SET   title = ?
                     WHERE id = ?
                     ",
-                    [$titleList, $listId]
+                    [$title, $listid]
                 );
                 return 0;
             }
             else {
-                return -1;          // Список не принадлежит пользователю $uid
+                return -1;  // Список не принадлежит пользователю $uid
             }
         }
         return -2;          // Список отсутствует в таблице lists
@@ -85,14 +66,14 @@ class Lists
     /**
      * Удаление списка
      */
-    static function deleteList ($uid, $listId) {
+    static function deleteList ($uid, $listid) {
         $row = DB::selectOne(
             "
                 SELECT
                     *
                 FROM lists AS l
                 WHERE   l.id = ?
-            ", [$listId]
+            ", [$listid]
         );
         if ($row) {
             if ($row->id_user == $uid) {
@@ -104,35 +85,35 @@ class Lists
                                 SELECT id FROM items AS i
                                 WHERE id_list = ?
                             )
-                    ", [$listId]
+                    ", [$listid]
                 );
                 DB::delete(
                     "
                         DELETE FROM items
                         WHERE id_list = ?
-                    ", [$listId]
+                    ", [$listid]
                 );
                 DB::delete(
                     "
                         DELETE FROM lists
                         WHERE id = ?
-                    ", [$listId]
+                    ", [$listid]
                 );
                 return 0;
             }
             else {
-                return -1;          // Список не принадлежит пользователю $uid
+                return -1;  // Список не принадлежит пользователю $uid
             }
         }
-        return -2;                  // Список отсутствует в таблице lists
+        return -2;          // Список отсутствует в таблице lists
     }
 
     /**
      * Добавление списка
      */
-    static function appendList ($uid, $titleList, $image) {
-        if(mb_strlen($titleList) < 5) {
-            return -4;              // Длина наименования (меньше 5 символов)
+    static function appendList ($uid, $title, $image) {
+        if (count($title) < 5) {
+            return -4;      // Длина наименования (меньше 5 символов)
         }
         $row = DB::selectOne(
             "
@@ -141,10 +122,10 @@ class Lists
                 FROM lists AS l
                 WHERE   l.id_user = ?
                     AND l.title = ?
-            ", [$uid, $titleList]
+            ", [$uid, $title]
         );
         if ($row) {
-            return -3;              // Дублирование наименования списка
+            return -3;      // Дублирование наименования списка
         }
         DB::insert(
             "
@@ -153,7 +134,7 @@ class Lists
             VALUES
                 (?, ?, ?)
             ",            
-            [$uid, $titleList, $image]
+            [$uid, $title, $image]
         );
         $row = DB::selectOne(
             "

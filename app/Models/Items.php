@@ -9,34 +9,45 @@ class Lists
     /**
      *  Списки пользователя и количество пунктов в них
      */
-    static function getLists($uid)
+    static function getLists($lisId)
     {
-        $rows = DB::select(
+        $items = [
+            'items' => [],
+            'tags'  => [],
+        ];
+        $rowsItems = DB::select(
             "
                 SELECT
-                    l.id,
-                    l.title,
-                    l.image,
+                    i.id_list,
+                    i.id,
+                    i.title,
+                    i.image,
                     (
-                        SELECT
-                            count(*)
-                        FROM items AS i
-                        WHERE i.id_list = l.id
-                    ) AS number_items
-                FROM lists AS l
-                WHERE l.id_user = ?
-                ORDER BY l.title
-            ", [$uid]
+                        SELECT GROUP_CONCAT(id_tag)
+                        FROM tags_items
+                        WHERE id_item = i.id AND
+                    )  AS ids_tags
+                FROM items AS i
+                WHERE i.id_list = ?
+                ORDER BY i.title
+            ", [$lisId]
         );
+        if (count($rowsItems) > 0) {
+        }
 
-        if (count($rows) == 0) return [];
-        else return $rows;
+        $rowsTags = DB::select(
+
+        );
+        if (count($rowsTags) > 0) {
+        }
+
+        return $items;
     }
-
+    
     /**
      *  Изменение наименования списка
      */
-    static function changeTitleList ($uid, $listId, $titleList) {
+    static function changeTitleList ($uid, $listid, $titleList) {
         $titleList = trim($titleList);
         if (mb_strlen($titleList) < 5) {
             return -4;              // Длина наименования (меньше 5 символов)
@@ -47,7 +58,7 @@ class Lists
                     *
                 FROM lists AS l
                 WHERE l.id = ?
-            ", [$listId]
+            ", [$listid]
         );
         if ($row) {
             if ($row->id_user == $uid) {
@@ -71,7 +82,7 @@ class Lists
                     SET   title = ?
                     WHERE id = ?
                     ",
-                    [$titleList, $listId]
+                    [$titleList, $listid]
                 );
                 return 0;
             }
@@ -85,14 +96,14 @@ class Lists
     /**
      * Удаление списка
      */
-    static function deleteList ($uid, $listId) {
+    static function deleteList ($uid, $listid) {
         $row = DB::selectOne(
             "
                 SELECT
                     *
                 FROM lists AS l
                 WHERE   l.id = ?
-            ", [$listId]
+            ", [$listid]
         );
         if ($row) {
             if ($row->id_user == $uid) {
@@ -104,19 +115,19 @@ class Lists
                                 SELECT id FROM items AS i
                                 WHERE id_list = ?
                             )
-                    ", [$listId]
+                    ", [$listid]
                 );
                 DB::delete(
                     "
                         DELETE FROM items
                         WHERE id_list = ?
-                    ", [$listId]
+                    ", [$listid]
                 );
                 DB::delete(
                     "
                         DELETE FROM lists
                         WHERE id = ?
-                    ", [$listId]
+                    ", [$listid]
                 );
                 return 0;
             }
