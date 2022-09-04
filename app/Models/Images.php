@@ -32,8 +32,8 @@ class Images
         if (Storage::disk('images')->put($purpose . '/' . $fname . '_img.jpg', (string)file_get_contents($file->getRealPath()))) {
             // preview
             $img = new Image();
-            print_r('public/images' . $purpose . '/' . $fname . '_img.jpg');
-            $img->make('public/images' . $purpose . '/' . $fname . '_img.jpg');
+            //print_r('public/images/' . $purpose . '/' . $fname . '_img.jpg');
+            $img->make(public_path() . '/images/' . $purpose . '/' . $fname . '_img.jpg');
             $img->resize(150, 150);
             $img->save('public/images' . $purpose . '/preview/' . $fname . '_preview.jpg');
 
