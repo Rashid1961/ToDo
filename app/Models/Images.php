@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Image;
 
 class Images
 {
@@ -31,11 +30,10 @@ class Images
         $fname = $u . $l . $i;
         if (Storage::disk('images')->put($purpose . '/' . $fname . '_img.jpg', (string)file_get_contents($file->getRealPath()))) {
             // preview
-            $img = new Image();
-            //print_r('public/images/' . $purpose . '/' . $fname . '_img.jpg');
-            $img->make(public_path() . '/images/' . $purpose . '/' . $fname . '_img.jpg');
-            $img->resize(150, 150);
-            $img->save('public/images' . $purpose . '/preview/' . $fname . '_preview.jpg');
+
+            \Gregwar\Image\Image::open(public_path() . '/images/' . $purpose . '/' . $fname . '_img.jpg')
+                ->resize(150,150)
+                ->save(public_path() . '/images/' . $purpose . '/preview/' . $fname . '_preview.jpg');
 
             // сохраняем в базу
             $fname = '/images/' . $fname;
