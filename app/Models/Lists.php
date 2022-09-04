@@ -17,6 +17,7 @@ class Lists
                     l.id,
                     l.title,
                     l.image,
+                    l.preview,
                     (
                         SELECT
                             count(*)

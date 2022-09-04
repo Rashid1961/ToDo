@@ -3,9 +3,8 @@
 
 <html lang='ru'>
     <head>
-        <!-- <meta charset='utf-8'>
-        <meta name='csrf-token' content='{{ csrf_token() }}'>
-        <meta name='viewport' content='width=device-width, initial-scale=1 shrink-to-fit=no'> -->
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1 shrink-to-fit=no'>
         <title>Изображение</title>
         <!-- Fonts -->
         <link
@@ -21,7 +20,6 @@
             integrity='sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7'
             crossorigin='anonymous'
         >
-        <!--{{-- <link href='{{ elixir('css/app.css') }}' rel='stylesheet'> --}} -->
         <style>
             body {
                 font-family: 'Lato';
@@ -39,12 +37,63 @@
         <div id='elemName' hidden>{{$name}}</div>
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
-            <form class='form-horizontal' id='form-image'>        
-                <div class='form-group'  style='text-align: center;'>
+                <div class='form-inline'  style='text-align: center; margin-top: 20'>
+                    <!-- "Изменить изображение", "Удалить изображение", "Выбор файла" -->
+                    <div class='form-horizontal'  style='margin-bottom: 10px;'>
+                        <button
+                            id='change-img'
+                            type='button'
+                            class='btn btn-primary'
+                            style='display: inline; margin-right: 2;'
+                        >
+                           Изменить изображение
+                        </button>
+
+                        <button
+                            id='del-img' 
+                            type='button'
+                            class='btn btn-danger'
+                            style='margin-left: 2;'
+                        >
+                            Удалить изображение
+                        </button>
+                        
+                        <!-- Выбор файла для загрузки -->
+                        <form
+                            class="form-inline hide"
+                            id='select-file-form'
+                            action="/Images/uploadImage"
+                            method="post"
+                            enctype="multipart/form-data"
+                            Style="margin-top: 10;"
+                        >
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <div class="form-group" style="margin-right: 5;">
+                                <input
+                                    class='btn btn-primary'
+                                    type='file'
+                                    id='select-file-input'
+                                    name='file'
+                                    accept='image/*'
+                                />
+                            </div>
+                            <div class="form-group" style="margin-left: 5;">
+                                <button
+                                    type="submit"
+                                    class="btn btn-success"
+                                    id='select-file-submit'
+                                >
+                                    Сохранить
+                                </button>
+                            </div>
+		                </form>
+                    </div>
+
                     <!-- Наименование изображения -->
                     <div
-                        class = 'row'
-                        style = 'font-size: 175%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+                        class='row'
+                        id='title-image'
+                        style='font-size: 175%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
                     >
                         {{$whatShow}}: {{$name}}
                     </div>
@@ -58,52 +107,8 @@
                         />
                     </div>
 
-                    <!-- Кнопки "Изменить изображение" и "Удалить изображение" -->
-                    <div class='row'  style='margin-bottom: 10px;'>
-                        <div class='col-md-6 col-md-offset-3'>
-                            <div class='col-md-6'> 
-                                <button
-                                    id='change-img'
-                                    type='button'
-                                    class='btn btn-block btn-primary'
-                                >
-                                   Изменить изображение
-                                </button>
-                            </div>
-                            <div class='col-md-6'> 
-                                <button
-                                    id='del-img' + 
-                                    type='button'
-                                    class='btn btn-block btn-danger'
-                                >
-                                    Удалить изображение
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Выбор файла изображения -->
-                    <div
-                        class='fileupload fileupload-new'
-                        id='select-file'
-                        data-provides='fileupload'
-                        style='display: none;'
-                    >
-                        <span class='btn btn-primary btn-file'>
-                            <input type='file' id='local-file' name='file' accept='image/*'/>
-                        </span>
-                        <span class='fileupload-preview'></span>
-                        <a
-                            href='#'
-                            class='close fileupload-exists'
-                            data-dismiss='fileupload'
-                            style='float: none'
-                        >
-                            ×
-                        </a>
-                    </div>
                 </div>
-            </form>                
+            <!-- </form>                 -->
         </div>
 
         <!-- JavaScripts -->

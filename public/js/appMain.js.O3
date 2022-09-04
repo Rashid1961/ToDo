@@ -6,9 +6,10 @@ var noImageListPreview = "/images/lists/preview/noListImage.jpg";
 var noImageItemPreview = "/images/items/preview/noItemImage.jpg";
 var lists = [];
 var iCur = '';
+var curElemHtmlVal = '';
 var errMess = null;
 $(document).ready(function() {
-    //$('.container').hide();
+    $('.container').hide();
     $('.container').children().hide();
     errMess = $.notification.init({
         time:  30,  // время отображения\скрытия (мсек)
@@ -113,10 +114,31 @@ function noLists(){
 }
 
 /** 
- * Изменение наименования списка
+ * Изменение списка
  */
  function changeTitleList() {
-    $('#number-items-list-' + iCur).hide();
+    curElemHtmlVal = $("#list-" + iCur).html();
+    $("#list-" + iCur).empty();
+    //$('#number-items-list-' + iCur).hide();
+    $("#list-" + iCur).html(
+        '<td style="text-align: center; width: 170px;">' +
+    );
+
+    $("#image-list-" + iCur).html(
+        '<a id="a-edit-image-list-' + iCur + '"' +
+            ' href="javascript:void(0);' +
+            ' onclick="selectImage()"' +
+        '>' +
+            '<img' +
+                ' src=' + lists[iCur].image +
+                ' width="150px"' +
+                ' height="150px"' +
+                ' alt="Изображения нет"' +
+                ' title="Изменить изображение"' +
+            '/>' +
+        '</a>'
+    );
+
     $("#title-list-" + iCur).html(
         '<div class="row" style="margin: 0">' + 
             '<input' +
@@ -129,13 +151,39 @@ function noLists(){
                 ' required' +
             '/>' +
             '<div style="font-size: 50%; color: #777;">' +
-                 'Введите новое название (от 5 до 100 символов) и нажмите Enter или Escape - для отмены' +
+                'Измените наименование (от 5 до 100 символов) и/или изображение' +
             '</div>' +
         '</div>'
     );
-    $("#title-list-edit-" + iCur).focus();
+
+    //$("#buttons-list-" + iCur).empty();
+    $("#buttons-list-" + iCur).html(
+        '<div class="row" style="margin: 10 10 5 10;">' +
+            '<button' +
+            ' id="save-edit-list-' + iCur + '"'+
+            ' type="button"' +
+            ' class="btn btn-block btn-primary"' +
+            '>' +
+                'Сохранить список' +
+            '</button>' +
+        '</div>' +
+        '<div class="row" style="margin: 5 10 10 10;">' +
+            '<button' +
+                ' id="not-save-edit-list-' + iCur + '"' +
+                ' type="button"' +
+                ' class="btn btn-block btn-danger"' +
+            '>' +
+                'Не сохранять' +
+            '</button>' +
+        '</div>'
+    );
+
+
+
+    //$("#title-list-edit-" + iCur).focus();
 
     $("#title-list-edit-" + iCur).keydown(function(event) {
+        /*
         if (event.which == 13) {
             event.preventDefault();
             let newTitle = $('#title-list-edit-' + iCur).val();
@@ -174,7 +222,12 @@ function noLists(){
             $('#number-items-list-' + iCur).show();
             $(':button').removeAttr('disabled', false);
         }
+        */
     });
+}
+
+function selectImage() {
+    alert ('Здесь будет выбор списка');
 }
 
 /**
@@ -215,13 +268,14 @@ function appendList() {
         id:           -1,
         title:        'Новый список',
         image:        noImageList,
+        preview:      noImageListPreview,
         number_items: 0,
     }) - 1;
     $("#one-list").append(
         '<tr id="list-' + iCur + '">' +
             '<td style="text-align: center; width: 170px;">' + 
                 '<a id="image-list-' + iCur + '"' +
-                    ' href="/ShowImage?whatShow=list&image='
+                    ' href="/ShowImage?whatShow=Лист&image='
                     + lists[iCur].image + '&name=' + lists[iCur].title + '"' +
                     ' target="_blank"' +
                 '>' +
@@ -263,7 +317,7 @@ function appendList() {
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
                     '<button' +
-                        ' id="save-list-' + iCur + '"'+
+                        ' id="save-new-list-' + iCur + '"'+
                         ' type="button"' +
                         ' class="btn btn-block btn-primary"' +
                     '>' +
@@ -272,7 +326,7 @@ function appendList() {
                 '</div>' +
                 '<div class="row" style="margin: 5 10 10 10;">' +
                     '<button' +
-                        ' id="cancel-list-' + iCur + '"' +
+                        ' id="cancel-new-list-' + iCur + '"' +
                         ' type="button"' +
                         ' class="btn btn-block btn-danger"' +
                     '>' +
@@ -292,11 +346,11 @@ function appendList() {
 
     
     // Обработка нажатия кнопок
-    $("#save-list-" + iCur).click(function() {
+    $("#save-new-list-" + iCur).click(function() {
         // Сохранить новый список
         saveNewList();
     });
-    $("#cancel-list-" + iCur).click(function() {
+    $("#cancel-new-list-" + iCur).click(function() {
         // Не сохранять новый список
         cancelNewList();
     });
@@ -323,6 +377,7 @@ function saveNewList() {
                 lists[iCur].id = err;
                 lists[iCur].title = newTitle;
                 lists[iCur].image = noImageList;
+                lists[iCur].preview = noImageListPreview;
                 $('#list-' + iCur).remove();
                 addOneListFromUserList(iCur);
             }
@@ -342,11 +397,11 @@ function addOneListFromUserList(idxArr = -1) {
     }
     $("#one-list").append(
         '<tr id="list-' + idxArr + '">' +
-            '<td style="text-align: center; width: 170px;">' + 
+            '<td style="text-align: center; width: 170px;">' +
                 '<a id="image-list-' + idxArr + '"' +
                     ' href="/Images/showImage?' +
                         'id=' +          lists[idxArr].id +
-                        '&whatShow= ' + 'list' +
+                        '&whatShow= ' + 'Лист' +
                         '&image='+      lists[idxArr].image + 
                         '&name=' +      lists[idxArr].title + '"' +
                     ' target="_blank"' +
@@ -380,7 +435,7 @@ function addOneListFromUserList(idxArr = -1) {
             '</td>' +
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
-            '>' + 
+            '>' +
                 '<div class="row" style="margin: 10 10 5 10;">' +
                     '<button' +
                     ' id="expand-list-' + idxArr + '"'+
@@ -396,7 +451,7 @@ function addOneListFromUserList(idxArr = -1) {
                     ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
                     '>' +
-                        'Изменить наименование' +
+                        'Изменить список' +
                     '</button>' +
                 '</div>' +
                 '<div class="row" style="margin: 5 10 10 10;">' +

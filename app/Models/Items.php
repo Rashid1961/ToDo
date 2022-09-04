@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 
-class Lists
+class Items
 {
     /**
      *  Списки пользователя и количество пунктов в них
@@ -22,6 +22,7 @@ class Lists
                     i.id,
                     i.title,
                     i.image,
+                    i.preview,
                     (
                         SELECT GROUP_CONCAT(id_tag)
                         FROM tags_items

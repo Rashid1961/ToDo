@@ -16,28 +16,17 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 Route::group(['middleware' => 'auth'], function () {
+
     Route::get('/', function() {
         $user = [
-            'id'    => auth()->user()->id,
-            'name'  => auth()->user()->name,
-            'email' => auth()->user()->email,
-            'image' => auth()->user()->image,
+            'id'      => auth()->user()->id,
+            'name'    => auth()->user()->name,
+            'email'   => auth()->user()->email,
+            'image'   => auth()->user()->image,
+            'preview' => auth()->user()->preview,
         ];
         $view = view('todo', $user);
         return $view;
-    });
-    Route::group(['prefix' => '/Images/'], function () {
-        Route::get('/showImage', 'ImagesController@showImage');
-        //Route::get('/ShowImage', function(Request $request) {
-        //    $data = [
-        //        'id'       => $request->input('id'),
-        //        'whatShow' => $request->input('whatShow'),
-        //        'image'    => $request->input('image'),
-        //        'name'     => $request->input('name'),
-        //    ];
-        //    $view = view('showimage', $data);
-        //    return $view;
-        //});
     });
 
     Route::group(['prefix' => '/Lists/'], function () {
@@ -49,6 +38,11 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::group(['prefix' => '/Items/'], function () {
         Route::post('/getItems', 'ItemsController@getItems');
+    });
+
+    Route::group(['prefix' => '/Images/'], function () {
+        Route::get('/showImage', 'ImagesController@showImage');
+        Route::post('/uploadImage', 'ImagesController@uploadImage');
     });
 });
 
