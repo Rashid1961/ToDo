@@ -55,11 +55,6 @@ $(document).ready(function() {
         titleImg = $('#titleImg').html();
         url      = '/Images/uploadImage';
 
-        console.log('idList = "' + idList + '"');
-        console.log('idItem = "' + idItem + '"');
-        console.log('imgPath = "' + imgPath + '"');
-        console.log('titleImg = "' + titleImg + '"');
-
         if (idList == 0 && idItem == 0) {
             $('#title-image').html('Пользователь: ' + titleImg);
         }
@@ -131,6 +126,7 @@ function showLists() {
         let clickId = this.id;
         // Добавить список
         if (clickId === "append-list") {
+            $(':button').attr('disabled', true);
             appendList();
         }
         // Развернуть список
@@ -351,6 +347,7 @@ function appendList() {
     $("#save-list-" + iCur).click(function() {
         // Сохранить новый список
         saveNewList();
+
     });
     $("#cancel-list-" + iCur).click(function() {
         // Не сохранять новый список
@@ -385,7 +382,18 @@ function saveNewList() {
             else {
                 errAction('appendList', err);
             }
-        },
+            $(':button').removeAttr('disabled', false);
+            $("#lists").after(
+                '<div'+
+                    ' class="block"' +
+                    ' style="text-align: center; margin: 0;"' +
+                '>' +
+                    '<button id="append-list" type="button" class="btn btn-success">' +
+                        'Добавить список' +
+                    '</button>' +
+                '</div>'
+            );
+                },
     });
 }
 
@@ -476,6 +484,7 @@ function cancelNewList() {
     lists.pop();
     $('#list-' + iCur).remove();
     $('#append-list').show();
+    $(':button').removeAttr('disabled', false);
 }
 
 /* ------------------ П У Н К Т Ы   С П И С К О В ------------------ /
