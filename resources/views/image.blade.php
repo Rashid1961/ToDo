@@ -31,10 +31,11 @@
         </style>
     </head>
     <body>
-        <div id='elemId'   hidden>{{$id}}</div>
-        <div id='whatShow' hidden>{{$whatShow}}</div>
-        <div id='imgPath'  hidden>{{$image}}</div>
-        <div id='elemName' hidden>{{$name}}</div>
+        <div id='tabName'  hidden>image</div>
+        <div id='idList'   hidden>{{$idList}}</div>
+        <div id='idItem'   hidden>{{$idItem}}</div>
+        <div id='imgPath'  hidden>{{$imgPath}}</div>
+        <div id='titleImg' hidden>{{$titleImg}}</div>
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
                 <div class='form-inline'  style='text-align: center; margin-top: 20'>
@@ -53,7 +54,7 @@
                             id='del-img' 
                             type='button'
                             class='btn btn-danger'
-                            style='margin-left: 2;'
+                            style='display: inline; margin-left: 2;'
                         >
                             Удалить изображение
                         </button>
@@ -62,18 +63,18 @@
                         <form
                             class="form-inline hide"
                             id='select-file-form'
-                            action="/Images/uploadImage"
-                            method="post"
                             enctype="multipart/form-data"
                             Style="margin-top: 10;"
                         >
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="_token" value="{{csrf_token()}}">
+                            <input type="hidden" name="idList" value="{{$idList}}">
+                            <input type="hidden" name="idItem" value="{{$idItem}}">
                             <div class="form-group" style="margin-right: 5;">
                                 <input
                                     class='btn btn-primary'
                                     type='file'
-                                    id='select-file-input'
-                                    name='file'
+                                    id='selected-image'
+                                    name='selected-image'
                                     accept='image/*'
                                 />
                             </div>
@@ -81,7 +82,7 @@
                                 <button
                                     type="submit"
                                     class="btn btn-success"
-                                    id='select-file-submit'
+                                    id='selected-submit'
                                 >
                                     Сохранить
                                 </button>
@@ -95,14 +96,14 @@
                         id='title-image'
                         style='font-size: 175%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
                     >
-                        {{$whatShow}}: {{$name}}
+                        {{$titleImg}}
                     </div>
 
                     <!-- Изображение -->
                     <div class='img-preview' style='margin-bottom: 10px;'> 
                         <img
                             id='upload-img'
-                            src='{{$image}}'
+                            src='{{$imgPath}}'
                             alt='Изображения нет'
                         />
                     </div>
@@ -122,6 +123,8 @@
             integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS'
             crossorigin='anonymous'>
         </script>
-        <script src='/js/appImage.js'></script>
+        <script src="/js/jquery.notification.min.js"></script>
+        <script src="/js/appToDo.js"></script>
+        <!-- <script src='/js/appImage.js'></script> -->
     </body>
 </html>

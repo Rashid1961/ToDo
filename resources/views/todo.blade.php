@@ -4,7 +4,7 @@
 <html lang="ru">
     <head>
         <meta charset="utf-8">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="csrf-token" content="{{csrf_token()}}">
         <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
 
         <meta name="robots" content="noindex,nofollow">
@@ -16,7 +16,6 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700">
         <!-- Styles -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-        {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
         <style>
             body {
                 font-family: 'Lato';
@@ -28,11 +27,12 @@
         </style>
     </head>
     <body>
+        <div id='tabName'   hidden>todo</div>
         <!-- Шапка -->
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url('/') }}">
+                    <a class="navbar-brand" href="{{url('/')}}">
                         ToDo
                     </a>
                 </div>
@@ -51,7 +51,7 @@
                         <li>
                             <a
                                 id="exit"
-                                href="{{ url('/logout') }}"
+                                href="{{url('/logout')}}"
                             >
                                 <i class="fa fa-btn fa-sign-out"></i>Выход
                             </a>
@@ -96,8 +96,8 @@
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
             crossorigin="anonymous">
         </script>
-        {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
         <script src="/js/jquery.notification.min.js"></script>
-        <script src="/js/appMain.js"></script>
+        <script src="/js/appToDo.js"></script>
+        <!-- <script src="/js/appMain.js"></script> -->
     </body>
 </html>
