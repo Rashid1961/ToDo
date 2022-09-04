@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
 
 class Images
 {
@@ -22,41 +23,40 @@ class Images
         }
         else if ($idItem == 0) {            // Изображение списка
             $i = '';
-            $purpose = 'lists/';
+            $purpose = 'lists';
         }
         else {                              // Изображение пункта
-            $purpose = 'items/';
+            $purpose = 'items';
         }
-        $fname = $purpose . '/' . $u . $l . $i . '_img.jpg';
-        if (Storage::disk('images')->put($fname, (string)file_get_contents($file->getRealPath()))) {
+        $fname = $u . $l . $i;
+        if (Storage::disk('images')->put($purpose . '/' . $fname . '_img.jpg', (string)file_get_contents($file->getRealPath()))) {
+            // preview
+            $img = new Image();
+            print_r('public/images' . $purpose . '/' . $fname . '_img.jpg');
+            $img->make('public/images' . $purpose . '/' . $fname . '_img.jpg');
+            $img->resize(150, 150);
+            $img->save('public/images' . $purpose . '/preview/' . $fname . '_preview.jpg');
+
+            // сохраняем в базу
+            $fname = '/images/' . $fname;
             switch ($purpose) {
                 case 'users':
                     DB::update("UPDATE users
-                                SET image = ?,
-                                WHERE id = ?
-                               ",["/" . $fname, $uid]);
+                                SET image = ?
+                                WHERE id = ?",
+                               [$fname, $uid]);
                     break;
                 case 'lists':
-                    DB::update(
-                        "
-                        UPDATE lists
-                        SET image = ?,
-                        WHERE id = ?
-                          AND id_user = ?
-                        ",
-                        ["/" . $fname, $idList, $uid]
-                    );
+                    DB::update("UPDATE lists
+                                SET image = ?
+                                WHERE id = ? AND id_user = ?",
+                               [$fname, $idList, $uid]);
                     break;
                 case 'items':
-                    DB::update(
-                        "
-                        UPDATE items
-                        SET image = ?,
-                        WHERE id = ?
-                          AND id_list = ?
-                        ",
-                        ["/" . $fname, $idItem, $idList]
-                    );
+                    DB::update("UPDATE items
+                                SET image = ?
+                                WHERE id = ? AND id_list = ?",
+                               [$fname, $idItem, $idList]);
                     break;
             };
         }
