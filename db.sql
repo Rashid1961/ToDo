@@ -31,7 +31,7 @@ CREATE TABLE `items` (
   PRIMARY KEY (`id`),
   KEY `item_lists_FK` (`id_list`),
   CONSTRAINT `item_lists_FK` FOREIGN KEY (`id_list`) REFERENCES `lists` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Пункты списков';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Пункты списков';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `items` (
 
 LOCK TABLES `items` WRITE;
 /*!40000 ALTER TABLE `items` DISABLE KEYS */;
-INSERT INTO `items` VALUES (0,'1',0,'/images/items/noItemImage.jpg','/images/items/preview/noItemPreview.jpg');
+INSERT INTO `items` VALUES (0,'1',0,'/images/items/noItemImage.jpg','/images/items/preview/noItemPreview.jpg'),(1,'Пунктик',2,'images/items/noItemImage.jpg','images/items/preview/noItemPreview.jpg');
 /*!40000 ALTER TABLE `items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +69,7 @@ CREATE TABLE `lists` (
 
 LOCK TABLES `lists` WRITE;
 /*!40000 ALTER TABLE `lists` DISABLE KEYS */;
-INSERT INTO `lists` VALUES (0,0,'ALL','/images/lists/noListImage.jpg','/images/lists/preview/noListPreview.jpg'),(2,1,'Музыка','/images/lists/noListImage.jpg','/images/lists/preview/noListPreview.jpg'),(11,1,'Наука','/images/lists/noListImage.jpg','/images/lists/preview/noListPreview.jpg'),(21,1,'Новый список','/images/u001_l021','/images/lists/preview/noListPreview.jpg');
+INSERT INTO `lists` VALUES (0,0,'ALL','/images/lists/noListImage.jpg','/images/lists/preview/noListPreview.jpg'),(2,1,'Музыка','/images/lists/noListImage.jpg','/images/lists/preview/noListPreview.jpg'),(11,1,'Наука','images/lists/noListImage.jpg','images/lists/preview/noListPreview.jpg'),(21,1,'Новый список','/images/lists/noListImage.jpg','/images/lists/preview/noListPreview.jpg');
 /*!40000 ALTER TABLE `lists` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,6 +169,7 @@ CREATE TABLE `tags_items` (
 
 LOCK TABLES `tags_items` WRITE;
 /*!40000 ALTER TABLE `tags_items` DISABLE KEYS */;
+INSERT INTO `tags_items` VALUES (6,1);
 /*!40000 ALTER TABLE `tags_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +192,7 @@ CREATE TABLE `users` (
   `preview` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '/images/users/preview/noUserPreview.jpg',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -200,7 +201,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (0,'ALL','no_email@fiction.all','no',NULL,'2022-08-23 06:59:45',NULL,'/images/users/noUserImage.jpg','/images/users/preview/noUserPreview.jpg'),(1,'Рашид','b97-74@mail.ru','$2y$10$dQ9bjcgj7O1u5bpFtN1Ta.Ia6Z2IwdBhuHj2X9NPA6HbKuy1yitMy','H05vMnrBl2uUyAfdGqBPO2gMVkwrfo9uXFtVFoUWnxqy56NGsaXVz9ql1h4D','2022-08-23 05:36:50','2022-08-29 06:37:31','/images/users/noUserImage.jpg','/images/users/preview/noUserPreview.jpg');
+INSERT INTO `users` VALUES (0,'ALL','no_email@fiction.all','no',NULL,'2022-08-23 06:59:45',NULL,'/images/users/noUserImage.jpg','/images/users/preview/noUserPreview.jpg'),(1,'Рашид','b97-74@mail.ru','$2y$10$dQ9bjcgj7O1u5bpFtN1Ta.Ia6Z2IwdBhuHj2X9NPA6HbKuy1yitMy','fpc6afQ0Xv1SXDcyhlJkTfF42QiCi5CtfeFTferuY3OqkTaEgLaqAzoeoH59','2022-08-23 05:36:50','2022-08-29 06:37:31','/images/users/noUserImage.jpg','/images/users/preview/noUserPreview.jpg'),(2,'Сафиюлин','Saf.Ra@mail.ru','$2y$10$7qqUgd1ahtNEdHmgotBJ4egraCCuavQb3z9TSg25lLEjl2Ly1CB/6','oOEk4qdWhHEx88VirPeREnmd6yIoMiiAMg4H3Nm5aWRrAZtM1Tuk9Ygb3pDu','2022-09-04 11:00:00','2022-09-04 11:00:00','/images/users/noUserImage.jpg','/images/users/preview/noUserPreview.jpg');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -213,4 +214,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-04 22:55:41
+-- Dump completed on 2022-09-05  5:22:54

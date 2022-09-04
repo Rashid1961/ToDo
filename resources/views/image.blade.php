@@ -4,6 +4,7 @@
 <html lang='ru'>
     <head>
         <meta charset='utf-8'>
+        <meta name="csrf-token" content="{{csrf_token()}}">
         <meta name='viewport' content='width=device-width, initial-scale=1 shrink-to-fit=no'>
         <title>Изображение</title>
         <!-- Fonts -->
@@ -38,78 +39,75 @@
         <div id='titleImg' hidden>{{$titleImg}}</div>
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
-                <div class='form-inline'  style='text-align: center; margin-top: 20'>
-                    <!-- "Изменить изображение", "Удалить изображение", "Выбор файла" -->
-                    <div class='form-horizontal'  style='margin-bottom: 10px;'>
-                        <button
-                            id='change-img'
-                            type='button'
-                            class='btn btn-primary'
-                            style='display: inline; margin-right: 2;'
-                        >
-                           Изменить изображение
-                        </button>
-
-                        <button
-                            id='del-img' 
-                            type='button'
-                            class='btn btn-danger'
-                            style='display: inline; margin-left: 2;'
-                        >
-                            Удалить изображение
-                        </button>
-                        
-                        <!-- Выбор файла для загрузки -->
-                        <form
-                            class="form-inline hide"
-                            id='select-file-form'
-                            enctype="multipart/form-data"
-                            Style="margin-top: 10;"
-                        >
-                            <input type="hidden" name="_token" value="{{csrf_token()}}">
-                            <input type="hidden" name="idList" value="{{$idList}}">
-                            <input type="hidden" name="idItem" value="{{$idItem}}">
-                            <div class="form-group" style="margin-right: 5;">
-                                <input
-                                    class='btn btn-primary'
-                                    type='file'
-                                    id='selected-image'
-                                    name='selected-image'
-                                    accept='image/*'
-                                />
-                            </div>
-                            <div class="form-group" style="margin-left: 5;">
-                                <button
-                                    type="submit"
-                                    class="btn btn-success"
-                                    id='selected-submit'
-                                >
-                                    Сохранить
-                                </button>
-                            </div>
-		                </form>
-                    </div>
-
-                    <!-- Наименование изображения -->
-                    <div
-                        class='row'
-                        id='title-image'
-                        style='font-size: 175%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+            <div class='form-inline'  style='text-align: center; margin-top: 20'>
+                <!-- "Изменить изображение", "Удалить изображение", "Выбор файла" -->
+                <div class='form-horizontal'  style='margin-bottom: 10px;'>
+                    <button
+                        id='change-img'
+                        type='button'
+                        class='btn btn-primary'
+                        style='display: inline; margin-right: 2;'
                     >
-                        {{$titleImg}}
-                    </div>
+                       Изменить изображение
+                    </button>
 
-                    <!-- Изображение -->
-                    <div class='img-preview' style='margin-bottom: 10px;'> 
-                        <img
-                            id='upload-img'
-                            src='{{$imgPath}}'
-                            alt='Изображения нет'
-                        />
-                    </div>
-
+                    <button
+                        id='del-img' 
+                        type='button'
+                        class='btn btn-danger'
+                        style='display: inline; margin-left: 2;'
+                    >
+                        Удалить изображение
+                    </button>
+                        
+                    <!-- Выбор файла для загрузки -->
+                    <form
+                        class="form-inline hide"
+                        id='select-file-form'
+                        enctype="multipart/form-data"
+                        Style="margin-top: 10;"
+                    >
+                        <input type="hidden" name="_token" value="{{csrf_token()}}">
+                        <input type="hidden" name="idList" value="{{$idList}}">
+                        <input type="hidden" name="idItem" value="{{$idItem}}">
+                        <div class="form-group" style="margin-right: 5;">
+                            <input
+                                class='btn btn-primary'
+                                type='file'
+                                id='selected-image'
+                                name='selected-image'
+                                accept='image/*'
+                            />
+                        </div>
+                        <div class="form-group" style="margin-left: 5;">
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                                id='selected-submit'
+                            >
+                                Сохранить
+                            </button>
+                        </div>
+		            </form>
                 </div>
-            <!-- </form>                 -->
+
+                <!-- Наименование изображения -->
+                <div
+                    class='row'
+                    id='title-image'
+                    style='font-size: 175%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+                >
+                </div>
+
+                <!-- Изображение -->
+                <div class='img-preview' style='margin-bottom: 10px;'> 
+                    <img
+                        id='upload-img'
+                        src='{{$imgPath}}'
+                        alt='Изображения нет'
+                    />
+                </div>
+            </div>
         </div>
 
         <!-- JavaScripts -->
@@ -125,6 +123,5 @@
         </script>
         <script src="/js/jquery.notification.min.js"></script>
         <script src="/js/appToDo.js"></script>
-        <!-- <script src='/js/appImage.js'></script> -->
     </body>
 </html>

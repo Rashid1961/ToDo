@@ -77,7 +77,11 @@
             <form class="form-horizontal" id="form-items">
                 <div class="form-group">
                     <table class="table" id="items" width="100%">
-                        <caption style="font-size: 250%; color:#000;">Пункты списка</caption>
+                        <caption
+                            id='caption-items'
+                            style="font-size: 250%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                        >
+                        </caption>
                         <tbody id="one-item">
                         </tbody>
                     </table>
@@ -98,6 +102,5 @@
         </script>
         <script src="/js/jquery.notification.min.js"></script>
         <script src="/js/appToDo.js"></script>
-        <!-- <script src="/js/appMain.js"></script> -->
     </body>
 </html>

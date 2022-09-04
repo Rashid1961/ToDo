@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class Images
 {
     /**
-     *  Списки пользователя и количество пунктов в них
+     *  Загрузка изображения
      */
     static function uploadImage($uid, $file, $idList, $idItem)
     {
@@ -27,36 +27,102 @@ class Images
         else {                              // Изображение пункта
             $purpose = 'items';
         }
-        $fname = $u . $l . $i;
-        if (Storage::disk('images')->put($purpose . '/' . $fname . '_img.jpg', (string)file_get_contents($file->getRealPath()))) {
-            // preview
-
-            \Gregwar\Image\Image::open(public_path() . '/images/' . $purpose . '/' . $fname . '_img.jpg')
+        $image = $u . $l . $i;
+        if (Storage::disk('images')->put($purpose . '/' . $image . '_img.jpg', (string)file_get_contents($file->getRealPath()))) {
+            // создание и сохранение preview
+            \Gregwar\Image\Image::open(public_path() . '/images/' . $purpose . '/' . $image . '_img.jpg')
                 ->resize(150,150)
-                ->save(public_path() . '/images/' . $purpose . '/preview/' . $fname . '_preview.jpg');
+                ->save(public_path() . '/images/' . $purpose . '/preview/' . $image . '_preview.jpg');
 
-            // сохраняем в базу
-            $fname = '/images/' . $fname;
+            // корректируем таблицу
+            $preview = '/images/' . $purpose . '/preview/' . $image . '_preview.jpg';
+            $image = '/images/' . $purpose . '/' . $image. '_img.jpg';
             switch ($purpose) {
                 case 'users':
                     DB::update("UPDATE users
-                                SET image = ?
+                                SET image = ?,
+                                    preview = ?
                                 WHERE id = ?",
-                               [$fname, $uid]);
+                               [$image, $preview, $uid]);
                     break;
                 case 'lists':
                     DB::update("UPDATE lists
-                                SET image = ?
+                                SET image = ?,
+                                    preview = ?
                                 WHERE id = ? AND id_user = ?",
-                               [$fname, $idList, $uid]);
+                               [$image, $preview, $idList, $uid]);
                     break;
                 case 'items':
                     DB::update("UPDATE items
-                                SET image = ?
+                                SET image = ?,
+                                    preview = ?
                                 WHERE id = ? AND id_list = ?",
-                               [$fname, $idItem, $idList]);
+                               [$image, $preview, $idItem, $idList]);
                     break;
             };
         }
     }
+
+    /**
+     *  Удаление изображения
+     */
+    static function delImage($uid, $idList, $idItem)
+    {
+        $u = 'u' . substr(('00' . (string)$uid), -3);
+        $l = '_l' . substr(('00' . (string)$idList), -3);
+        $i = '_i' . substr(('00' . (string)$idItem), -3);
+
+        if ($idList == 0 && $idItem == 0) { // Изображение пользователя
+            $l = '';
+            $i = '';
+            $noImage = "noUserImage.jpg";
+            $noPreview = "noUserPreview.jpg";
+            $purpose = 'users';
+        }
+        else if ($idItem == 0) {            // Изображение списка
+            $i = '';
+            $noImage = "noListImage.jpg";
+            $noPreview = "noListPreview.jpg";
+            $purpose = 'lists';
+        }
+        else {                              // Изображение пункта
+            $noImage = "noItemImage.jpg";
+            $noPreview = "noItemPreview.jpg";
+            $purpose = 'items';
+        }
+
+        // Удаляем файлы
+        Storage::disk('images')->delete([
+            $purpose . '/' . $u . $l . $i . '_img.jpg',
+            $purpose . '/preview/' . $u . $l . $i . '_preview.jpg'
+        ]);
+
+        // корректируем таблицу
+        $noImage = '/images/' . $purpose . '/' . $noImage;
+        $noPreview = '/images/' . $purpose . '/preview/' . $noPreview;
+        switch ($purpose) {
+            case 'users':
+                DB::update("UPDATE users
+                            SET image = ?,
+                                preview = ?
+                            WHERE id = ?",
+                           [$noImage, $noPreview, $uid]);
+                break;
+            case 'lists':
+                DB::update("UPDATE lists
+                            SET image = ?,
+                                preview = ?
+                            WHERE id = ? AND id_user = ?",
+                           [$noImage, $noPreview, $idList, $uid]);
+                break;
+            case 'items':
+                DB::update("UPDATE items
+                            SET image = ?,
+                                preview = ?
+                            WHERE id = ? AND id_list = ?",
+                           [$noImage, $noPreview, $idItem, $idList]);
+                break;
+        };
+        return 1;
+    }    
 }

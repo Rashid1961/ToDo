@@ -9,11 +9,9 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
 use Illuminate\Support\Facades\Route;
-//use App\Http\Controllers\ListsController;
 
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 
 Route::group(['middleware' => 'auth'], function () {
 
@@ -34,6 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/changeTitleList', 'ListsController@changeTitleList');
         Route::post('/deleteList',      'ListsController@deleteList');
         Route::post('/appendList',      'ListsController@appendList');
+        Route::post('/getImgList',      'ListsController@getImgList');
     });
     
     Route::group(['prefix' => '/Items/'], function () {
@@ -41,8 +40,9 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix' => '/Images/'], function () {
-        Route::get('/showImage', 'ImagesController@showImage');
+        Route::get('/showImage',    'ImagesController@showImage');
         Route::post('/uploadImage', 'ImagesController@uploadImage');
+        Route::post('/delImage',    'ImagesController@delImage');
     });
 });
 

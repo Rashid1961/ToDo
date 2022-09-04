@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
@@ -162,5 +161,30 @@ class Lists
             "
         );
         return $row->id;
-    }    
+    }
+
+    /**
+     * Получение image и preview списка
+     */
+    static function getImgList($listId) {
+        $images = [
+            'image'   => '',
+            'preview' => ''
+        ];
+        $row = DB::selectOne(
+            "
+                SELECT
+                    l.image,
+                    l.preview,
+                FROM lists AS l
+                WHERE l. = ?
+                ORDER BY l.title
+            ", [$listId]
+        );
+        if ($row) {
+            $images['image'] =$row->image;
+            $images['preview'] =$row->preview;
+        }
+        return $images;
+    }
 }

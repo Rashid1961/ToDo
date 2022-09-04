@@ -7,39 +7,66 @@ use Illuminate\Support\Facades\DB;
 class Items
 {
     /**
-     *  Списки пользователя и количество пунктов в них
+     *  Пункты списка
      */
-    static function getLists($lisId)
+    static function getItems($listId)
     {
         $items = [
             'items' => [],
             'tags'  => [],
         ];
-        $rowsItems = DB::select(
-            "
-                SELECT
-                    i.id_list,
-                    i.id,
-                    i.title,
-                    i.image,
-                    i.preview,
-                    (
-                        SELECT GROUP_CONCAT(id_tag)
-                        FROM tags_items
-                        WHERE id_item = i.id AND
-                    )  AS ids_tags
-                FROM items AS i
-                WHERE i.id_list = ?
-                ORDER BY i.title
-            ", [$lisId]
-        );
-        if (count($rowsItems) > 0) {
-        }
+        $item = [
+            'id'      => '',
+            'id_list' => '',
+            'title'   => '',
+            'image'   => '',
+            'preview' => '',
+            'tags'    => '',
+        ];
 
         $rowsTags = DB::select(
-
+            "SELECT *
+             FROM tags
+             ORDER BY id"
         );
         if (count($rowsTags) > 0) {
+            foreach ($rowsTags as $row) {
+                $items['tags'][$row->id] = $row->title;
+            }
+        }
+
+        $rowsItems = DB::select(
+            "SELECT
+                i.id,
+                i.id_list,
+                i.title,
+                i.image,
+                i.preview,
+                (
+                    SELECT GROUP_CONCAT(id_tag)
+                    FROM tags_items
+                    WHERE id_item = i.id
+                )  AS ids_tags
+             FROM items AS i
+             WHERE i.id_list = ?
+             ORDER BY i.title",
+            [$listId]
+        );
+        if (count($rowsItems) > 0) {
+            foreach ($rowsItems as $row) {
+                $i = array_push($items['items'], $item) - 1;
+                $items['items'][$i]['id']       = $row->id;
+                $items['items'][$i]['id_list']  = $row->id_list;
+                $items['items'][$i]['title']    = $row->title;
+                $items['items'][$i]['image']    = $row->image;
+                $items['items'][$i]['preview']  = $row->preview;
+                if ($row->ids_tags) {
+                    $tags = explode(",", $row->ids_tags);
+                    for ($j = 0; $j < count($tags); $j++) {
+                        $items['items'][$i]['tags'] .= $items['tags'][$tags[$j]] . ' ';
+                    }
+                }
+            }
         }
 
         return $items;
