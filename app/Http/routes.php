@@ -11,8 +11,6 @@
 */
 use Illuminate\Support\Facades\Route;
 
-//use Illuminate\Http\Request;
-
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/', function() {
@@ -36,7 +34,12 @@ Route::group(['middleware' => 'auth'], function () {
     });
     
     Route::group(['prefix' => '/Items/'], function () {
-        Route::post('/getItems', 'ItemsController@getItems');
+        Route::post('/getItems',        'ItemsController@getItems');
+        Route::post('/getImgItem',      'ItemsController@getImgItem');
+        Route::post('/appendItem',      'ItemsController@appendItem');
+        Route::post('/changeTitleItem', 'ItemsController@changeTitleItem');
+        Route::post('/deleteItem',      'ItemsController@deleteItem');
+        Route::post('/changeTagsItem',  'ItemsController@changeTagsItem');
     });
 
     Route::group(['prefix' => '/Images/'], function () {

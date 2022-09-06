@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
@@ -73,126 +72,56 @@ class Items
     }
     
     /**
-     *  Изменение наименования списка
+     * Получение image и preview списка
      */
-    static function changeTitleList ($uid, $listid, $titleList) {
-        $titleList = trim($titleList);
-        if (mb_strlen($titleList) < 5) {
-            return -4;              // Длина наименования (меньше 5 символов)
-        }
+    static function getImgItem($itemId) {
+        $images = [
+            'image'   => '',
+            'preview' => ''
+        ];
         $row = DB::selectOne(
             "
                 SELECT
-                    *
-                FROM lists AS l
-                WHERE l.id = ?
-            ", [$listid]
+                    i.image,
+                    i.preview
+                FROM items AS i
+                WHERE i.id = ?
+            ", [$itemId]
         );
         if ($row) {
-            if ($row->id_user == $uid) {
-                $rowDup = DB::selectOne(
-                    "
-                        SELECT
-                            *
-                        FROM lists AS l
-                        WHERE l.id_user = ?
-                          AND l.title = ?
-
-                    ", [$uid, $titleList]
-                );
-                if ($rowDup) {
-                    return -3;      // Дублирование наименования списка
-                }
-        
-                DB::update(
-                    "
-                    UPDATE lists
-                    SET   title = ?
-                    WHERE id = ?
-                    ",
-                    [$titleList, $listid]
-                );
-                return 0;
-            }
-            else {
-                return -1;          // Список не принадлежит пользователю $uid
-            }
+            $images['image'] =$row->image;
+            $images['preview'] =$row->preview;
         }
-        return -2;          // Список отсутствует в таблице lists
+        return $images;
     }
 
     /**
-     * Удаление списка
+     * Добавление пункта
      */
-    static function deleteList ($uid, $listid) {
-        $row = DB::selectOne(
-            "
-                SELECT
-                    *
-                FROM lists AS l
-                WHERE   l.id = ?
-            ", [$listid]
-        );
-        if ($row) {
-            if ($row->id_user == $uid) {
-                DB::delete(
-                    "
-                        DELETE FROM tags_items
-                        WHERE id_item IN
-                            (
-                                SELECT id FROM items AS i
-                                WHERE id_list = ?
-                            )
-                    ", [$listid]
-                );
-                DB::delete(
-                    "
-                        DELETE FROM items
-                        WHERE id_list = ?
-                    ", [$listid]
-                );
-                DB::delete(
-                    "
-                        DELETE FROM lists
-                        WHERE id = ?
-                    ", [$listid]
-                );
-                return 0;
-            }
-            else {
-                return -1;          // Список не принадлежит пользователю $uid
-            }
-        }
-        return -2;                  // Список отсутствует в таблице lists
-    }
-
-    /**
-     * Добавление списка
-     */
-    static function appendList ($uid, $titleList, $image) {
-        if(mb_strlen($titleList) < 5) {
-            return -4;              // Длина наименования (меньше 5 символов)
+    static function appendItem($listId, $title, $image) {
+        if(mb_strlen($title) < 5) {
+            return -4;              // Длина наименования меньше 5 символов
         }
         $row = DB::selectOne(
             "
                 SELECT
                     *
-                FROM lists AS l
-                WHERE   l.id_user = ?
-                    AND l.title = ?
-            ", [$uid, $titleList]
+                FROM items AS i
+                WHERE   i.id_list = ?
+                    AND i.title = ?
+            ", [$listId, $title]
         );
         if ($row) {
             return -3;              // Дублирование наименования списка
         }
         DB::insert(
             "
-            INSERT INTO lists
-                (id_user, title, image)
+            INSERT INTO items
+                (id_list, title, image)
             VALUES
                 (?, ?, ?)
             ",            
-            [$uid, $titleList, $image]
+            [$listId, $title, $image]
         );
         $row = DB::selectOne(
             "
@@ -200,5 +129,149 @@ class Items
             "
         );
         return $row->id;
-    }    
+    }
+
+    /**
+     *  Изменение наименования пункта
+     */
+    static function changeTitleItem($listId, $itemId, $title) {
+        $title = trim($title);
+        if (mb_strlen($title) < 5) {
+            return -4;              // Длина наименования меньше 5 символов
+        }
+        $rowDup = DB::selectOne(
+            "
+                SELECT
+                    *
+                FROM items AS i
+                WHERE i.id_list = ?
+                  AND i.title = ?
+                  AND i.id != ?
+            ", [$listId, $title, $itemId]
+        );
+        if ($rowDup) {
+            return -3;      // Дублирование наименования
+        }
+        DB::update(
+            "
+            UPDATE items
+            SET   title = ?
+            WHERE id = ?
+              AND id_list = ?
+            ",
+            [$title, $itemId, $listId]
+        );
+        return 0;
+    }
+
+    
+    /**
+     * Удаление пункта
+     */
+    static function deleteItem($listId, $itemId) {
+        DB::delete(
+            "
+                DELETE FROM tags_items
+                WHERE id_item = ?
+            ", [$itemId]
+        );
+        DB::delete(
+            "
+                DELETE FROM items
+                WHERE id_list = ?
+                  AND id = ?
+            ", [$listId, $itemId]
+        );
+        return 0;
+    }
+
+    /**
+     * Изменение тегов пункта
+     */
+    static function changeTagsItem($itemId, $tags) {
+        if (strlen($tags) == 0) {
+            DB::delete(
+                "
+                    DELETE FROM tags_items
+                    WHERE id_item = ?
+                ", [$itemId]
+            );
+            return 0;
+        }
+        $arrCurTags = [];
+        $rows = DB::select(
+            "
+                SELECT ti.id_tag
+                FROM tags_items AS ti
+                WHERE ti.id_item = ?
+            ", [$itemId]
+        );
+        if ($rows) {
+            foreach ($rows as $row) {
+                $arrCurTags[] = $row->id_tag;
+            }
+        }
+
+        $arrNewTags = explode('#', $tags);
+
+        for ($i = count($arrNewTags) -1; $i >= 0; $i--) {
+            $curTag = '#' . trim($arrNewTags[$i]);
+            if ( strlen($curTag) == 1) {
+                continue;
+            }
+            $row = DB::selectOne(
+                "
+                    SELECT t.id
+                    FROM tags AS t
+                    WHERE t.title = ?
+                ", [$curTag]
+            );
+            if ($row) {
+                $idCurTag = $row->id;
+                if ($key = array_search($idCurTag, $arrCurTags) !== false) {
+                    unset($arrCurTags[$key]);
+                    continue;
+                }
+            }
+            else {                  //Нет такого тега в справочнике - добавляем
+                DB::insert(
+                    "
+                    INSERT INTO tags
+                        (title)
+                    VALUES
+                        (?)
+                    ",            
+                    [$curTag]
+                );
+                $rowNewTag = DB::selectOne(
+                    "
+                    SELECT LAST_INSERT_ID() AS id
+                    "
+                );
+                $idCurTag = $rowNewTag->id;
+            }
+            DB::insert(
+                "
+                INSERT INTO tags_items
+                    (id_tag, id_item)
+                VALUES
+                    (?, ?)
+                ",            
+                [$idCurTag, $itemId]
+            );
+        }
+        
+        // Удаляем "лишние" теги
+        if (count($arrCurTags) > 0 ) {
+            DB::delete(
+            "
+                DELETE FROM tags_items
+                WHERE id_item = ?
+                  AND id_tag in ("  . implode(',', $arrCurTags) . ")",
+                [$itemId]
+            );
+        }
+    
+        return 0;
+    }
 }

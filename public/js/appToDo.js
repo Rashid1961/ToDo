@@ -7,9 +7,13 @@ var noImageItem = "/images/items/noItemImage.jpg";
 var noImageUserPreview = "/images/users/preview/noUserPreview.jpg";
 var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
 var noImageItemPreview = "/images/items/preview/noItemPreview.jpg";
+
 var lists = [];
 var iCur = '';
+
 var items = [];
+var iCurI = '';
+var idListForItem = '';
 
 var idList   = '';
 var idItem   = '';
@@ -46,10 +50,15 @@ $(document).ready(function() {
     tabName = $('#tabName').html();
     if (tabName === 'todo') {
         $('.container').children().hide();
+
         window.addEventListener('storage', (event) => {
             if (event.storageArea != localStorage) return;
-            if (event.key === 'idList') changeImageList(+localStorage.getItem('idList'));
-            if (event.key === 'idItem') changeImageItem(+localStorage.getItem('idList'));
+            let lsKey = event.key;
+            if (lsKey === 'idList' || lsKey === 'idItem') {
+                let lsVal = storageGetItem(lsKey);
+                changeImage(lsKey, lsVal);
+                localStorage.removeItem(lsKey);
+            }
         });
         showLists();
     }
@@ -63,12 +72,14 @@ $(document).ready(function() {
             $('#title-image').html('Пользователь: ' + titleImg);
         }
         else if (idList < 0)  {
-            $('#title-image').html('Изменение изображения возможно только после сохранения<br/>' +
-                                  'списка "' +titleImg + '"');
             $('#change-img').css('display', 'none');
             $('#del-img').css('display', 'none');
+            $('#title-image').html('Изменение изображения возможно только после сохранения<br/>' +
+                                  'списка "' +titleImg + '"');
         }
         else if (idItem < 0) {
+            $('#change-img').css('display', 'none');
+            $('#del-img').css('display', 'none');
             $('#title-image').html('Изменение изображения возможно только после сохранения<br/>' +
                                   'пункта "' + titleImg + '"');
         }
@@ -103,7 +114,10 @@ function showLists() {
         },
     });
 
+    $('#form-lists').show();
+    $('.container').show();
     $("#one-list").empty();
+
     if (lists.length == 0) {
         noLists();
     }
@@ -122,11 +136,11 @@ function showLists() {
             '</button>' +
         '</div>'
     );
-    $('#form-lists').show();
-    $('.container').show();
 
     // Обработка нажатия кнопок
-    $(":button").click(function() {
+    $('body').on('click', ':button', function() {
+
+        //   С П И С К И
         let clickId = this.id;
         // Добавить список
         if (clickId === "append-list") {
@@ -138,7 +152,7 @@ function showLists() {
             iCur = clickId.substring(12);
             expandList(lists[iCur].id);
         }
-        // Изменить "Наименование списка"
+        // Изменить наименование
         else if(clickId.substring(0, 10) === "edit-list-") {
             iCur = clickId.substring(10);
             $(':button').attr('disabled', true);
@@ -148,6 +162,18 @@ function showLists() {
         else if(clickId.substring(0, 9) === "del-list-") {
             iCur = clickId.substring(9);
             deleteList();
+        }
+
+        //   П У Н К Т Ы
+        // Сохранить новый пункт
+        else if (clickId.substring(0, 10) === "save-item-") {
+            iCurI = clickId.substring(10);
+            saveNewItem();
+        }    
+        // Не сохранять новый пункт
+        else if (clickId.substring(0, 12) === "cancel-item-") {
+            iCurI = clickId.substring(12);
+            cancelNewItem();
         }
     });
 }
@@ -339,7 +365,7 @@ function deleteList() {
     });
 }
 
- /**
+/**
  * Добавление списка
  */
 function appendList() {
@@ -348,6 +374,7 @@ function appendList() {
         id:           -1,
         title:        'Новый список',
         image:        noImageList,
+        preview:      noImageListPreview,
         number_items: 0,
     }) - 1;
     $("#one-list").append(
@@ -431,7 +458,6 @@ function appendList() {
     $("#save-list-" + iCur).click(function() {
         // Сохранить новый список
         saveNewList();
-
     });
     $("#cancel-list-" + iCur).click(function() {
         // Не сохранять новый список
@@ -456,28 +482,20 @@ function saveNewList() {
         },
         complete: function(response){
             err = response.responseJSON;
+            $('#list-' + iCur).remove();
             if (err > 0) {
                 lists[iCur].id = err;
                 lists[iCur].title = newTitle;
                 lists[iCur].image = noImageList;
-                $('#list-' + iCur).remove();
+                lists[iCur].preview = noImageListPreview;
                 addOneListFromUserList(iCur);
             }
             else {
                 errAction('appendList', err);
             }
             $(':button').removeAttr('disabled', false);
-            $("#lists").after(
-                '<div'+
-                    ' class="block"' +
-                    ' style="text-align: center; margin: 0;"' +
-                '>' +
-                    '<button id="append-list" type="button" class="btn btn-success">' +
-                        'Добавить список' +
-                    '</button>' +
-                '</div>'
-            );
-                },
+            $('#append-list').show();
+        },
     });
 }
 
@@ -492,11 +510,18 @@ function cancelNewList() {
 }
 
 /**
- * Изменение preview на "основной" вкладке, при изменении
- * изображения на "дополнительной" вкладке
+ * Изменение preview списка на "основной" вкладке
+ * при изменении изображения на "дополнительной" вкладке
  */
 function changeImageList(idList) {
-    let iChng = lists.findIndex(element => element.id === idList);
+    idListForItem = idList;
+    let iChng = -1;
+    for (let i = 0; i < lists.length; i++) {
+        if (lists[i].id == idList) {
+            iChng = i;
+            break;
+        }
+    }
     if (iChng >= 0) {
         $.ajax({
             url:      '/Lists/getImgList',
@@ -507,9 +532,8 @@ function changeImageList(idList) {
                 'listId':  lists[iChng].id,
             },
             complete: function(response){
-                console.log(response);
-                let newImage = response.image;
-                let newPreview = response.preview;
+                let newImage = response.responseJSON.image;
+                let newPreview = response.responseJSON.preview;
                 if (newImage.length > 0) {
                     lists[iChng].image = newImage;
                 }
@@ -526,28 +550,30 @@ function changeImageList(idList) {
 
 /* ------------------ П У Н К Т Ы   С П И С К О В ------------------ /
 /** 
- * Вывод пунктов
+ * Вывод пунктов списка
  */
-function expandList(listid) {
+function expandList(listId) {
+    idListForItem = listId;
     $.ajax({
         url:    '/Items/getItems',
         method: 'post',
         dataType: 'json',
         async:   false,
         data: {
-            'listid': listid,
+            'listid': idListForItem,
         },
         success: function(response){
             items = response.items;
             tags = response.tags;
-            console.log("===   response   ===");
-            console.log(response);
         },
     });
 
     $("#one-item").empty();
+    $("#footer-items").empty();
+    $('#form-lists').hide();
+    $('#form-items').show();
     
-    $("#caption-items").html('Список ' + lists[iCur].title);
+    $("#caption-items").html(lists[iCur].title);
 
     if (items.length == 0) {
         noItems();
@@ -558,17 +584,67 @@ function expandList(listid) {
         }
     }
     $("#items").after(
-        '<div'+
-            ' class="block"' +
-            ' style="text-align: center; margin: 0;"' +
+        '<div' +
+            ' class="form-horizontal"' +
+            ' id="footer-items"' +
+            ' style="margin-bottom: 10px;"' +
         '>' +
-            '<button id="append-list" type="button" class="btn btn-success">' +
-                'Добавить пункт' +
-            '</button>' +
+            '<div'+
+                ' class="block"' +
+                ' style="text-align: center; margin: 0;"' +
+            '>' +
+                '<button' +
+                    ' class="btn btn-success"' +
+                    ' id="append-item"' + 
+                    ' type="button"' +
+                    ' style="display: inline; margin-right: 4;"' +
+                    '>' +
+                    'Добавить пункт' +
+                '</button>' +
+                '<button' +
+                    ' class="btn btn-primary"' +
+                    ' id="return-to-lists"' +
+                    ' type="button"' +
+                    ' style="display: inline; margin-left: 4;"' +
+                '>' +
+                   'Вернуться к спискам' +
+                '</button>' +
+            '</div>' +
         '</div>'
     );
-    $('#form-lists').hide();
-    $('#form-items').show();
+
+    // Обработка нажатия кнопок
+    $('#form-items').on('click', ':button', function() {
+        let clickId = this.id;
+        // Вернуться к спискам
+        if (clickId === "return-to-lists") {
+            $("#one-item").empty();
+            $('#form-items').hide();
+            $('#form-lists').show();
+        }
+        // Добавить пункт
+        else if (clickId === "append-item") {
+            $(':button').attr('disabled', true);
+            appendItem();
+        }
+        // Изменить наименование
+        else if(clickId.substring(0, 10) === "edit-item-") {
+            iCurI = clickId.substring(10);
+            $(':button').attr('disabled', true);
+            changeTitleItem();
+        }
+        // Изменить теги
+        else if(clickId.substring(0, 10) === "edit-tags-") {
+            iCurI = clickId.substring(10);
+            $(':button').attr('disabled', true);
+            changeTagsItem();
+        }
+        // Удалить пункт
+        else if(clickId.substring(0, 9) === "del-item-") {
+            iCurI = clickId.substring(9);
+            deleteItem();
+        }
+    });
 }
 
 /** 
@@ -583,6 +659,7 @@ function noItems(){
         '</tr>'
     );
 }
+
 /**
  *  Вывод одного пункта (существующего или нового)
  */
@@ -621,7 +698,7 @@ function addOneItemFromItems(idxArr = -1) {
                     items[idxArr].title +
                 '</div>' +
                 '<div'+
-                    ' id="tags-items-' + idxArr + '"' +
+                    ' id="tags-item-' + idxArr + '"' +
                     ' class="row"'+
                     ' style="margin: 0; color: #2a5885; word-break: break-word;"' +
                 '>' +
@@ -642,7 +719,7 @@ function addOneItemFromItems(idxArr = -1) {
                 '</div>' +
                 '<div class="row" style="margin: 5 10 5 10;">' +
                     '<button' +
-                    ' id="edit-item-' + idxArr + '"'+
+                    ' id="edit-tags-' + idxArr + '"'+
                     ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
                     '>' +
@@ -663,6 +740,327 @@ function addOneItemFromItems(idxArr = -1) {
     );
 }
 
+/**
+ * Добавление пункта
+ */
+function appendItem() {
+    $('#footer-items').hide();
+    iCurI = items.push({
+        id:           -1,
+        id_list:      idListForItem,
+        image:        noImageList,
+        preview:      noImageItemPreview,
+        tags:         '',
+        title:        'Новый пункт',
+    }) - 1;
+    $("#one-item").append(
+        '<tr id="item-' + iCurI + '">' +
+            '<td style="text-align: center; width: 170px;">' + 
+                '<a id="image-item-' + iCurI + '"' +
+                    ' href="/Images/showImage?' +
+                        '&idList=' +    idListForItem   +
+                        '&idItem=' +    items[iCurI].id +
+                        '&imgPath=' +   items[iCurI].image + 
+                        '&titleImg='  + items[iCurI].title + '"' +
+                    ' target="_blank"' +
+                '>' +
+                    '<img' +
+                        ' src=' + items[iCurI].image +
+                        ' width="150px"' +
+                        ' height="150px"' +
+                        ' alt="Изображения нет"' +
+                        ' title="Посмотреть в отдельной вкладке"' +
+                    '/>' +
+                '</a>' +
+            '</td>' +
+            '<td' +
+                ' style="vertical-align: middle;"' +
+            '>' +
+                '<div class="row" style="margin: 0">' + 
+                    '<input' + 
+                        ' id="title-item-new-' + iCurI + '"' + 
+                        ' type="text"' +
+                        ' style="margi: 0; width: 100%"' +
+                        ' value="' + items[iCurI].title + '"' +
+                        ' minlength="5"' +
+                        ' maxlength="100"' +
+                        ' required' +
+                    '/>' +
+                    '<div style="font-size: 50%; color: #777;">' +
+                        'От 5 до 100 символов' +
+                    '</div>' +
+                '</div>' +
+            '</td>' +
+            '<td' +
+                ' style="text-align: right; vertical-align: middle; width: 150px;"'+
+            '>' + 
+                '<div class="row" style="margin: 10 10 5 10;">' +
+                    '<button' +
+                    ' id="save-item-' + iCurI + '"'+
+                    ' type="button"' +
+                    ' class="btn btn-block btn-primary"' +
+                    '>' +
+                        'Сохранить пункт' +
+                    '</button>' +
+                '</div>' +
+                '<div class="row" style="margin: 5 10 10 10;">' +
+                    '<button' +
+                        ' id="cancel-item-' + iCurI + '"' +
+                        ' type="button"' +
+                        ' class="btn btn-block btn-danger"' +
+                    '>' +
+                        'Не добавлять' +
+                    '</button>' +
+                '</div>' +
+            '</td>' +
+        '</tr>'
+    );
+    $("#title-item-new-" + iCur).focus()
+
+    $("#title-item-new-" + iCur).keydown(function(event) {
+        if (event.which == 13) {
+          event.preventDefault();
+        }
+    });
+}
+
+/**
+ * Сохранение нового пункта
+ */
+function saveNewItem() {
+    let newTitle = $('#title-item-new-' + iCurI).val();
+    let err = 0;
+    $.ajax({
+        url:      '/Items/appendItem',
+        method:   'post',
+        dataType: 'json',
+        async:    true,
+        data: {
+            'listId': idListForItem,
+            'title':  newTitle,
+            'image':  items[iCurI].image,
+        },
+        complete: function(response){
+            $('#item-' + iCurI).remove();
+            err = response.responseJSON;
+            if (err > 0) {
+                items[iCurI].id = err;
+                items[iCurI].title = newTitle;
+                items[iCurI].image = noImageItem;
+                items[iCurI].preview = noImageItemPreview;
+                addOneItemFromItems(iCurI);
+            }
+            else {
+                errAction('appendItem', err);
+            }
+            $(':button').removeAttr('disabled', false);
+            $('#footer-items').show();
+        },
+    });
+}
+
+/**
+ * Отказ от сохранения нового пункта
+ */
+ function cancelNewItem() {
+    items.pop();
+    $('#item-' + iCurI).remove();
+    $('#footer-items').show();
+    $(':button').removeAttr('disabled', false);
+}
+
+/**
+ * Изменение наименования пункта
+ */
+function changeTitleItem() {
+    $("#title-item-" + iCurI).html(
+        '<div class="row" style="margin: 0">' + 
+            '<input' +
+                ' id="title-item-edit-' + iCurI + '"' +
+                ' type="text"' +
+                ' style="margi: 0; width: 100%"' +
+                ' value="' + items[iCurI].title + '"' +
+                ' minlength="5"' +
+                ' maxlength="100"' +
+                ' required' +
+            '/>' +
+            '<div style="font-size: 50%; color: #777;">' +
+                 'Введите новое название (от 5 до 100 символов) и нажмите Enter или Escape - для отмены' +
+            '</div>' +
+        '</div>'
+    );
+    $("#title-item-edit-" + iCurI).focus();
+
+    $("#title-item-edit-" + iCurI).keydown(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+            let newTitle = $('#title-item-edit-' + iCurI).val();
+            let err = 0;
+            if (items[iCurI].title === newTitle) {
+                errAction('changeTitleItem', -3);
+            }
+            else {
+                $.ajax({
+                    url:      '/Items/changeTitleItem',
+                    method:   'post',
+                    dataType: 'json',
+                    async:    true,
+                    data:  {
+                        'listid':    idListForItem,
+                        'itemid':    items[iCurI].id,
+                        'itemtitle': newTitle,
+                    },
+                    complete: function(response) {
+                        err = response.responseJSON;
+                        if (err == 0) {
+                            items[iCurI].title = newTitle;
+                        }
+                        else {
+                            errAction('changeTitleItem', err);
+                        }
+                        $('#title-item-' + iCurI).html(items[iCurI].title);
+                        $(':button').removeAttr('disabled', false);
+                    }
+                });
+            }
+        }
+        else if (event.which == 27) {
+            event.preventDefault();
+            $('#title-item-' + iCurI).html(items[iCurI].title);
+            $(':button').removeAttr('disabled', false);
+        }
+    });
+
+}
+
+/**
+ * Изменение тегов пункта
+ */
+function changeTagsItem() {
+    $("#tags-item-" + iCurI).html(
+        '<div class="row" style="margin: 0">' + 
+            '<input' +
+                ' id="tags-item-edit-' + iCurI + '"' +
+                ' type="text"' +
+                ' style="margi: 0; width: 100%"' +
+                ' value="' + items[iCurI].tags + '"' +
+                ' required' +
+            '/>' +
+            '<div style="font-size: 75%; color: #777;">' +
+                 'Измените теги и нажмите Enter или Escape - для отмены <br/>' +
+                 '(каждый тег должен начинаться с символа `#`)' +
+            '</div>' +
+        '</div>'
+    );
+    $("#tags-item-edit-" + iCurI).focus();
+
+    $("#tags-item-edit-" + iCurI).keydown(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+            let newTags = $('#tags-item-edit-' + iCurI).val();
+            let err = 0;
+            if (items[iCurI].tags === newTags) {
+                errAction('changeTagsItem', -3);
+            }
+            else {
+                $.ajax({
+                    url:      '/Items/changeTagsItem',
+                    method:   'post',
+                    dataType: 'json',
+                    async:    true,
+                    data:  {
+                        'itemid': items[iCurI].id,
+                        'tags':   newTags,
+                    },
+                    complete: function(response) {
+                        err = response.responseJSON;
+                        if (err == 0) {
+                            items[iCurI].tags = newTags;
+                        }
+                        else {
+                            errAction('changeTagsItem', err);
+                        }
+                        $('#tags-item-' + iCurI).html(items[iCurI].tags);
+                        $(':button').removeAttr('disabled', false);
+                    }
+                });
+            }
+        }
+        else if (event.which == 27) {
+            event.preventDefault();
+            $('#tags-item-' + iCurI).html(items[iCurI].tags);
+            $(':button').removeAttr('disabled', false);
+        }
+    });
+}
+
+/**
+ * Удаление пункта
+ */
+function deleteItem() {
+    let err = 0;
+    $.ajax({
+        url:      '/Items/deleteItem',
+        method:   'post',
+        dataType: 'json',
+        async:    true,
+        data: {
+            'listid': idListForItem,
+            'itemid': items[iCurI].id,
+        },
+        complete: function(response){
+            err = response.responseJSON;
+            if (err == 0) {
+                items.splice(iCurI, 1);
+                $('#item-' + iCurI).remove();
+                if (items.length == 0) {
+                    noItems();
+                }
+            }
+            else {
+                errAction('deleteItem', err);
+            }
+        },
+    });
+}
+
+/**
+ * Изменение preview пункта на "основной" вкладке
+ * при изменении изображения на "дополнительной" вкладке
+ */
+function changeImageItem(idItem) {
+    let iChng = -1;
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].id == idItem) {
+            iChng = i;
+            break;
+        }
+    }
+    if (iChng >= 0) {
+        $.ajax({
+            url:      '/Items/getImgItem',
+            method:   'post',
+            dataType: 'json',
+            async:    true,
+            data: {
+                'itemId':  items[iChng].id,
+            },
+            complete: function(response){
+                let newImage = response.responseJSON.image;
+                let newPreview = response.responseJSON.preview;
+                if (newImage.length > 0) {
+                    items[iChng].image = newImage;
+                }
+                if (newPreview.length > 0) {
+                    items[iChng].preview = newPreview;
+                    $('#image-item-' + iChng).children('img').attr('src', items[iChng].preview);
+                }
+
+            },
+        });
+    
+    }
+}
 
 /* ------------------ И З О Б Р А Ж Е Н И Я ------------------ /
 /** 
@@ -703,13 +1101,13 @@ function showImage() {
                 success : function(result) {
                     $('#select-file-form').addClass('hide');
                     if (idList == 0 && idItem == 0) { // Изображение пользователя
-                        localStorage.setItem("idUser", "idUser");
+                        storageSetItem("idUser", "idUser");
                     }
                     else if (idItem == 0) {            // Изображение списка
-                        localStorage.setItem("idList", idList);
+                        storageSetItem("idList", idList);
                     }
                     else {                              // Изображение пункта    
-                        localStorage.setItem("idItem", idItem);
+                        storageSetItem("idItem", idItem);
                     }
                 }
             });
@@ -751,16 +1149,20 @@ function showImage() {
  */
 function errAction(action, response, needExit = false) {
     let actions = [
-        {act: 'changeTitleList',   message: 'Изменение наименования списка'},
+        {act: 'changeTitleList',   message: 'Изменение наименования списка',},
         {act: 'deleteList',        message: 'Удаление списка',},
         {act: 'appendList',        message: 'Добавление нового списка',},
-        {act: 'checkNewListTitle', message: 'Проверка наименования нового списка'},
+        {act: 'checkNewListTitle', message: 'Проверка наименования нового списка',},
+        {act: 'appendItem',        message: 'Добавление нового пункта',},
+        {act: 'changeTitleItem',   message: 'Изменение наименования пункта',},
+        {act: 'deleteItem',        message: 'Удаление пункта',},
+        {act: 'changeTagsItem',    message: 'Изменение тегов пункта',},
     ];
     let responses = [
-        {resp: '-1', message: 'Список не принадлежит текущему пользователю'},
-        {resp: '-2', message: 'Список отсутствует в базе данных'},
-        {resp: '-3', message: 'Дублирование наименования списка'},
-        {resp: '-4', message: 'Длина наименования меньше 5 символов'},
+        {resp: '-1', message: 'Список не принадлежит текущему пользователю',},
+        {resp: '-2', message: 'Список отсутствует в базе данных',},
+        {resp: '-3', message: 'Дублирование наименования',},
+        {resp: '-4', message: 'Длина наименования меньше 5 символов',},
     ];
     
     let idxAct = actions.findIndex(a => a.act == action);
@@ -781,4 +1183,59 @@ function errAction(action, response, needExit = false) {
         $('.container').hide();
         $("#exit")[0].click();
     }
+}
+
+
+/**
+ * Изменение preview на "основной" вкладке
+ * при изменении изображения на "дополнительной" вкладке 
+ */
+function changeImage(lsKey, lsVal) {
+    if (lsKey === 'idList') {
+        changeImageList(lsVal);
+    }
+    else if (lsKey === 'idItem') {
+        changeImageItem(lsVal);
+    }
+}
+
+/**
+ * Записать значение в localStorage
+ */
+function storageSetItem(key, value) {
+    const localStorage = window.localStorage;
+    if (!localStorage) {
+        return false;
+    }
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+/**
+ * Получить значение из localStorage
+ */
+function storageGetItem(key, defaultValue = null) {
+    const localStorage = window.localStorage;
+    if (!localStorage) {
+        return defaultValue;
+    }
+    const value = localStorage.getItem(key);
+    if (value === null) {
+        return defaultValue;
+    }
+    return JSON.parse(value);
+}
+
+/**
+ * Удалить ключ из localStorage
+ */
+function storageDelItem(key) {
+    const localStorage = window.localStorage;
+    if (!localStorage) {
+        return defaultValue;
+    }
+    const value = localStorage.removeItem(key);
+    if (value === null) {
+        return defaultValue;
+    }
+    return JSON.parse(value);
 }

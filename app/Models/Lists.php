@@ -58,8 +58,9 @@ class Lists
                         FROM lists AS l
                         WHERE l.id_user = ?
                           AND l.title = ?
+                          AND l.id != ?
 
-                    ", [$uid, $titleList]
+                    ", [$uid, $titleList, $listId]
                 );
                 if ($rowDup) {
                     return -3;      // Дублирование наименования списка
@@ -175,10 +176,9 @@ class Lists
             "
                 SELECT
                     l.image,
-                    l.preview,
+                    l.preview
                 FROM lists AS l
-                WHERE l. = ?
-                ORDER BY l.title
+                WHERE l.id = ?
             ", [$listId]
         );
         if ($row) {

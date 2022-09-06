@@ -61,6 +61,7 @@ class Images
                     break;
             };
         }
+        return 1;
     }
 
     /**
