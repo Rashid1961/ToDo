@@ -184,7 +184,7 @@ function showLists() {
 function noLists(){
     $("#one-list").append(
         '<tr>' +
-            '<td colspan="3" style="font-size: 150%; text-align: center;">' +
+            '<td colspan="3" id= "no-lists" style="font-size: 150%; text-align: center;">' +
                 'У Вас пока нет ни одного списка' +
             '</td>' +
         '</tr>'
@@ -268,6 +268,16 @@ function noLists(){
                 '</div>' +
             '</td>' +
         '</tr>'
+    );
+}
+
+/**
+ *  Изменение в выводе количества пунктов
+ *  при добавлении / удалении пункта
+ */
+ function changeNumberItems(idxArr) {
+    $('#number-items-list-' + idxArr).html(
+        'Пунктов: ' + lists[idxArr].number_items
     );
 }
 
@@ -493,6 +503,9 @@ function saveNewList() {
             else {
                 errAction('appendList', err);
             }
+            if (iCur == 0) {
+                $('#no-lists').remove();
+            }
             $(':button').removeAttr('disabled', false);
             $('#append-list').show();
         },
@@ -653,7 +666,7 @@ function expandList(listId) {
 function noItems(){
     $("#one-item").append(
         '<tr>' +
-            '<td colspan="3" style="font-size: 150%; text-align: center;">' +
+            '<td colspan="3" id="no-item" style="font-size: 150%; text-align: center;">' +
                 'В списке пока нет ни одного пункта' +
             '</td>' +
         '</tr>'
@@ -849,9 +862,17 @@ function saveNewItem() {
                 items[iCurI].image = noImageItem;
                 items[iCurI].preview = noImageItemPreview;
                 addOneItemFromItems(iCurI);
-            }
+                lists[iCur].number_items++;
+                changeNumberItems(iCur);
+                }
             else {
                 errAction('appendItem', err);
+            }
+            if (iCurI == 0) {
+                $('#no-item').remove();
+            }
+            if (iCurI == 0) {
+                $('#no-item').remove;
             }
             $(':button').removeAttr('disabled', false);
             $('#footer-items').show();
@@ -1013,7 +1034,9 @@ function deleteItem() {
             if (err == 0) {
                 items.splice(iCurI, 1);
                 $('#item-' + iCurI).remove();
-                if (items.length == 0) {
+                lists[iCur].number_items--;
+                changeNumberItems(iCur);
+                    if (items.length == 0) {
                     noItems();
                 }
             }
