@@ -20,6 +20,10 @@ class Items
             'title'   => '',
             'image'   => '',
             'preview' => '',
+            'ids_tag' => [
+                'id'    => 0,
+                'name'  => '',
+            ],
             'tags'    => '',
         ];
 
@@ -60,9 +64,10 @@ class Items
                 $items['items'][$i]['image']    = $row->image;
                 $items['items'][$i]['preview']  = $row->preview;
                 if ($row->ids_tags) {
-                    $tags = explode(",", $row->ids_tags);
-                    for ($j = 0; $j < count($tags); $j++) {
-                        $items['items'][$i]['tags'] .= $items['tags'][$tags[$j]] . ' ';
+                    $items['items'][$i]['ids_tag']['id'] = explode(",", $row->ids_tags);
+                    for ($j = 0; $j < count($items['items'][$i]['ids_tag']['id']); $j++) {
+                        $items['items'][$i]['tags'] .= $items['tags'][$items['items'][$i]['ids_tag']['id'][$j]] . ' ';
+                        $items['items'][$i]['ids_tag']['name'][] = $items['tags'][$items['items'][$i]['ids_tag']['id'][$j]] . ' ';
                     }
                 }
             }
@@ -163,7 +168,6 @@ class Items
         );
         return 0;
     }
-
     
     /**
      * Удаление пункта
@@ -211,12 +215,10 @@ class Items
                 $arrCurTags[] = $row->id_tag;
             }
         }
-
         $arrNewTags = explode('#', $tags);
-
         for ($i = count($arrNewTags) -1; $i >= 0; $i--) {
-            $curTag = '#' . trim($arrNewTags[$i]);
-            if ( strlen($curTag) == 1) {
+            $curNewTag = '#' . trim($arrNewTags[$i]);
+            if ( strlen($curNewTag) == 1) {
                 continue;
             }
             $row = DB::selectOne(
@@ -224,12 +226,18 @@ class Items
                     SELECT t.id
                     FROM tags AS t
                     WHERE t.title = ?
-                ", [$curTag]
+                ", [$curNewTag]
             );
             if ($row) {
                 $idCurTag = $row->id;
-                if ($key = array_search($idCurTag, $arrCurTags) !== false) {
-                    unset($arrCurTags[$key]);
+                $conti = false;
+                for ($j = 0; $j < count($arrCurTags); $j++) {
+                    if ($arrCurTags[$j] == $idCurTag) {
+                        unset($arrCurTags[$j]);
+                        $conti = true;
+                    }
+                }
+                if ($conti) {
                     continue;
                 }
             }
@@ -241,7 +249,7 @@ class Items
                     VALUES
                         (?)
                     ",            
-                    [$curTag]
+                    [$curNewTag]
                 );
                 $rowNewTag = DB::selectOne(
                     "

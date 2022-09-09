@@ -20,6 +20,10 @@ var idItem   = '';
 var imgPath  = '';
 var titleImg = '';
 var file     = '';
+var filterTags = [
+    {id:      []},
+    {checked: []}
+];
 
 $(document).ready(function() {
     $.ajaxSetup({
@@ -165,6 +169,14 @@ function showLists() {
         }
 
         //   П У Н К Т Ы
+        // Фильтр
+        if (clickId === "filter") {
+            selectFiler();
+        }
+        // Поиск
+        if (clickId === "search") {
+            alert('Чуть позже');
+        }
         // Сохранить новый пункт
         else if (clickId.substring(0, 10) === "save-item-") {
             iCurI = clickId.substring(10);
@@ -310,7 +322,10 @@ function changeTitleList() {
             let newTitle = $('#title-list-edit-' + iCur).val();
             let err = 0;
             if (lists[iCur].title === newTitle) {
-                errAction('changeTitleList', -3);
+                //errAction('changeTitleList', -3);
+                $('#title-list-' + iCur).html(lists[iCur].title);
+                $('#number-items-list-' + iCur).show();
+                $(':button').removeAttr('disabled', false);
             }
             else {
                 $.ajax({
@@ -326,13 +341,13 @@ function changeTitleList() {
                         err = response.responseJSON;
                         if (err == 0) {
                             lists[iCur].title = newTitle;
+                            $('#title-list-' + iCur).html(lists[iCur].title);
+                            $('#number-items-list-' + iCur).show();
+                            $(':button').removeAttr('disabled', false);
                         }
                         else {
                             errAction('changeTitleList', err);
                         }
-                        $('#title-list-' + iCur).html(lists[iCur].title);
-                        $('#number-items-list-' + iCur).show();
-                        $(':button').removeAttr('disabled', false);
                     }
                 });
             }
@@ -592,6 +607,7 @@ function expandList(listId) {
         noItems();
     }
     else {
+        formFilter();
         for (let i = 0; i < items.length; i++) {
             addOneItemFromItems(i);
         }
@@ -629,8 +645,17 @@ function expandList(listId) {
     // Обработка нажатия кнопок
     $('#form-items').on('click', ':button', function() {
         let clickId = this.id;
+        // Применить фильтр
+        if (clickId === 'apply-filter') {
+            $(':button').attr('disabled', true);
+            applyFilter();
+        }
+        // Отменить фильтр
+        if (clickId === 'undo-filter') {
+            undoFilter();
+        }
         // Вернуться к спискам
-        if (clickId === "return-to-lists") {
+        else if (clickId === "return-to-lists") {
             $("#one-item").empty();
             $('#form-items').hide();
             $('#form-lists').show();
@@ -661,9 +686,10 @@ function expandList(listId) {
 }
 
 /** 
- * Строка таблицы при пунктов
+ * Строка таблицы при отсутствии пунктов
  */
 function noItems(){
+    $('#filter-search').hide();
     $("#one-item").append(
         '<tr>' +
             '<td colspan="3" id="no-item" style="font-size: 150%; text-align: center;">' +
@@ -671,6 +697,97 @@ function noItems(){
             '</td>' +
         '</tr>'
     );
+}
+
+/** 
+ * Выбор фильтра
+ */
+ function formFilter() {
+    filterTags.id = [];
+    filterTags.checked = [];
+    let k = 0;
+    for (i = 0; i < items.length; i++) {
+        for (j = 0; j < items[i].ids_tag.id.length; j++) {
+            if (filterTags.id.indexOf(items[i].ids_tag.id[j]) == -1 ) {
+                k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
+                filterTags.checked.push(false);
+                $('#ul-filter').append(
+                    '<li style="padding-left: 3; padding-right: 3;">' +
+                        '<label class="form-check-label"  style="margin-bottom: 0">' +
+                            '<input' +
+                            ' type="checkbox"' +
+                            ' class="form-check-input"' +
+                            ' style="margin-right: 3;"' +
+                            ' onchange="filterTags.checked[' + k +'] = !filterTags.checked[' + k +']">' +
+                            items[i].ids_tag.name[j] +
+                        '</label>' +
+                    '</li>'
+                );
+            }
+        }
+    }
+    if (k > 0) {
+        $('#ul-filter').append(
+            '<li style="padding-left: 3; padding-right: 3;">' +
+                '<button' +
+                    ' id="apply-filter"'+
+                    ' type="button"' +
+                    ' class="btn btn-block btn-primary"' +
+                    'style="margin-bottom: 5;"' +
+                '>' +
+                    'Применить' +
+                '</button>' +
+            '</li>' +
+            '<li style="padding-left: 3; padding-right: 3;">' +
+                '<button' +
+                    ' id="undo-filter"'+
+                    ' type="button"' +
+                    ' class="btn btn-block btn-primary"' +
+                '>' +
+                    'Отменить' +
+                '</button>' +
+            '</li>'
+        )
+        $('#filter').show();
+    }
+}
+
+/**
+ * Применение фильтра
+ */
+function applyFilter() {
+    $(':button').attr('disabled', false);
+    if (filterTags.id.length == 0) {
+        return;
+    }
+    let showItem;
+    for (i = 0; i < items.length; i++) {
+        showItem = false;
+        for (j = 0; j < items[i].ids_tag.id.length; j++) {
+            k = filterTags.id.indexOf(items[i].ids_tag.id[j]);
+            if (k >= 0) {
+                if (filterTags.checked[k] === true) {
+                  showItem = true;
+                  break;
+                }
+            }
+        }
+        if (showItem === true) {
+            $('#item-' + i).show();
+        }
+        else {
+            $('#item-' + i).hide();
+        }
+    }
+}
+
+/**
+ * Отменена фильтра
+ */
+ function undoFilter() {
+    for (i = 0; i < items.length; i++) {
+        $('#item-' + i).show();
+    }
 }
 
 /**
@@ -870,6 +987,7 @@ function saveNewItem() {
             }
             if (iCurI == 0) {
                 $('#no-item').remove();
+                $('#filter-search').show();
             }
             if (iCurI == 0) {
                 $('#no-item').remove;
@@ -918,8 +1036,10 @@ function changeTitleItem() {
             let newTitle = $('#title-item-edit-' + iCurI).val();
             let err = 0;
             if (items[iCurI].title === newTitle) {
-                errAction('changeTitleItem', -3);
-            }
+                //errAction('changeTitleItem', -3);
+                $('#title-item-' + iCurI).html(items[iCurI].title);
+                $(':button').removeAttr('disabled', false);
+                }
             else {
                 $.ajax({
                     url:      '/Items/changeTitleItem',
@@ -935,16 +1055,16 @@ function changeTitleItem() {
                         err = response.responseJSON;
                         if (err == 0) {
                             items[iCurI].title = newTitle;
+                            $('#title-item-' + iCurI).html(items[iCurI].title);
+                            $(':button').removeAttr('disabled', false);
                         }
                         else {
                             errAction('changeTitleItem', err);
                         }
-                        $('#title-item-' + iCurI).html(items[iCurI].title);
-                        $(':button').removeAttr('disabled', false);
                     }
                 });
             }
-        }
+    }
         else if (event.which == 27) {
             event.preventDefault();
             $('#title-item-' + iCurI).html(items[iCurI].title);
@@ -981,7 +1101,9 @@ function changeTagsItem() {
             let newTags = $('#tags-item-edit-' + iCurI).val();
             let err = 0;
             if (items[iCurI].tags === newTags) {
-                errAction('changeTagsItem', -3);
+                //errAction('changeTagsItem', -3);
+                $('#tags-item-' + iCurI).html(items[iCurI].tags);
+                $(':button').removeAttr('disabled', false);
             }
             else {
                 $.ajax({
@@ -997,12 +1119,25 @@ function changeTagsItem() {
                         err = response.responseJSON;
                         if (err == 0) {
                             items[iCurI].tags = newTags;
+                            $.ajax({
+                                url:    '/Items/getItems',
+                                method: 'post',
+                                dataType: 'json',
+                                async:   false,
+                                data: {
+                                    'listid': idListForItem,
+                                },
+                                success: function(response){
+                                    items = response.items;
+                                    tags = response.tags;
+                                },
+                            });
+                            $('#tags-item-' + iCurI).html(items[iCurI].tags);
+                            $(':button').removeAttr('disabled', false);
                         }
                         else {
                             errAction('changeTagsItem', err);
                         }
-                        $('#tags-item-' + iCurI).html(items[iCurI].tags);
-                        $(':button').removeAttr('disabled', false);
                     }
                 });
             }
@@ -1036,7 +1171,7 @@ function deleteItem() {
                 $('#item-' + iCurI).remove();
                 lists[iCur].number_items--;
                 changeNumberItems(iCur);
-                    if (items.length == 0) {
+                if (items.length == 0) {
                     noItems();
                 }
             }
