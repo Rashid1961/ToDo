@@ -54,7 +54,6 @@ $(document).ready(function() {
     tabName = $('#tabName').html();
     if (tabName === 'todo') {
         $('.container').children().hide();
-
         window.addEventListener('storage', (event) => {
             if (event.storageArea != localStorage) return;
             let lsKey = event.key;
@@ -143,7 +142,6 @@ function showLists() {
 
     // Обработка нажатия кнопок
     $('body').on('click', ':button', function() {
-
         //   С П И С К И
         let clickId = this.id;
         // Добавить список
@@ -169,14 +167,6 @@ function showLists() {
         }
 
         //   П У Н К Т Ы
-        // Фильтр
-        if (clickId === "filter") {
-            selectFiler();
-        }
-        // Поиск
-        if (clickId === "search") {
-            alert('Чуть позже');
-        }
         // Сохранить новый пункт
         else if (clickId.substring(0, 10) === "save-item-") {
             iCurI = clickId.substring(10);
@@ -310,7 +300,7 @@ function changeTitleList() {
                 ' required' +
             '/>' +
             '<div style="font-size: 50%; color: #777;">' +
-                 'Введите новое название (от 5 до 100 символов) и нажмите Enter или Escape - для отмены' +
+                 'Введите новое название (от 5 до 100 символов) и нажмите Enter (Escape - для отмены)' +
             '</div>' +
         '</div>'
     );
@@ -320,9 +310,8 @@ function changeTitleList() {
         if (event.which == 13) {
             event.preventDefault();
             let newTitle = $('#title-list-edit-' + iCur).val();
-            let err = 0;
+            let retValue = 0;
             if (lists[iCur].title === newTitle) {
-                //errAction('changeTitleList', -3);
                 $('#title-list-' + iCur).html(lists[iCur].title);
                 $('#number-items-list-' + iCur).show();
                 $(':button').removeAttr('disabled', false);
@@ -338,15 +327,15 @@ function changeTitleList() {
                         'listtitle': newTitle,
                     },
                     complete: function(response) {
-                        err = response.responseJSON;
-                        if (err == 0) {
+                        retValue = response.responseJSON;
+                        if (retValue == 0) {
                             lists[iCur].title = newTitle;
                             $('#title-list-' + iCur).html(lists[iCur].title);
                             $('#number-items-list-' + iCur).show();
                             $(':button').removeAttr('disabled', false);
                         }
                         else {
-                            errAction('changeTitleList', err);
+                            errAction('changeTitleList', retValue);
                         }
                     }
                 });
@@ -365,7 +354,7 @@ function changeTitleList() {
  * Удаление списка и всех его пунктов
  */
 function deleteList() {
-    let err = 0;
+    let retValue = 0;
     $.ajax({
         url:      '/Lists/deleteList',
         method:   'post',
@@ -375,8 +364,8 @@ function deleteList() {
             'listid': lists[iCur].id,
         },
         complete: function(response){
-            err = response.responseJSON;
-            if (err == 0) {
+            retValue = response.responseJSON;
+            if (retValue == 0) {
                 lists.splice(iCur, 1);
                 $('#list-' + iCur).remove();
                 if (lists.length == 0) {
@@ -384,7 +373,7 @@ function deleteList() {
                 }
             }
             else {
-                errAction('deleteList', err);
+                errAction('deleteList', retValue);
             }
         },
     });
@@ -495,7 +484,7 @@ function appendList() {
  */
 function saveNewList() {
     let newTitle = $('#title-list-new-' + iCur).val();
-    let err = 0;
+    let retValue = 0;
     $.ajax({
         url:      '/Lists/appendList',
         method:   'post',
@@ -506,17 +495,17 @@ function saveNewList() {
             'image':  lists[iCur].image,
         },
         complete: function(response){
-            err = response.responseJSON;
+            retValue = response.responseJSON;
             $('#list-' + iCur).remove();
-            if (err > 0) {
-                lists[iCur].id = err;
+            if (retValue > 0) {
+                lists[iCur].id = retValue;
                 lists[iCur].title = newTitle;
                 lists[iCur].image = noImageList;
                 lists[iCur].preview = noImageListPreview;
                 addOneListFromUserList(iCur);
             }
             else {
-                errAction('appendList', err);
+                errAction('appendList', retValue);
             }
             if (iCur == 0) {
                 $('#no-lists').remove();
@@ -576,6 +565,8 @@ function changeImageList(idList) {
     }
 }
 
+
+
 /* ------------------ П У Н К Т Ы   С П И С К О В ------------------ /
 /** 
  * Вывод пунктов списка
@@ -601,13 +592,15 @@ function expandList(listId) {
     $('#form-lists').hide();
     $('#form-items').show();
     
-    $("#caption-items").html(lists[iCur].title);
+    $("#list-name").html(lists[iCur].title);
 
     if (items.length == 0) {
         noItems();
     }
     else {
-        formFilter();
+        $('#filter-search').show();
+        $('#search-input').css("display", "none");
+        $('#search-undo').css("display", "none");
         for (let i = 0; i < items.length; i++) {
             addOneItemFromItems(i);
         }
@@ -645,14 +638,30 @@ function expandList(listId) {
     // Обработка нажатия кнопок
     $('#form-items').on('click', ':button', function() {
         let clickId = this.id;
+        // Сформировать список фильтра
+        if (clickId === 'dropdown-filter') {
+            formFilter();
+        }
         // Применить фильтр
-        if (clickId === 'apply-filter') {
+        else if (clickId === 'apply-filter') {
             $(':button').attr('disabled', true);
             applyFilter();
         }
-        // Отменить фильтр
-        if (clickId === 'undo-filter') {
+        // Сбросить фильтр
+        else if (clickId === 'undo-filter') {
             undoFilter();
+        }
+        // Поиск по наименованию пунктов
+        else if (clickId === 'search') {
+            $(':button').attr('disabled', true);
+            $('#search-undo').attr('disabled', false);
+            $('#search-input').css("display", "block");
+            $('#search-undo').css("display", "block"); 
+            $('#search-input').focus();
+        }
+        // Отменить поиск
+        else if (clickId === 'search-undo') {
+            undoSearch();
         }
         // Вернуться к спискам
         else if (clickId === "return-to-lists") {
@@ -700,11 +709,12 @@ function noItems(){
 }
 
 /** 
- * Выбор фильтра
+ * Вывод фильтра
  */
  function formFilter() {
     filterTags.id = [];
     filterTags.checked = [];
+    $('#ul-filter').html('');
     let k = 0;
     for (i = 0; i < items.length; i++) {
         for (j = 0; j < items[i].ids_tag.id.length; j++) {
@@ -735,6 +745,8 @@ function noItems(){
                     ' class="btn btn-block btn-primary"' +
                     'style="margin-bottom: 5;"' +
                 '>' +
+                    '<i class="glyphicon glyphicon-ok" style="margin-right: 5;">' +
+                    '</i>' +
                     'Применить' +
                 '</button>' +
             '</li>' +
@@ -742,9 +754,11 @@ function noItems(){
                 '<button' +
                     ' id="undo-filter"'+
                     ' type="button"' +
-                    ' class="btn btn-block btn-primary"' +
+                    ' class="btn btn-block btn-danger"' +
                 '>' +
-                    'Отменить' +
+                    '<i class="glyphicon glyphicon-remove" style="margin-right: 5;">' +
+                    '</i>' +
+                'Сбросить' +
                 '</button>' +
             '</li>'
         )
@@ -784,10 +798,35 @@ function applyFilter() {
 /**
  * Отменена фильтра
  */
- function undoFilter() {
+function undoFilter() {
     for (i = 0; i < items.length; i++) {
         $('#item-' + i).show();
     }
+}
+
+/**
+ * Поиск пунктов по наименованию
+ */
+$("#search-input").on("keyup", function() {
+    var value = $(this).val();
+    for (i = 0; i < items.length; i++) {
+        if (items[i].title.indexOf(value) != 0) {
+            $('#item-' + i).hide();
+        }
+        else {
+            $('#item-' + i).show();
+        }
+    }
+});
+
+function undoSearch(){
+    $('#search-input').val('');
+    for (i = 0; i < items.length; i++) {
+        $('#item-' + i).show();
+    }
+    $(':button').attr('disabled', false);
+    $('#search-input').css("display", "none");
+    $('#search-undo').css("display", "none");
 }
 
 /**
@@ -959,7 +998,7 @@ function appendItem() {
  */
 function saveNewItem() {
     let newTitle = $('#title-item-new-' + iCurI).val();
-    let err = 0;
+    let retValue = 0;
     $.ajax({
         url:      '/Items/appendItem',
         method:   'post',
@@ -972,9 +1011,9 @@ function saveNewItem() {
         },
         complete: function(response){
             $('#item-' + iCurI).remove();
-            err = response.responseJSON;
-            if (err > 0) {
-                items[iCurI].id = err;
+            retValue = response.responseJSON;
+            if (retValue >= 0) {
+                items[iCurI].id = retValue;
                 items[iCurI].title = newTitle;
                 items[iCurI].image = noImageItem;
                 items[iCurI].preview = noImageItemPreview;
@@ -983,11 +1022,13 @@ function saveNewItem() {
                 changeNumberItems(iCur);
                 }
             else {
-                errAction('appendItem', err);
+                errAction('appendItem', retValue);
             }
             if (iCurI == 0) {
                 $('#no-item').remove();
                 $('#filter-search').show();
+                $('#search-input').css("display", "none");
+                $('#search-undo').css("display", "none");
             }
             if (iCurI == 0) {
                 $('#no-item').remove;
@@ -1024,7 +1065,7 @@ function changeTitleItem() {
                 ' required' +
             '/>' +
             '<div style="font-size: 50%; color: #777;">' +
-                 'Введите новое название (от 5 до 100 символов) и нажмите Enter или Escape - для отмены' +
+                 'Введите новое название (от 5 до 100 символов) и нажмите Enter (Escape - для отмены)' +
             '</div>' +
         '</div>'
     );
@@ -1034,9 +1075,8 @@ function changeTitleItem() {
         if (event.which == 13) {
             event.preventDefault();
             let newTitle = $('#title-item-edit-' + iCurI).val();
-            let err = 0;
+            let retValue = 0;
             if (items[iCurI].title === newTitle) {
-                //errAction('changeTitleItem', -3);
                 $('#title-item-' + iCurI).html(items[iCurI].title);
                 $(':button').removeAttr('disabled', false);
                 }
@@ -1052,14 +1092,14 @@ function changeTitleItem() {
                         'itemtitle': newTitle,
                     },
                     complete: function(response) {
-                        err = response.responseJSON;
-                        if (err == 0) {
+                        retValue = response.responseJSON;
+                        if (retValue == 0) {
                             items[iCurI].title = newTitle;
                             $('#title-item-' + iCurI).html(items[iCurI].title);
                             $(':button').removeAttr('disabled', false);
                         }
                         else {
-                            errAction('changeTitleItem', err);
+                            errAction('changeTitleItem', retValue);
                         }
                     }
                 });
@@ -1088,7 +1128,7 @@ function changeTagsItem() {
                 ' required' +
             '/>' +
             '<div style="font-size: 75%; color: #777;">' +
-                 'Измените теги и нажмите Enter или Escape - для отмены <br/>' +
+                 'Измените теги и нажмите Enter (Escape - для отмены) <br/>' +
                  '(каждый тег должен начинаться с символа `#`)' +
             '</div>' +
         '</div>'
@@ -1099,9 +1139,8 @@ function changeTagsItem() {
         if (event.which == 13) {
             event.preventDefault();
             let newTags = $('#tags-item-edit-' + iCurI).val();
-            let err = 0;
+            let retValue = 0;
             if (items[iCurI].tags === newTags) {
-                //errAction('changeTagsItem', -3);
                 $('#tags-item-' + iCurI).html(items[iCurI].tags);
                 $(':button').removeAttr('disabled', false);
             }
@@ -1116,8 +1155,8 @@ function changeTagsItem() {
                         'tags':   newTags,
                     },
                     complete: function(response) {
-                        err = response.responseJSON;
-                        if (err == 0) {
+                        retValue = response.responseJSON;
+                        if (retValue == 0) {
                             items[iCurI].tags = newTags;
                             $.ajax({
                                 url:    '/Items/getItems',
@@ -1136,7 +1175,7 @@ function changeTagsItem() {
                             $(':button').removeAttr('disabled', false);
                         }
                         else {
-                            errAction('changeTagsItem', err);
+                            errAction('changeTagsItem', retValue);
                         }
                     }
                 });
@@ -1154,7 +1193,7 @@ function changeTagsItem() {
  * Удаление пункта
  */
 function deleteItem() {
-    let err = 0;
+    let retValue = 0;
     $.ajax({
         url:      '/Items/deleteItem',
         method:   'post',
@@ -1165,8 +1204,8 @@ function deleteItem() {
             'itemid': items[iCurI].id,
         },
         complete: function(response){
-            err = response.responseJSON;
-            if (err == 0) {
+            retValue = response.responseJSON;
+            if (retValue == 0) {
                 items.splice(iCurI, 1);
                 $('#item-' + iCurI).remove();
                 lists[iCur].number_items--;
@@ -1176,7 +1215,7 @@ function deleteItem() {
                 }
             }
             else {
-                errAction('deleteItem', err);
+                errAction('deleteItem', retValue);
             }
         },
     });

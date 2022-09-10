@@ -75,57 +75,88 @@
 
             <!-- Пункты списка -->
             <form class="form-horizontal" id="form-items">
-                <!-- "Фильтр", "Поиск" -->
-                <div class='form-inline' id="filter-search" style='text-align: center; margin-top: 20'>
-                    <div class='form-horizontal' style='margin-bottom: 10px;'>
-
-                        <div class="dropdown" id='filter' style="display: inline; margin-right: 100;">
-                            <button class="btn btn-primary dropdown-toggle" type="button" 
-                                    id="dropdownMenu1" data-toggle="dropdown" 
-                                    aria-haspopup="true" aria-expanded="true">
-                              <i class="glyphicon glyphicon-search" style="margin-right: 5;"></i>Фильтр по тегам
-                              <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu checkbox-menu allow-focus" id="ul-filter" aria-labelledby="dropdownMenu1">
-                                  
-                                  
-                            </ul>
-                        </div>
-
-
-
-                        <!-- <button
-                            id='filter'
-                            type='button'
-                            class='btn btn-primary'
-                            style='display: inline; margin-right: 100;'
-                        >
-                           Фильтр по тегам
-                        </button> -->
-
-                        <button
-                            id='search' 
-                            type='button'
-                            class='btn btn-primary'
-                            style='display: inline; margin-left: 100;'
-                        >
-                            Поиск по наименованию
-                        </button>
-                    </div>
-                </div>
-                <!-- выбор фильтра -->
-                <div class="form-inline" id="select-filter" style="margin: 0; word-break: break-word;">
-
+                <!-- Фильтр, Поиск, Наименование списка -->
+                <div class="form-group" id="items-head" style="margin-bottom: 0;">
+                    <table class="table" width="100%">
+                        <tbody>
+                            <tr id="filter-search" hidden>
+                                <!-- "Фильтр" -->
+                                <td style="text-align: right; width: 170px;">
+                                    <div 
+                                        class="dropdown" 
+                                        id='filter' 
+                                        style="margin-right: 0;"
+                                    >
+                                        <button 
+                                            class="btn btn-primary dropdown-toggle" 
+                                            type="button" 
+                                            id="dropdown-filter" 
+                                            data-toggle="dropdown" 
+                                            aria-haspopup="true"
+                                            aria-expanded="true"
+                                        >
+                                            <i
+                                                class="glyphicon glyphicon-filter"
+                                                style="margin-right: 5;"
+                                            >
+                                            </i>
+                                            Фильтр по тегам
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul 
+                                            class="dropdown-menu checkbox-menu allow-focus" 
+                                            id="ul-filter" 
+                                            aria-labelledby="dropdownMenu1"
+                                        >
+                                            <!-- Здесь будут теги для выбора фильтра -->
+                                        </ul>
+                                    </div>
+                                </td>
+                                <!-- "Поиск" -->
+                                <td style="text-align: left; display: flex;">
+                                    <button
+                                        id='search' 
+                                        type='button'
+                                        class='btn btn-primary'
+                                    >
+                                        <i class="glyphicon glyphicon-search">
+                                        </i>
+                                        Поиск по наименованию
+                                    </button>
+                                    <input
+                                        id="search-input"
+                                        type="text"
+                                        style="margin: 0 5; flex: 1;"
+                                        value=""
+                                        required
+                                    />
+                                    <button
+                                        id='search-undo'
+                                        type='button'
+                                        class='btn btn-danger'
+                                    >
+                                        <i class="glyphicon glyphicon-remove">
+                                        </i>
+                                        Отменить
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- Наименование списка -->
+                                <td
+                                    colspan="2"
+                                    id='list-name'
+                                    style="font-size: 250%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                >
+                                </td>                                    
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Пункты -->
                 <div class="form-group">
                     <table class="table" id="items" width="100%">
-                        <caption
-                            id='caption-items'
-                            style="font-size: 250%; color:#000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                        >
-                        </caption>
                         <tbody id="one-item">
                         </tbody>
                     </table>
