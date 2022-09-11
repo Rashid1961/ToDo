@@ -212,7 +212,7 @@ function noLists(){
                     ' target="_blank"' +
                 '>' +
                     '<img' +
-                        ' src=' + lists[idxArr].image +
+                        ' src=' + lists[idxArr].preview +
                         ' width="150px"' +
                         ' height="150px"' +
                         ' alt="Изображения нет"' +
@@ -242,13 +242,15 @@ function noLists(){
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
-                    '<button' +
-                    ' id="expand-list-' + idxArr + '"'+
-                    ' type="button"' +
+                    '<a' +
+                    //'<button' +
+                   // ' id="expand-list-' + idxArr + '"'+
+                   // ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
+                    ' href="/Items/List' + lists[idxArr].id + '"' +
                     '>' +
                         'Развернуть список' +
-                    '</button>' +
+                    '</a>' +
                 '</div>' +
                 '<div class="row" style="margin: 5 10 5 10;">' +
                     '<button' +
@@ -403,7 +405,7 @@ function appendList() {
                     ' target="_blank"' +
                 '>' +
                     '<img' +
-                        ' src=' + lists[iCur].image +
+                        ' src=' + lists[iCur].preview +
                         ' width="150px"' +
                         ' height="150px"' +
                         ' alt="Изображения нет"' +
@@ -553,12 +555,18 @@ function changeImageList(idList) {
                 let newPreview = response.responseJSON.preview;
                 if (newImage.length > 0) {
                     lists[iChng].image = newImage;
+                    $('#image-list-' + iChng).attr('href',
+                        '/Images/showImage?' +
+                        '&idList=' +   lists[iChng].id +
+                        '&idItem=' + '0' +
+                        '&imgPath=' + lists[iChng].image + 
+                        '&titleImg='  + lists[iChng].title
+                    );
                 }
                 if (newPreview.length > 0) {
                     lists[iChng].preview = newPreview;
                     $('#image-list-' + iChng).children('img').attr('src', lists[iChng].preview);
                 }
-
             },
         });
     
@@ -848,7 +856,7 @@ function addOneItemFromItems(idxArr = -1) {
                     ' target="_blank"' +
                 '>' +
                     '<img' +
-                        ' src=' + items[idxArr].image +
+                        ' src=' + items[idxArr].preview +
                         ' width="150px"' +
                         ' height="150px"' +
                         ' alt="Изображения нет"' +
@@ -934,7 +942,7 @@ function appendItem() {
                     ' target="_blank"' +
                 '>' +
                     '<img' +
-                        ' src=' + items[iCurI].image +
+                        ' src=' + items[iCurI].preview +
                         ' width="150px"' +
                         ' height="150px"' +
                         ' alt="Изображения нет"' +
@@ -1247,6 +1255,13 @@ function changeImageItem(idItem) {
                 let newPreview = response.responseJSON.preview;
                 if (newImage.length > 0) {
                     items[iChng].image = newImage;
+                    $('image-item-' + iChng).attr('href',
+                        '/Images/showImage?' +
+                        '&idList=' + lists[iChng].id   +
+                        '&idItem=' + items[iChng].id +
+                        '&imgPath=' + items[iChng].image + 
+                        '&titleImg='  + items[iChng].title
+                    );
                 }
                 if (newPreview.length > 0) {
                     items[iChng].preview = newPreview;
@@ -1306,6 +1321,7 @@ function showImage() {
                     else {                              // Изображение пункта    
                         storageSetItem("idItem", idItem);
                     }
+                    $('#del-img').removeAttr('display');
                 }
             });
         });        
@@ -1326,11 +1342,14 @@ function showImage() {
                 $('#del-img').css('display', 'none');
                 if (idList == 0 && idItem == 0) { // Изображение пользователя
                     noImage = noImageUser;
+                    storageSetItem("idUser", "idUser");
                 }
                 else if (idItem == 0) {            // Изображение списка
+                    storageSetItem("idList", idList);
                     noImage = noImageList;
                 }
-                else {                              // Изображение пункта
+                else {                              // Изображение пункта    
+                    storageSetItem("idItem", idItem);
                     noImage = noImageItem;
                 }
                 $('#upload-img').attr('src', noImage);
@@ -1338,7 +1357,10 @@ function showImage() {
         });
 
     });
-}
+
+    $('#return-todo').click(function () {
+        location.href = "todo.test";
+    });}
 
 /* ------------------ О Б Щ Е Е ------------------ /
 /**

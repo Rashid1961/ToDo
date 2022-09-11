@@ -40,7 +40,7 @@
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
             <div class='form-inline'  style='text-align: center; margin-top: 20'>
-                <!-- "Изменить изображение", "Удалить изображение", "Выбор файла" -->
+                <!-- "Изменить изображение", "Удалить изображение", "На основную страницу", "Выбор файла" -->
                 <div class='form-horizontal'  style='margin-bottom: 10px;'>
                     <button
                         id='change-img'
@@ -58,6 +58,17 @@
                         style='display: inline; margin-left: 2;'
                     >
                         Удалить изображение
+                    </button>
+                        
+                    <button
+                        id='return-todo' 
+                        type='button'
+                        class='btn btn-primary'
+                        style='display: inline; margin-left: 2;'
+                    >
+                        <i class="glyphicon glyphicon-arrow-left">
+                        </i>
+                        На основную страницу
                     </button>
                         
                     <!-- Выбор файла для загрузки -->
@@ -125,3 +136,11 @@
         <script src="/js/appToDo.js"></script>
     </body>
 </html>
+
+<Style>
+    .img-preview img {
+    max-width: 100%;
+    height: auto;
+    max-height:100%
+}
+</Style>
