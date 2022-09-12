@@ -242,16 +242,16 @@ function noLists(){
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
-                    //'<a' +
-                    '<button' +                         //
-                    ' id="expand-list-' + idxArr + '"'+ //
+                    '<a' + //
+                    //'<button' +                         //
+                    //' id="expand-list-' + idxArr + '"'+ //
                     ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
-                    //' href="/Items/ExpandList' + lists[idxArr].id + '"' +
+                    ' href="/Items/expandList/' + lists[idxArr].id + '"' + //
                     '>' +
                         'Развернуть список' +
-                    //'</a>' +
-                    '</button>' +                      //
+                    '</a>' + //
+                    //'</button>' +                      //
                 '</div>' +
                 '<div class="row" style="margin: 5 10 5 10;">' +
                     '<button' +

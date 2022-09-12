@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     
     Route::group(['prefix' => '/Items/'], function () {
+        Route::post('expandList/{id}',  'ItemsController@expandList')->where('id', '[0-9]+');
         Route::post('/getItems',        'ItemsController@getItems');
         Route::post('/getImgItem',      'ItemsController@getImgItem');
         Route::post('/appendItem',      'ItemsController@appendItem');

@@ -7,6 +7,11 @@ use App\Models\Items;
 
 class ItemsController extends Controller
 {
+    // Вывод пунктов списка
+    public function expandList($id){
+        return view('items', [$id, Items::getItems($id)]);
+    }
+
     // Получение пунктов списка
     public function getItems(Request $request){
         $listId = $request->input('listid', 0);

@@ -32,9 +32,9 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <!-- <a class="navbar-brand" href="{{url('/')}}"> -->
-                        <div class="navbar-brand">ToDo</div>
-                    <!-- </a> -->
+                    <a class="navbar-brand" href="{{url('/')}}">
+                        ToDo
+                    </a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -62,7 +62,8 @@
         </nav>
         <!-- Основной контейнер -->
         <div class="container" style="margin-top: 50; margin-left: auto;">
-            <!-- Списки пользователя -->
+<!--        
+            < !-- Списки пользователя -- >
             <form class="form-horizontal" id="form-lists">
                 <div class="form-group">
                     <table class="table" id="lists" width="100%">
@@ -72,7 +73,7 @@
                     </table>
                 </div>
             </form>
-
+-->
             <!-- Пункты списка -->
             <form class="form-horizontal" id="form-items">
                 <!-- Фильтр, Поиск, Наименование списка -->

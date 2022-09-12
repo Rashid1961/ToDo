@@ -16,8 +16,8 @@ class ImagesController extends Controller
             'imgPath'  => $request->input('imgPath'),
             'titleImg' => $request->input('titleImg'),
         ];
-        $view = view('image', $data);
-        return $view;
+        //$view = view('image', $data);
+        return view('image', $data) //$view;
     }
 
     // Загрузка изображения

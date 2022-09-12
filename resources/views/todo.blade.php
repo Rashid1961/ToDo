@@ -72,15 +72,15 @@
                     </table>
                 </div>
             </form>
-
-            <!-- Пункты списка -->
+<!--
+            < !-- Пункты списка -- >
             <form class="form-horizontal" id="form-items">
-                <!-- Фильтр, Поиск, Наименование списка -->
+                < !-- Фильтр, Поиск, Наименование списка -- >
                 <div class="form-group" id="items-head" style="margin-bottom: 0;">
                     <table class="table" width="100%">
                         <tbody>
                             <tr id="filter-search" hidden>
-                                <!-- "Фильтр" -->
+                                < !-- "Фильтр" -- >
                                 <td style="text-align: right; width: 170px;">
                                     <div 
                                         class="dropdown" 
@@ -108,11 +108,11 @@
                                             id="ul-filter" 
                                             aria-labelledby="dropdownMenu1"
                                         >
-                                            <!-- Здесь будут теги для выбора фильтра -->
+                                            < !-- Здесь будут теги для выбора фильтра -- >
                                         </ul>
                                     </div>
                                 </td>
-                                <!-- "Поиск" -->
+                                < !-- "Поиск" -- >
                                 <td style="text-align: left; display: flex;">
                                     <button
                                         id='search' 
@@ -142,7 +142,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <!-- Наименование списка -->
+                                < !-- Наименование списка -- >
                                 <td
                                     colspan="2"
                                     id='list-name'
@@ -154,7 +154,7 @@
                     </table>
                 </div>
 
-                <!-- Пункты -->
+                < !-- Пункты -- >
                 <div class="form-group">
                     <table class="table" id="items" width="100%">
                         <tbody id="one-item">
@@ -163,7 +163,7 @@
                 </div>
             </form>
         </div>
-
+-->
         <!-- JavaScripts -->
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"
