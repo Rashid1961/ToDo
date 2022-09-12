@@ -60,7 +60,7 @@
                         Удалить изображение
                     </button>
                         
-                    <button
+                    <!-- <button
                         id='return-todo' 
                         type='button'
                         class='btn btn-primary'
@@ -69,7 +69,7 @@
                         <i class="glyphicon glyphicon-arrow-left">
                         </i>
                         На основную страницу
-                    </button>
+                    </button> -->
                         
                     <!-- Выбор файла для загрузки -->
                     <form

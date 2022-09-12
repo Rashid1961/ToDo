@@ -242,15 +242,16 @@ function noLists(){
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
-                    '<a' +
-                    //'<button' +
-                   // ' id="expand-list-' + idxArr + '"'+
-                   // ' type="button"' +
+                    //'<a' +
+                    '<button' +                         //
+                    ' id="expand-list-' + idxArr + '"'+ //
+                    ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
-                    ' href="/Items/List' + lists[idxArr].id + '"' +
+                    //' href="/Items/ExpandList' + lists[idxArr].id + '"' +
                     '>' +
                         'Развернуть список' +
-                    '</a>' +
+                    //'</a>' +
+                    '</button>' +                      //
                 '</div>' +
                 '<div class="row" style="margin: 5 10 5 10;">' +
                     '<button' +
@@ -818,11 +819,11 @@ function undoFilter() {
 $("#search-input").on("keyup", function() {
     var value = $(this).val();
     for (i = 0; i < items.length; i++) {
-        if (items[i].title.indexOf(value) != 0) {
-            $('#item-' + i).hide();
+        if (items[i].title.includes(value)) {
+            $('#item-' + i).show();
         }
         else {
-            $('#item-' + i).show();
+            $('#item-' + i).hide();
         }
     }
 });
