@@ -36,7 +36,7 @@ class Lists
     /**
      *  Изменение наименования списка
      */
-    static function changeTitleList ($uid, $listId, $titleList) {
+    static function changeTitleList ($uid, $idList, $titleList) {
         $titleList = trim($titleList);
         if (mb_strlen($titleList) < 5) {
             return -4;              // Длина наименования (меньше 5 символов)
@@ -47,7 +47,7 @@ class Lists
                     *
                 FROM lists AS l
                 WHERE l.id = ?
-            ", [$listId]
+            ", [$idList]
         );
         if ($row) {
             if ($row->id_user == $uid) {
@@ -60,7 +60,7 @@ class Lists
                           AND l.title = ?
                           AND l.id != ?
 
-                    ", [$uid, $titleList, $listId]
+                    ", [$uid, $titleList, $idList]
                 );
                 if ($rowDup) {
                     return -3;      // Дублирование наименования списка
@@ -72,7 +72,7 @@ class Lists
                     SET   title = ?
                     WHERE id = ?
                     ",
-                    [$titleList, $listId]
+                    [$titleList, $idList]
                 );
                 return 0;
             }
@@ -86,14 +86,14 @@ class Lists
     /**
      * Удаление списка
      */
-    static function deleteList ($uid, $listId) {
+    static function deleteList ($uid, $idList) {
         $row = DB::selectOne(
             "
                 SELECT
                     *
                 FROM lists AS l
                 WHERE   l.id = ?
-            ", [$listId]
+            ", [$idList]
         );
         if ($row) {
             if ($row->id_user == $uid) {
@@ -105,19 +105,19 @@ class Lists
                                 SELECT id FROM items AS i
                                 WHERE id_list = ?
                             )
-                    ", [$listId]
+                    ", [$idList]
                 );
                 DB::delete(
                     "
                         DELETE FROM items
                         WHERE id_list = ?
-                    ", [$listId]
+                    ", [$idList]
                 );
                 DB::delete(
                     "
                         DELETE FROM lists
                         WHERE id = ?
-                    ", [$listId]
+                    ", [$idList]
                 );
                 return 0;
             }
@@ -167,7 +167,7 @@ class Lists
     /**
      * Получение image и preview списка
      */
-    static function getImgList($listId) {
+    static function getImgList($idList) {
         $images = [
             'image'   => '',
             'preview' => ''
@@ -179,7 +179,7 @@ class Lists
                     l.preview
                 FROM lists AS l
                 WHERE l.id = ?
-            ", [$listId]
+            ", [$idList]
         );
         if ($row) {
             $images['image'] =$row->image;

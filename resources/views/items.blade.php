@@ -27,7 +27,13 @@
         </style>
     </head>
     <body>
-        <div id='tabName'   hidden>todo</div>
+        <div id='tabName'   hidden>items</div>
+        <div id='id'   hidden>{{$id}}</div>
+        <div id='name'   hidden>{{$name}}</div>
+        <div id='email'  hidden>{{$email}}</div>
+        <div id='image' hidden>{{$image}}</div>
+        <div id='preview' hidden>{{$preview}}</div>
+        <div id='idList' hidden>{{$idList}}</div>
         <!-- Шапка -->
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">

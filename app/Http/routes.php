@@ -15,14 +15,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/', function() {
         $user = [
+            // данные пользователя
             'id'      => auth()->user()->id,
             'name'    => auth()->user()->name,
             'email'   => auth()->user()->email,
             'image'   => auth()->user()->image,
             'preview' => auth()->user()->preview,
         ];
-        $view = view('todo', $user);
-        return $view;
+        // $view = view('todo', $user);
+        return view('todo', $user); //$view;
     });
 
     Route::group(['prefix' => '/Lists/'], function () {
@@ -34,13 +35,13 @@ Route::group(['middleware' => 'auth'], function () {
     });
     
     Route::group(['prefix' => '/Items/'], function () {
-        Route::post('expandList/{id}',  'ItemsController@expandList')->where('id', '[0-9]+');
-        Route::post('/getItems',        'ItemsController@getItems');
-        Route::post('/getImgItem',      'ItemsController@getImgItem');
-        Route::post('/appendItem',      'ItemsController@appendItem');
-        Route::post('/changeTitleItem', 'ItemsController@changeTitleItem');
-        Route::post('/deleteItem',      'ItemsController@deleteItem');
-        Route::post('/changeTagsItem',  'ItemsController@changeTagsItem');
+        Route::get('expandList/{idList}', 'ItemsController@expandList')->where('id', '[0-9]+');
+        Route::post('/getItems',          'ItemsController@getItems');
+        Route::post('/getImgItem',        'ItemsController@getImgItem');
+        Route::post('/appendItem',        'ItemsController@appendItem');
+        Route::post('/changeTitleItem',   'ItemsController@changeTitleItem');
+        Route::post('/deleteItem',        'ItemsController@deleteItem');
+        Route::post('/changeTagsItem',    'ItemsController@changeTagsItem');
     });
 
     Route::group(['prefix' => '/Images/'], function () {

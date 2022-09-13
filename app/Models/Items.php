@@ -8,7 +8,7 @@ class Items
     /**
      *  Пункты списка
      */
-    static function getItems($listId)
+    static function getItems($idList)
     {
         $items = [
             'items' => [],
@@ -53,7 +53,7 @@ class Items
              FROM items AS i
              WHERE i.id_list = ?
              ORDER BY i.title",
-            [$listId]
+            [$idList]
         );
         if (count($rowsItems) > 0) {
             foreach ($rowsItems as $row) {
@@ -103,7 +103,7 @@ class Items
     /**
      * Добавление пункта
      */
-    static function appendItem($listId, $title, $image) {
+    static function appendItem($idList, $title, $image) {
         if(mb_strlen($title) < 5) {
             return -4;              // Длина наименования меньше 5 символов
         }
@@ -114,7 +114,7 @@ class Items
                 FROM items AS i
                 WHERE   i.id_list = ?
                     AND i.title = ?
-            ", [$listId, $title]
+            ", [$idList, $title]
         );
         if ($row) {
             return -3;              // Дублирование наименования списка
@@ -126,7 +126,7 @@ class Items
             VALUES
                 (?, ?, ?)
             ",            
-            [$listId, $title, $image]
+            [$idList, $title, $image]
         );
         $row = DB::selectOne(
             "
@@ -139,7 +139,7 @@ class Items
     /**
      *  Изменение наименования пункта
      */
-    static function changeTitleItem($listId, $itemId, $title) {
+    static function changeTitleItem($idList, $itemId, $title) {
         $title = trim($title);
         if (mb_strlen($title) < 5) {
             return -4;              // Длина наименования меньше 5 символов
@@ -152,7 +152,7 @@ class Items
                 WHERE i.id_list = ?
                   AND i.title = ?
                   AND i.id != ?
-            ", [$listId, $title, $itemId]
+            ", [$idList, $title, $itemId]
         );
         if ($rowDup) {
             return -3;      // Дублирование наименования
@@ -164,7 +164,7 @@ class Items
             WHERE id = ?
               AND id_list = ?
             ",
-            [$title, $itemId, $listId]
+            [$title, $itemId, $idList]
         );
         return 0;
     }
@@ -172,7 +172,7 @@ class Items
     /**
      * Удаление пункта
      */
-    static function deleteItem($listId, $itemId) {
+    static function deleteItem($idList, $itemId) {
         DB::delete(
             "
                 DELETE FROM tags_items
@@ -184,7 +184,7 @@ class Items
                 DELETE FROM items
                 WHERE id_list = ?
                   AND id = ?
-            ", [$listId, $itemId]
+            ", [$idList, $itemId]
         );
         return 0;
     }

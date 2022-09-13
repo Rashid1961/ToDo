@@ -16,16 +16,16 @@ class ListsController extends Controller
     // Переименование списка
     public function changeTitleList(Request $request) {
         $uid = auth()->user()->id;
-        $listid = $request->input('listid', 0);
+        $idList = $request->input('idList', 0);
         $titleList = $request->input('listtitle', '');
-        return Lists::changeTitleList($uid, $listid, $titleList);
+        return Lists::changeTitleList($uid, $idList, $titleList);
     }
 
     // Удаление списка
     public function deleteList(Request $request) {
         $uid = auth()->user()->id;
-        $listid = $request->input('listid', 0);
-        return Lists::deleteList($uid, $listid);
+        $idList = $request->input('idList', 0);
+        return Lists::deleteList($uid, $idList);
     }
 
     // Добавление списка
@@ -38,7 +38,7 @@ class ListsController extends Controller
 
     // Получение image и preview списка
     public function getImgList(Request $request) {
-        $listId = $request->input('listId', '');
-        return Lists::getImgList($listId);
+        $idList = $request->input('idList', '');
+        return Lists::getImgList($idList);
     }
 }

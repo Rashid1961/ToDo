@@ -51,23 +51,35 @@ $(document).ready(function() {
         delay: 3000 // сколько будет висеть сообщение (мсек)
     });
 
+    window.addEventListener('storage', (event) => {
+        if (event.storageArea != localStorage) return;
+        let lsKey = event.key;
+        if (lsKey === 'idList' || lsKey === 'idItem') {
+            let lsVal = storageGetItem(lsKey);
+            changeImage(lsKey, lsVal);
+            localStorage.removeItem(lsKey);
+        }
+    });
+
     tabName = $('#tabName').html();
     if (tabName === 'todo') {
         $('.container').children().hide();
-        window.addEventListener('storage', (event) => {
-            if (event.storageArea != localStorage) return;
-            let lsKey = event.key;
-            if (lsKey === 'idList' || lsKey === 'idItem') {
-                let lsVal = storageGetItem(lsKey);
-                changeImage(lsKey, lsVal);
-                localStorage.removeItem(lsKey);
-            }
-        });
         showLists();
+    }
+    else if (tabName === 'items') {
+        /* Данные пользователя
+        id      = $('#id').html();
+        name    = $('#name').html();
+        email   = $('#email').html();
+        image   = $('#image').html();
+        preview = $('#preview').html();
+        */
+        idList  = $('#idList').html();
+        expandList(idList);
     }
     else if (tabName === 'image') {
         idList   = $('#idList').html();
-        idItem    = $('#idItem').html();
+        idItem   = $('#idItem').html();
         imgPath  = $('#imgPath').html();
         titleImg = $('#titleImg').html();
 
@@ -150,10 +162,10 @@ function showLists() {
             appendList();
         }
         // Развернуть список
-        else if(clickId.substring(0, 12) === "expand-list-") {
-            iCur = clickId.substring(12);
-            expandList(lists[iCur].id);
-        }
+        //else if(clickId.substring(0, 12) === "expand-list-") {
+        //    iCur = clickId.substring(12);
+        //    expandList(lists[iCur].id);
+        //}
         // Изменить наименование
         else if(clickId.substring(0, 10) === "edit-list-") {
             iCur = clickId.substring(10);
@@ -326,7 +338,7 @@ function changeTitleList() {
                     dataType: 'json',
                     async:    true,
                     data:  {
-                        'listid':    lists[iCur].id,
+                        'idList':    lists[iCur].id,
                         'listtitle': newTitle,
                     },
                     complete: function(response) {
@@ -364,7 +376,7 @@ function deleteList() {
         dataType: 'json',
         async:    true,
         data: {
-            'listid': lists[iCur].id,
+            'idList': lists[iCur].id,
         },
         complete: function(response){
             retValue = response.responseJSON;
@@ -549,7 +561,7 @@ function changeImageList(idList) {
             dataType: 'json',
             async:    true,
             data: {
-                'listId':  lists[iChng].id,
+                'idList':  lists[iChng].id,
             },
             complete: function(response){
                 let newImage = response.responseJSON.image;
@@ -580,15 +592,15 @@ function changeImageList(idList) {
 /** 
  * Вывод пунктов списка
  */
-function expandList(listId) {
-    idListForItem = listId;
+function expandList(idList) {
+    idListForItem = idList;
     $.ajax({
         url:    '/Items/getItems',
         method: 'post',
         dataType: 'json',
         async:   false,
         data: {
-            'listid': idListForItem,
+            'idList': idListForItem,
         },
         success: function(response){
             items = response.items;
@@ -1014,7 +1026,7 @@ function saveNewItem() {
         dataType: 'json',
         async:    true,
         data: {
-            'listId': idListForItem,
+            'idList': idListForItem,
             'title':  newTitle,
             'image':  items[iCurI].image,
         },
@@ -1096,7 +1108,7 @@ function changeTitleItem() {
                     dataType: 'json',
                     async:    true,
                     data:  {
-                        'listid':    idListForItem,
+                        'idList':    idListForItem,
                         'itemid':    items[iCurI].id,
                         'itemtitle': newTitle,
                     },
@@ -1173,7 +1185,7 @@ function changeTagsItem() {
                                 dataType: 'json',
                                 async:   false,
                                 data: {
-                                    'listid': idListForItem,
+                                    'idList': idListForItem,
                                 },
                                 success: function(response){
                                     items = response.items;
@@ -1209,7 +1221,7 @@ function deleteItem() {
         dataType: 'json',
         async:    true,
         data: {
-            'listid': idListForItem,
+            'idList': idListForItem,
             'itemid': items[iCurI].id,
         },
         complete: function(response){

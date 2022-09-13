@@ -8,14 +8,28 @@ use App\Models\Items;
 class ItemsController extends Controller
 {
     // Вывод пунктов списка
-    public function expandList($id){
-        return view('items', [$id, Items::getItems($id)]);
+    public function expandList($idList){
+        //$id      = auth()->user()->id;
+        //$name    = auth()->user()->name;
+        //$email   = auth()->user()->email;
+        //$image   = auth()->user()->image;
+        //$preview = auth()->user()->preview;
+        $data = [
+            'id'      => auth()->user()->id,
+            'name'    => auth()->user()->name,
+            'email'   => auth()->user()->email,
+            'image'   => auth()->user()->image,
+            'preview' => auth()->user()->preview,
+            'idList'  => $idList
+        ];
+
+        return view('items', $data); // [$idList, $id, $name, $email, $image, $preview]); //[$idList, Items::getItems($idList)]);
     }
 
     // Получение пунктов списка
     public function getItems(Request $request){
-        $listId = $request->input('listid', 0);
-        return Items::getItems($listId);
+        $idList = $request->input('idList', 0);
+        return Items::getItems($idList);
     }
 
     // Получение image и preview пункта
@@ -26,25 +40,25 @@ class ItemsController extends Controller
 
     // Добавление пункта
     public function appendItem(Request $request) {
-        $listId = $request->input('listId', '');
+        $idList = $request->input('idList', '');
         $title  = $request->input('title', '');
         $image  = $request->input('image', '');
-        return Items::appendItem($listId, $title, $image);
+        return Items::appendItem($idList, $title, $image);
     }
 
     // Переименование пункта
     public function changeTitleItem(Request $request) {
-        $listId    = $request->input('listid', 0);
+        $idList    = $request->input('idList', 0);
         $itemId    = $request->input('itemid', 0);
         $title = $request->input('itemtitle', '');
-        return Items::changeTitleItem($listId, $itemId, $title);
+        return Items::changeTitleItem($idList, $itemId, $title);
     }
 
     // Удаление пункта
     public function deleteItem(Request $request) {
-        $listId = $request->input('listid', 0);
+        $idList = $request->input('idList', 0);
         $itemId = $request->input('itemid', 0);
-        return Items::deleteItem($listId, $itemId);
+        return Items::deleteItem($idList, $itemId);
     }
 
     // Удаление пункта
@@ -54,3 +68,5 @@ class ItemsController extends Controller
         return Items::changeTagsItem($itemId, $tags);
     }
 }
+
+
