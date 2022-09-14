@@ -1109,7 +1109,7 @@ function changeTitleItem() {
                     async:    true,
                     data:  {
                         'idList':    idListForItem,
-                        'itemid':    items[iCurI].id,
+                        'idItem':    items[iCurI].id,
                         'itemtitle': newTitle,
                     },
                     complete: function(response) {
@@ -1172,7 +1172,7 @@ function changeTagsItem() {
                     dataType: 'json',
                     async:    true,
                     data:  {
-                        'itemid': items[iCurI].id,
+                        'idItem': items[iCurI].id,
                         'tags':   newTags,
                     },
                     complete: function(response) {
@@ -1222,7 +1222,7 @@ function deleteItem() {
         async:    true,
         data: {
             'idList': idListForItem,
-            'itemid': items[iCurI].id,
+            'idItem': items[iCurI].id,
         },
         complete: function(response){
             retValue = response.responseJSON;
@@ -1261,7 +1261,7 @@ function changeImageItem(idItem) {
             dataType: 'json',
             async:    true,
             data: {
-                'itemId':  items[iChng].id,
+                'idItem':  items[iChng].id,
             },
             complete: function(response){
                 let newImage = response.responseJSON.image;

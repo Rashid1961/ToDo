@@ -15,18 +15,16 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/', function() {
         $user = [
-            // данные пользователя
             'id'      => auth()->user()->id,
             'name'    => auth()->user()->name,
             'email'   => auth()->user()->email,
             'image'   => auth()->user()->image,
             'preview' => auth()->user()->preview,
         ];
-        // $view = view('todo', $user);
-        return view('todo', $user); //$view;
+        return view('lists', $user);
     });
 
-    Route::group(['prefix' => '/Lists/'], function () {
+    Route::group(['prefix' => '/Lists/'], function () {  // Списки
         Route::post('/getLists',        'ListsController@getLists');
         Route::post('/changeTitleList', 'ListsController@changeTitleList');
         Route::post('/deleteList',      'ListsController@deleteList');
@@ -34,7 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/getImgList',      'ListsController@getImgList');
     });
     
-    Route::group(['prefix' => '/Items/'], function () {
+    Route::group(['prefix' => '/Items/'], function () {  // Пункты списков
         Route::get('expandList/{idList}', 'ItemsController@expandList')->where('id', '[0-9]+');
         Route::post('/getItems',          'ItemsController@getItems');
         Route::post('/getImgItem',        'ItemsController@getImgItem');
@@ -44,7 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/changeTagsItem',    'ItemsController@changeTagsItem');
     });
 
-    Route::group(['prefix' => '/Images/'], function () {
+    Route::group(['prefix' => '/Images/'], function () {  // Изображения
         Route::get('/showImage',    'ImagesController@showImage');
         Route::post('/uploadImage', 'ImagesController@uploadImage');
         Route::post('/delImage',    'ImagesController@delImage');

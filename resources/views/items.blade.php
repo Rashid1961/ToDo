@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
 
         <meta name="robots" content="noindex,nofollow">
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
 
         <title>ToDo</title>
         <!-- Fonts -->
@@ -34,6 +34,8 @@
         <div id='image' hidden>{{$image}}</div>
         <div id='preview' hidden>{{$preview}}</div>
         <div id='idList' hidden>{{$idList}}</div>
+        <div id='titleList' hidden>{{$titleList}}</div>
+        <div id='numberItemsList' hidden>{{$numberItemsList}}</div>
         <!-- Шапка -->
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
@@ -68,18 +70,6 @@
         </nav>
         <!-- Основной контейнер -->
         <div class="container" style="margin-top: 50; margin-left: auto;">
-<!--        
-            < !-- Списки пользователя -- >
-            <form class="form-horizontal" id="form-lists">
-                <div class="form-group">
-                    <table class="table" id="lists" width="100%">
-                        <caption style="font-size: 200%; color:#000;">Ваши списки</caption>
-                        <tbody id="one-list">
-                        </tbody>
-                    </table>
-                </div>
-            </form>
--->
             <!-- Пункты списка -->
             <form class="form-horizontal" id="form-items">
                 <!-- Фильтр, Поиск, Наименование списка -->
@@ -183,6 +173,7 @@
             crossorigin="anonymous">
         </script>
         <script src="/js/jquery.notification.min.js"></script>
-        <script src="/js/appToDo.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/appItems.js"></script>
     </body>
 </html>

@@ -32,11 +32,12 @@
         </style>
     </head>
     <body>
-        <div id='tabName'  hidden>image</div>
-        <div id='idList'   hidden>{{$idList}}</div>
-        <div id='idItem'   hidden>{{$idItem}}</div>
-        <div id='imgPath'  hidden>{{$imgPath}}</div>
-        <div id='titleImg' hidden>{{$titleImg}}</div>
+        <div id='tabName'    hidden>image</div>
+        <div id='idList'     hidden>{{$idList}}</div>
+        <div id='idItem'     hidden>{{$idItem}}</div>
+        <div id='imgPath'    hidden>{{$imgPath}}</div>
+        <div id='titleImg'   hidden>{{$titleImg}}</div>
+        <div id='hrefReturn' hidden>{{$hrefReturn}}</div>
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
             <div class='form-inline'  style='text-align: center; margin-top: 20'>
@@ -60,16 +61,16 @@
                         Удалить изображение
                     </button>
                         
-                    <!-- <button
-                        id='return-todo' 
+                    <a
                         type='button'
                         class='btn btn-primary'
                         style='display: inline; margin-left: 2;'
+                        href='/'
                     >
                         <i class="glyphicon glyphicon-arrow-left">
                         </i>
                         На основную страницу
-                    </button> -->
+                    </a>
                         
                     <!-- Выбор файла для загрузки -->
                     <form
@@ -133,7 +134,8 @@
             crossorigin='anonymous'>
         </script>
         <script src="/js/jquery.notification.min.js"></script>
-        <script src="/js/appToDo.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/appImages.js"></script>
     </body>
 </html>
 
