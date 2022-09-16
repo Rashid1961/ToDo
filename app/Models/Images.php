@@ -9,121 +9,200 @@ class Images
 {
     /**
      *  Загрузка изображения
+     * @param $uid  id пользователя
+     * @param $file загружаемый файл
+     * @param $idList id списка
+     * @param $idItem id пункта списка
+     * 
+     * Структура имени файла:
+     *      uUUU_vVVV.jpg           - для пользователя
+     *      uUUU_lLLL_vVVV.jpg      - для списка
+     *      uUUU_lLLL_iIII_vVVV.jpg - для пункта списка
+     *          UUU - id пользователя
+     *          LLL - id списка
+     *          III - id пункта
+     *          VVV - версия изображения
+     * 
+     * @return 1
      */
     static function uploadImage($uid, $file, $idList, $idItem)
     {
-        $u = 'u' . substr(('00' . (string)$uid), -3);
-        $l = '_l' . substr(('00' . (string)$idList), -3);
-        $i = '_i' . substr(('00' . (string)$idItem), -3);
-        if ($idList == 0 && $idItem == 0) { // Изображение пользователя
-            $l = '';
-            $i = '';
-            $purpose = 'users';
+        if ($uid == 0) { // Не определён пользователь
+            return 0;
         }
-        else if ($idItem == 0) {            // Изображение списка
-            $i = '';
-            $purpose = 'lists';
-        }
-        else {                              // Изображение пункта
-            $purpose = 'items';
-        }
-        $image = $u . $l . $i;
-        if (Storage::disk('images')->put($purpose . '/' . $image . '_img.jpg', (string)file_get_contents($file->getRealPath()))) {
-            // создание и сохранение preview
-            \Gregwar\Image\Image::open(public_path() . '/images/' . $purpose . '/' . $image . '_img.jpg')
-                ->resize(150,150)
-                ->save(public_path() . '/images/' . $purpose . '/preview/' . $image . '_preview.jpg');
 
-            // корректируем таблицу
-            $preview = '/images/' . $purpose . '/preview/' . $image . '_preview.jpg';
-            $image = '/images/' . $purpose . '/' . $image. '_img.jpg';
-            switch ($purpose) {
-                case 'users':
-                    DB::update("UPDATE users
-                                SET image = ?,
-                                    preview = ?
-                                WHERE id = ?",
-                               [$image, $preview, $uid]);
-                    break;
-                case 'lists':
-                    DB::update("UPDATE lists
-                                SET image = ?,
-                                    preview = ?
-                                WHERE id = ? AND id_user = ?",
-                               [$image, $preview, $idList, $uid]);
-                    break;
-                case 'items':
-                    DB::update("UPDATE items
-                                SET image = ?,
-                                    preview = ?
-                                WHERE id = ? AND id_list = ?",
-                               [$image, $preview, $idItem, $idList]);
-                    break;
-            };
+        $user = 'u'  . substr(('00' . (string)$uid), -3);                          // id пользователя
+        $list = $idList == 0 ? '' : ('_l' . substr(('00' . (string)$idList), -3)); // id списка
+        $item = $idItem == 0 ? '' : ('_i' . substr(('00' . (string)$idItem), -3)); // id пункта
+        $vers = '_v000';                                                           // версия
+
+        $table = '';
+        $where = '';
+        $params = [];
+        $noImage = '';
+        $noPreview = '';
+        $oldImage = '';
+        $oldPrewview = '';
+        
+        if ($idList == 0 && $idItem == 0) { // Пользователь
+            $noImage = "/images/users/noUserImage.jpg";
+            $noPreview = "/images/users/preview/noUserPreview.jpg";
+            $table = 'users';
+            $where = 'id = ?';
+            $params = [$uid];
         }
+        else if ($idItem == 0) {            // Список
+            $noImage = "/images/lists/noListImage.jpg";
+            $noPreview = "/images/lists/preview/noListPreview.jpg";
+            $table = 'lists';
+            $where = 'id = ? AND id_user = ?';
+            $params = [$idList, $uid];
+        }
+        else {                              // Пункт
+            $noImage = "/images/items/noItemImage.jpg";
+            $noPreview = "/images/items/preview/noItemPreview.jpg";
+            $table = 'items';
+            $where = 'id = ? AND id_list = ?';
+            $params = [$idItem, $idList];
+        }
+
+        $row = DB::selectOne(
+            "
+                SELECT image, preview
+                FROM {$table}
+                WHERE {$where}
+            ", $params
+        );
+
+        if ($row) {
+            $oldImage = $row->image;
+            $oldPrewview = $row->preview;
+            $i = strpos($oldImage, '_v');
+            if ($i !== false) {
+                $newVersion = substr($oldImage, $i + 2, 3) + 1;
+                if ($newVersion == 999) {
+                    $newVersion = 0;
+                }
+
+                $vers = '_v' . substr(('00' . (string)$newVersion), -3);
+            }
+        }
+
+        $image = $user . $list . $item . $vers . '.jpg';
+        // Сохранение изображения
+        if (Storage:: disk('images')->put('/' . $table . '/' . $image, (string)file_get_contents($file->getRealPath()), 'public')) {
+            // Создание и сохранение preview
+            \Gregwar\Image\Image::open(public_path() . '/images/' . $table . '/' . $image)
+                ->resize(150,150)
+                ->save(public_path() . '/images/' . $table . '/preview/' . $image);
+
+            // Корректировка полей image и preview таблицы $table
+            array_unshift($params, '/images/' . $table . '/' . $image, '/images/' . $table . '/preview/' . $image);
+            DB::update(
+                "
+                    UPDATE {$table}
+                    SET image = ?, preview = ?
+                    WHERE {$where}
+                ", $params
+            );
+        }
+
+        // Удалeние старых изображений и preview
+        if ($oldImage !== $noImage) {
+            Storage:: disk('images')->delete(str_replace('/images', '', $oldImage));
+        }
+
+        if ($oldPrewview !== $noPreview) {
+            Storage:: disk('images')->delete(str_replace('/images', '', $oldPrewview));
+        }
+
         return 1;
     }
 
     /**
-     *  Удаление изображения
+     *  Удаление изображения и preview
      */
     static function delImage($uid, $idList, $idItem)
     {
-        $u = 'u' . substr(('00' . (string)$uid), -3);
-        $l = '_l' . substr(('00' . (string)$idList), -3);
-        $i = '_i' . substr(('00' . (string)$idItem), -3);
-
-        if ($idList == 0 && $idItem == 0) { // Изображение пользователя
-            $l = '';
-            $i = '';
-            $noImage = "noUserImage.jpg";
-            $noPreview = "noUserPreview.jpg";
-            $purpose = 'users';
-        }
-        else if ($idItem == 0) {            // Изображение списка
-            $i = '';
-            $noImage = "noListImage.jpg";
-            $noPreview = "noListPreview.jpg";
-            $purpose = 'lists';
-        }
-        else {                              // Изображение пункта
-            $noImage = "noItemImage.jpg";
-            $noPreview = "noItemPreview.jpg";
-            $purpose = 'items';
+        if ($uid == 0) { // Не определён пользователь
+            return 0;
         }
 
-        // Удаляем файлы
-        Storage::disk('images')->delete([
-            $purpose . '/' . $u . $l . $i . '_img.jpg',
-            $purpose . '/preview/' . $u . $l . $i . '_preview.jpg'
-        ]);
+        $table = '';
+        $where = '';
+        $params = [];
+        $needImageDelete = false;
+        $needPreviewDelete = false;
+        $noImage = '';
+        $noPreview = '';
+        $image = '';
+        $preview = '';
 
-        // корректируем таблицу
-        $noImage = '/images/' . $purpose . '/' . $noImage;
-        $noPreview = '/images/' . $purpose . '/preview/' . $noPreview;
-        switch ($purpose) {
-            case 'users':
-                DB::update("UPDATE users
-                            SET image = ?,
-                                preview = ?
-                            WHERE id = ?",
-                           [$noImage, $noPreview, $uid]);
-                break;
-            case 'lists':
-                DB::update("UPDATE lists
-                            SET image = ?,
-                                preview = ?
-                            WHERE id = ? AND id_user = ?",
-                           [$noImage, $noPreview, $idList, $uid]);
-                break;
-            case 'items':
-                DB::update("UPDATE items
-                            SET image = ?,
-                                preview = ?
-                            WHERE id = ? AND id_list = ?",
-                           [$noImage, $noPreview, $idItem, $idList]);
-                break;
-        };
+        if ($idList == 0 && $idItem == 0) { // Пользователь
+            $noImage = "/images/users/noUserImage.jpg";
+            $noPreview = "/images/users/preview/noUserPreview.jpg";
+            $table = 'users';
+            $where = 'id = ?';
+            $params = [$uid];
+        }
+        else if ($idItem == 0) {            // Список
+            $noImage = "/images/lists/noListImage.jpg";
+            $noPreview = "/images/lists/preview/noListPreview.jpg";
+            $table = 'lists';
+            $where = 'id = ? AND id_user = ?';
+            $params = [$idList, $uid];
+        }
+        else {                              // Пункт
+            $noImage = "/images/items/noItemImage.jpg";
+            $noPreview = "/images/items/preview/noItemPreview.jpg";
+            $table = 'items';
+            $where = 'id = ? AND id_list = ?';
+            $params = [$idItem, $idList];
+        }
+        
+        $row = DB::selectOne(
+            "
+                SELECT image, preview
+                FROM {$table} 
+                WHERE {$where}
+            ", $params
+        );
+
+        if ($row) {
+            if ($row->image !== $noImage) {
+                $needImageDelete = true;
+                $image = str_replace('/images', '', $row->image);
+            }
+
+            if ($row->preview !== $noPreview) {
+                $needPreviewDelete = true;
+                $preview = str_replace('/images', '', $row->preview);
+            }
+        }
+        else {
+            return 0;
+        }
+
+        // Удаление изображения
+        if ($needImageDelete) {
+            Storage:: disk('images')->delete($image);
+        }
+
+        // Удаление preview
+        if ($needPreviewDelete) {
+            Storage:: disk('images')->delete($preview);
+        }
+
+        // Корректировка полей image и preview таблицы $table
+        array_unshift($params, $noImage, $noPreview);
+        DB::update(
+            "
+                UPDATE {$table}
+                SET image = ?, preview = ?
+                WHERE {$where}
+            ", $params
+        );
+
         return 1;
     }    
 }

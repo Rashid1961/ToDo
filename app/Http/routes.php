@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('/', function() {
+    Route::get('/', function() {  //--------------- Стартовая страница (перечень списков)
         $user = [
             'id'      => auth()->user()->id,
             'name'    => auth()->user()->name,
@@ -24,28 +24,28 @@ Route::group(['middleware' => 'auth'], function () {
         return view('lists', $user);
     });
 
-    Route::group(['prefix' => '/Lists/'], function () {  // Списки
-        Route::post('/getLists',        'ListsController@getLists');
-        Route::post('/changeTitleList', 'ListsController@changeTitleList');
-        Route::post('/deleteList',      'ListsController@deleteList');
-        Route::post('/appendList',      'ListsController@appendList');
-        Route::post('/getImgList',      'ListsController@getImgList');
+    Route::group(['prefix' => '/Lists/'], function () {  //------------------- Списки
+        Route::post('/getLists',        'ListsController@getLists');        // Получение списков пользователя
+        Route::post('/changeTitleList', 'ListsController@changeTitleList'); // Переименование списка
+        Route::post('/deleteList',      'ListsController@deleteList');      // Удаление списка и всех его пунктов
+        Route::post('/appendList',      'ListsController@appendList');      // Добавление списка
+        Route::post('/getImgList',      'ListsController@getImgList');      // Получение image и preview списка
     });
     
-    Route::group(['prefix' => '/Items/'], function () {  // Пункты списков
-        Route::get('expandList/{idList}', 'ItemsController@expandList')->where('id', '[0-9]+');
-        Route::post('/getItems',          'ItemsController@getItems');
-        Route::post('/getImgItem',        'ItemsController@getImgItem');
-        Route::post('/appendItem',        'ItemsController@appendItem');
-        Route::post('/changeTitleItem',   'ItemsController@changeTitleItem');
-        Route::post('/deleteItem',        'ItemsController@deleteItem');
-        Route::post('/changeTagsItem',    'ItemsController@changeTagsItem');
+    Route::group(['prefix' => '/Items/'], function () {  //--------------------------------------- Пункты списков
+        Route::get('expandList/{idList}', 'ItemsController@expandList')->where('id', '[0-9]+'); // Вывод пунктов списка
+        Route::post('/getItems',          'ItemsController@getItems');                          // Получение пунктов списка
+        Route::post('/getImgItem',        'ItemsController@getImgItem');                        // Получение image и preview пункта
+        Route::post('/appendItem',        'ItemsController@appendItem');                        // Добавление пункта
+        Route::post('/changeTitleItem',   'ItemsController@changeTitleItem');                   // Переименование пункта
+        Route::post('/deleteItem',        'ItemsController@deleteItem');                        // Удаление пункта
+        Route::post('/changeTagsItem',    'ItemsController@changeTagsItem');                    // Изменение тегов пункта
     });
 
-    Route::group(['prefix' => '/Images/'], function () {  // Изображения
-        Route::get('/showImage',    'ImagesController@showImage');
-        Route::post('/uploadImage', 'ImagesController@uploadImage');
-        Route::post('/delImage',    'ImagesController@delImage');
+    Route::group(['prefix' => '/Images/'], function () {  //----------- Изображения
+        Route::get('/showImage',    'ImagesController@showImage');   // Вывод изображения в отдельном окне
+        Route::post('/uploadImage', 'ImagesController@uploadImage'); // Загрузка нового изображения при изменении
+        Route::post('/delImage',    'ImagesController@delImage');    // Удаление изображения (замена дефолтным)
     });
 });
 
