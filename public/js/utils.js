@@ -15,12 +15,14 @@ function errAction(action, response, needExit = false) {
         {act: 'changeTitleItem',   message: 'Изменение наименования пункта',},
         {act: 'deleteItem',        message: 'Удаление пункта',},
         {act: 'changeTagsItem',    message: 'Изменение тегов пункта',},
+        {act: 'selectImage',       message: 'Сохранение изображения',},
     ];
     let responses = [
         {resp: '-1', message: 'Список не принадлежит текущему пользователю',},
         {resp: '-2', message: 'Список отсутствует в базе данных',},
         {resp: '-3', message: 'Дублирование наименования',},
         {resp: '-4', message: 'Длина наименования меньше 5 символов',},
+        {resp: '-5', message: 'Файл не выбран',},
     ];
     
     let idxAct = actions.findIndex(a => a.act == action);

@@ -33,13 +33,13 @@ Route::group(['middleware' => 'auth'], function () {
     });
     
     Route::group(['prefix' => '/Items/'], function () {  //--------------------------------------- Пункты списков
-        Route::get('expandList/{idList}', 'ItemsController@expandList')->where('id', '[0-9]+'); // Вывод пунктов списка
-        Route::post('/getItems',          'ItemsController@getItems');                          // Получение пунктов списка
-        Route::post('/getImgItem',        'ItemsController@getImgItem');                        // Получение image и preview пункта
-        Route::post('/appendItem',        'ItemsController@appendItem');                        // Добавление пункта
-        Route::post('/changeTitleItem',   'ItemsController@changeTitleItem');                   // Переименование пункта
-        Route::post('/deleteItem',        'ItemsController@deleteItem');                        // Удаление пункта
-        Route::post('/changeTagsItem',    'ItemsController@changeTagsItem');                    // Изменение тегов пункта
+        Route::get('expandList/{idList}', 'ItemsController@expandList')->where('idList', '[0-9]+'); // Вывод пунктов списка
+        Route::post('/getItems',          'ItemsController@getItems');                              // Получение пунктов списка
+        Route::post('/getImgItem',        'ItemsController@getImgItem');                            // Получение image и preview пункта
+        Route::post('/appendItem',        'ItemsController@appendItem');                            // Добавление пункта
+        Route::post('/changeTitleItem',   'ItemsController@changeTitleItem');                       // Переименование пункта
+        Route::post('/deleteItem',        'ItemsController@deleteItem');                            // Удаление пункта
+        Route::post('/changeTagsItem',    'ItemsController@changeTagsItem');                        // Изменение тегов пункта
     });
 
     Route::group(['prefix' => '/Images/'], function () {  //----------- Изображения

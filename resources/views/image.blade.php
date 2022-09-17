@@ -37,7 +37,7 @@
         <div id='idItem'     hidden>{{$idItem}}</div>
         <div id='imgPath'    hidden>{{$imgPath}}</div>
         <div id='titleImg'   hidden>{{$titleImg}}</div>
-        <div id='hrefReturn' hidden>{{$hrefReturn}}</div>
+        <div id='hrefParent' hidden>{{$hrefParent}}</div>
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
             <div class='form-inline'  style='text-align: center; margin-top: 20'>
@@ -65,7 +65,7 @@
                         type='button'
                         class='btn btn-primary'
                         style='display: inline; margin-left: 2;'
-                        href='/'
+                        href='{{$hrefParent}}'
                     >
                         <i class="glyphicon glyphicon-arrow-left">
                         </i>
@@ -93,9 +93,10 @@
                         </div>
                         <div class="form-group" style="margin-left: 5;">
                             <button
-                                type="submit"
                                 class="btn btn-success"
                                 id='selected-submit'
+                                disabled
+                                type="submit"
                             >
                                 Сохранить
                             </button>

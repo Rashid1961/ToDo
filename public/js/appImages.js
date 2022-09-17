@@ -54,13 +54,13 @@ $(document).ready(function() {
     if (idList == 0 && idItem == 0) {
         $('#title-image').html('Пользователь: ' + titleImg);
     }
-    else if (idList < 0)  {
+    else if (idList < 0)  {             // Новый (несохранённый) список
         $('#change-img').css('display', 'none');
         $('#del-img').css('display', 'none');
         $('#title-image').html('Изменение изображения возможно только после сохранения<br/>' +
                               'списка "' +titleImg + '"');
     }
-    else if (idItem < 0) {
+    else if (idItem < 0) {              // Новый (несохранённый) пункт
         $('#change-img').css('display', 'none');
         $('#del-img').css('display', 'none');
         $('#title-image').html('Изменение изображения возможно только после сохранения<br/>' +
@@ -103,36 +103,42 @@ function showImage(idList, idItem, imgPath, titleImg) {
             }
             reader.readAsDataURL(files[0]);
         }
+        $('#selected-submit').removeAttr('disabled', false);
     });
 
-    // Нажата кнопка "Загрузить"
+    // Нажата кнопка "Сохранить"
     $('#selected-submit').click(function() {
-        $('#select-file-form').on('submit', function(e) {
-            e.preventDefault();
-            let $form = $(e.currentTarget);
-            $.ajax({
-                url:         '/Images/uploadImage',
-                type:        'post',
-                dataType:    'json',
-                cache:       false,
-                contentType: false,
-                processData: false,
-                data :       new FormData($form[0]),
-                success : function(result) {
-                    $('#select-file-form').addClass('hide');
-                    if (idList == 0 && idItem == 0) { // Изображение пользователя
-                        storageSetItem("idUser", "idUser");
+        //if($.trim($('#selected-image').val()).length){      //Файл выбран
+            $('#select-file-form').on('submit', function(e) {
+                e.preventDefault();
+                let $form = $(e.currentTarget);
+                $.ajax({
+                    url:         '/Images/uploadImage',
+                    type:        'post',
+                    dataType:    'json',
+                    cache:       false,
+                    contentType: false,
+                    processData: false,
+                    data :       new FormData($form[0]),
+                    success : function(result) {
+                        $('#select-file-form').addClass('hide');
+                        if (idList == 0 && idItem == 0) { // Изображение пользователя
+                            storageSetItem("idUser", "idUser");
+                        }
+                        else if (idItem == 0) {            // Изображение списка
+                            storageSetItem("idList", idList);
+                        }
+                        else {                              // Изображение пункта    
+                            storageSetItem("idItem", idItem);
+                        }
+                        $('#del-img').removeAttr('display');
                     }
-                    else if (idItem == 0) {            // Изображение списка
-                        storageSetItem("idList", idList);
-                    }
-                    else {                              // Изображение пункта    
-                        storageSetItem("idItem", idItem);
-                    }
-                    $('#del-img').removeAttr('display');
-                }
+                });
             });
-        });        
+        //}
+        //else {
+        //    errAction('selectImage', -5);
+        //}
     });
 
     // Нажата кнопка "Удалить изображение"
@@ -164,9 +170,5 @@ function showImage(idList, idItem, imgPath, titleImg) {
             }
         });
 
-    });
-
-    $('#return-todo').click(function () {
-        location.href = "todo.test";
     });
 }

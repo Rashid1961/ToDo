@@ -18,6 +18,7 @@ class ItemsController extends Controller
             'idList'          => $idList,
             'titleList'       => $request->input('titleList'),
             'numberItemsList' => $request->input('numberItemsList'),
+            'hrefParent'      => $request->input('hrefParent'),
         ];
         return view('items', $data);
     }

@@ -2,6 +2,7 @@ var noImageList = "/images/lists/noListImage.jpg";
 var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
 var lists = [];
 var iCur = '';
+var hrefParent = '';
 
 $(document).ready(function() {
     $.ajaxSetup({
@@ -60,9 +61,9 @@ function showLists() {
         noLists();
     }
     else {
-        let hrefReturn = $(location).attr('href');
+        let hrefParent = $(location).attr('href');
         for (let i = 0; i < lists.length; i++) {
-            addOneListFromUserList(i, hrefReturn);
+            addOneListFromUserList(i, hrefParent);
         }
     }
     $("#lists").after(
@@ -115,7 +116,7 @@ function noLists(){
 /**
  *  Вывод одного списка (существующего или нового)
  */
-function addOneListFromUserList(idxArr = -1, hrefReturn) {
+function addOneListFromUserList(idxArr = -1, hrefParent) {
     if (idxArr < 0 || idxArr >= lists.length) {
         return false;
     }
@@ -128,7 +129,7 @@ function addOneListFromUserList(idxArr = -1, hrefReturn) {
                         '&idItem=' + '0' +
                         '&imgPath=' + lists[idxArr].image + 
                         '&titleImg='  + lists[idxArr].title +
-                        '&hrefReturn=' + hrefReturn + '"' +
+                        '&hrefParent=' + hrefParent + '"' +
                     ' target="_blank"' +
                 '>' +
                     '<img' +
@@ -162,19 +163,16 @@ function addOneListFromUserList(idxArr = -1, hrefReturn) {
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
-                    '<a' + //
-                    //'<button' +                         //
-                    //' id="expand-list-' + idxArr + '"'+ //
+                    '<a' +
                     ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
                     ' href="/Items/expandList/' + lists[idxArr].id +
                         '?&titleList='  + lists[idxArr].title +
                         '&numberItemsList=' + lists[idxArr].number_items +
-                    '"' + //
+                        '&hrefParent=' + hrefParent + '"' +
                     '>' +
                         'Развернуть список' +
-                    '</a>' + //
-                    //'</button>' +                      //
+                    '</a>' +
                 '</div>' +
                 '<div class="row" style="margin: 5 10 5 10;">' +
                     '<button' +
@@ -309,7 +307,7 @@ function deleteList() {
  * Добавление списка
  */
 function appendList() {
-    let hrefReturn = $(location).attr('href');
+    let hrefParent = $(location).attr('href');
     $('#append-list').hide();
     iCur = lists.push({
         id:           -1,
@@ -327,7 +325,7 @@ function appendList() {
                     '&idItem=' + '0' +
                     '&imgPath=' + lists[iCur].image + 
                     '&titleImg='  + lists[iCur].title +
-                    '&hrefReturn=' + hrefReturn + '"' +
+                    '&hrefParent=' + hrefParent + '"' +
                     ' target="_blank"' +
                 '>' +
                     '<img' +
@@ -430,7 +428,7 @@ function saveNewList() {
                 lists[iCur].title = newTitle;
                 lists[iCur].image = noImageList;
                 lists[iCur].preview = noImageListPreview;
-                addOneListFromUserList(iCur, hrefReturn);
+                addOneListFromUserList(iCur, hrefParent);
             }
             else {
                 errAction('appendList', retValue);

@@ -9,10 +9,11 @@ class Images
 {
     /**
      *  Загрузка изображения
+     * 
      * @param $uid  id пользователя
      * @param $file загружаемый файл
-     * @param $idList id списка
-     * @param $idItem id пункта списка
+     * @param $idList id списка (0 - для изображения пользователя)
+     * @param $idItem id пункта списка (0 - для изображений пользователя и списка)
      * 
      * Структура имени файла:
      *      uUUU_vVVV.jpg           - для пользователя
@@ -23,7 +24,7 @@ class Images
      *          III - id пункта
      *          VVV - версия изображения
      * 
-     * @return 1
+     * @return 0/1
      */
     static function uploadImage($uid, $file, $idList, $idItem)
     {
@@ -121,6 +122,11 @@ class Images
 
     /**
      *  Удаление изображения и preview
+     * 
+     * @param $uid  id пользователя
+     * @param $idList id списка (0 - для изображения пользователя)
+     * @param $idItem id пункта списка (0 - для изображений пользователя и списка)
+     * 
      */
     static function delImage($uid, $idList, $idItem)
     {

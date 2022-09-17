@@ -10,7 +10,7 @@
         <meta name="robots" content="noindex,nofollow">
         <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
 
-        <title>ToDo</title>
+        <title>ToDo (пункты списков)</title>
         <!-- Fonts -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700">
@@ -27,15 +27,17 @@
         </style>
     </head>
     <body>
-        <div id='tabName'   hidden>items</div>
-        <div id='id'   hidden>{{$id}}</div>
-        <div id='name'   hidden>{{$name}}</div>
-        <div id='email'  hidden>{{$email}}</div>
-        <div id='image' hidden>{{$image}}</div>
-        <div id='preview' hidden>{{$preview}}</div>
-        <div id='idList' hidden>{{$idList}}</div>
-        <div id='titleList' hidden>{{$titleList}}</div>
+        <div id='tabName'         hidden>items</div>
+        <div id='id'              hidden>{{$id}}</div>
+        <div id='name'            hidden>{{$name}}</div>
+        <div id='email'           hidden>{{$email}}</div>
+        <div id='image'           hidden>{{$image}}</div>
+        <div id='preview'         hidden>{{$preview}}</div>
+        <div id='idList'          hidden>{{$idList}}</div>
+        <div id='titleList'       hidden>{{$titleList}}</div>
         <div id='numberItemsList' hidden>{{$numberItemsList}}</div>
+        <div id='hrefParent'      hidden>{{$hrefParent}}</div>
+
         <!-- Шапка -->
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">

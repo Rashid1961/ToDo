@@ -5,9 +5,13 @@ var items = [];
 var iCurI = '';
 
 var idList   = '';
+var titleList = '';
+var numberItemsList = '';
+var hrefParent = '';
 var idItem   = '';
 var imgPath  = '';
 var titleImg = '';
+var hrefParentForImage = '';
 var filterTags = [
     {id:      []},
     {checked: []}
@@ -47,6 +51,10 @@ $(document).ready(function() {
     idList          = $('#idList').html();
     titleList       = $('#titleList').html();
     numberItemsList = $('#numberItemsList').html();
+    hrefParent      = $('#hrefParent').html();
+    hrefParentForImage = $(location).attr('href');/*hrefParent  + 'Items/expandList/' + idList + '?&titleList=' + titleList.replaceAll(' ', '%20') +
+    '&numberItemsList=' + numberItemsList*/ /*+ '&hrefParent=' + hrefParent;*/
+
     expandList(idList);
 });
 
@@ -79,12 +87,11 @@ function expandList(idList) {
         noItems();
     }
     else {
-        let hrefReturn = $(location).attr('href');
         $('#filter-search').show();
         $('#search-input').css("display", "none");
         $('#search-undo').css("display", "none");
         for (let i = 0; i < items.length; i++) {
-            addOneItemFromItems(i, idList, hrefReturn);
+            addOneItemFromItems(i, idList, hrefParentForImage);
         }
     }
     $("#items").after(
@@ -105,20 +112,20 @@ function expandList(idList) {
                     '>' +
                     'Добавить пункт' +
                 '</button>' +
-                '<button' +
+                '<a' +
                     ' class="btn btn-primary"' +
-                    ' id="return-to-lists"' +
                     ' type="button"' +
                     ' style="display: inline; margin-left: 4;"' +
+                    ' href="' + hrefParent + '"' +
                 '>' +
-                   'Вернуться к спискам' +
-                '</button>' +
+                    '<i class="glyphicon glyphicon-arrow-left"></i>' +
+                    'Вернуться к спискам' +
+                '</a>' +
             '</div>' +
         '</div>'
     );
 
     // Обработка нажатия кнопок
-//    $('#form-items').on('click', ':button', function() {
     $('body').on('click', ':button', function() {
         let clickId = this.id;
         // Сформировать список фильтра
@@ -327,7 +334,7 @@ $("#search-input").on("keyup", function() {
 /**
  *  Вывод одного пункта (существующего или нового)
  */
-function addOneItemFromItems(idxArr = -1, idList, hrefReturn) {
+function addOneItemFromItems(idxArr = -1, idList, hrefParentForImage) {
     if (idxArr < 0 || idxArr >= items.length) {
         return false;
     }
@@ -340,7 +347,7 @@ function addOneItemFromItems(idxArr = -1, idList, hrefReturn) {
                         '&idItem=' + items[idxArr].id +
                         '&imgPath=' + items[idxArr].image + 
                         '&titleImg='  + items[idxArr].title +
-                        '&hrefReturn=' + hrefReturn + '"' +
+                        '&hrefParent=' + hrefParentForImage + '"' +
                     ' target="_blank"' +
                 '>' +
                     '<img' +
@@ -409,7 +416,7 @@ function addOneItemFromItems(idxArr = -1, idList, hrefReturn) {
  * Добавление пункта
  */
 function appendItem(idList) {
-    let hrefReturn = $(location).attr('href');
+    //let hrefParentForImage = $(location).attr('href');
     $('#footer-items').hide();
     iCurI = items.push({
         id:           -1,
@@ -428,7 +435,7 @@ function appendItem(idList) {
                         '&idItem=' +    items[iCurI].id +
                         '&imgPath=' +   items[iCurI].image + 
                         '&titleImg='  + items[iCurI].title +
-                        '&hrefReturn=' + hrefReturn + '"' +
+                        '&hrefParent=' + hrefParentForImage + '"' +
                     ' target="_blank"' +
                 '>' +
                     '<img' +
