@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
 
         <meta name="robots" content="noindex,nofollow">
-        <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+        <link rel="stylesheet" type="text/css" href="/style.css">
 
         <title>ToDo (пункты списков)</title>
         <!-- Fonts -->
@@ -27,16 +27,14 @@
         </style>
     </head>
     <body>
-        <div id='tabName'         hidden>items</div>
-        <div id='id'              hidden>{{$id}}</div>
-        <div id='name'            hidden>{{$name}}</div>
-        <div id='email'           hidden>{{$email}}</div>
-        <div id='image'           hidden>{{$image}}</div>
-        <div id='preview'         hidden>{{$preview}}</div>
-        <div id='idList'          hidden>{{$idList}}</div>
-        <div id='titleList'       hidden>{{$titleList}}</div>
-        <div id='numberItemsList' hidden>{{$numberItemsList}}</div>
-        <div id='hrefParent'      hidden>{{$hrefParent}}</div>
+        <div id='id'           hidden>{{$id}}</div>
+        <div id='name'         hidden>{{$name}}</div>
+        <div id='email'        hidden>{{$email}}</div>
+        <div id='image'        hidden>{{$image}}</div>
+        <div id='preview'      hidden>{{$preview}}</div>
+        <div id='idList'       hidden>{{$idList}}</div>
+        <div id='titleList'    hidden>{{$titleList}}</div>
+        <div id='number_items' hidden>{{$number_items}}</div>
 
         <!-- Шапка -->
         <nav class="navbar navbar-default navbar-fixed-top">
@@ -95,7 +93,7 @@
                                             aria-expanded="true"
                                         >
                                             <i
-                                                class="glyphicon glyphicon-filter"
+                                                class="fa fa-filter"
                                                 style="margin-right: 5;"
                                             >
                                             </i>
@@ -118,7 +116,7 @@
                                         type='button'
                                         class='btn btn-primary'
                                     >
-                                        <i class="glyphicon glyphicon-search">
+                                        <i class="fa fa-search">
                                         </i>
                                         Поиск по наименованию
                                     </button>
@@ -134,7 +132,7 @@
                                         type='button'
                                         class='btn btn-danger'
                                     >
-                                        <i class="glyphicon glyphicon-remove">
+                                        <i class="fa fa-times">
                                         </i>
                                         Отменить
                                     </button>

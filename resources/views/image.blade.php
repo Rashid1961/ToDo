@@ -32,44 +32,44 @@
         </style>
     </head>
     <body>
-        <div id='tabName'    hidden>image</div>
+        <div id='id'         hidden>{{$id}}</div>
         <div id='idList'     hidden>{{$idList}}</div>
         <div id='idItem'     hidden>{{$idItem}}</div>
         <div id='imgPath'    hidden>{{$imgPath}}</div>
         <div id='titleImg'   hidden>{{$titleImg}}</div>
-        <div id='hrefParent' hidden>{{$hrefParent}}</div>
+        <div id='hrefRet'    hidden>{{$hrefRet}}</div>
 
         <div class = 'container' id = 'image' style = 'margin-left: auto;'>
             <div class='form-inline'  style='text-align: center; margin-top: 20'>
-                <!-- "Изменить изображение", "Удалить изображение", "На основную страницу", "Выбор файла" -->
+                <!-- "Изменить изображение", "Удалить изображение", "Вернуться к ...", "Выбор файла" -->
                 <div class='form-horizontal'  style='margin-bottom: 10px;'>
                     <button
-                        id='change-img'
-                        type='button'
                         class='btn btn-primary'
+                        id='change-img'
                         style='display: inline; margin-right: 2;'
+                        type='button'
                     >
-                       Изменить изображение
+                        <i class="fa fa-file-image-o" style="margin-right: 5;"></i>
+                        Изменить изображение
                     </button>
 
                     <button
-                        id='del-img' 
-                        type='button'
                         class='btn btn-danger'
+                        id='del-img' 
                         style='display: inline; margin-left: 2;'
+                        type='button'
                     >
+                        <i class="fa fa-trash-o" style="margin-right: 5;"></i>
                         Удалить изображение
                     </button>
-                        
+                    
+                    <!-- Вернуться к ... -->
                     <a
-                        type='button'
                         class='btn btn-primary'
+                        id='goBack'
                         style='display: inline; margin-left: 2;'
-                        href='{{$hrefParent}}'
+                        type='button'
                     >
-                        <i class="glyphicon glyphicon-arrow-left">
-                        </i>
-                        На основную страницу
                     </a>
                         
                     <!-- Выбор файла для загрузки -->
@@ -98,6 +98,7 @@
                                 disabled
                                 type="submit"
                             >
+                            <i class="fa fa-floppy-o" style="margin-right: 5;"></i>
                                 Сохранить
                             </button>
                         </div>

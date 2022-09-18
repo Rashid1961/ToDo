@@ -11,11 +11,12 @@ class ImagesController extends Controller
     // Вывод изображения
     public function showImage(Request $request) {
         $data = [
+            'id'         => auth()->user()->id,
             'idList'     => $request->input('idList'),
             'idItem'     => $request->input('idItem'),
             'imgPath'    => $request->input('imgPath'),
             'titleImg'   => $request->input('titleImg'),
-            'hrefParent' => $request->input('hrefParent'),
+            'hrefRet'   => $request->input('hrefRet'),
         ];
         return view('image', $data);
     }

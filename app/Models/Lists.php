@@ -34,6 +34,34 @@ class Lists
     }
 
     /**
+     *  Один список пользователя и количество пунктов в нём
+     */
+    static function getOneList($uid, $idList)
+    {
+        $row = DB::selectOne(
+            "
+                SELECT
+                    l.id,
+                    l.title,
+                    l.image,
+                    l.preview,
+                    (
+                        SELECT
+                            count(*)
+                        FROM items AS i
+                        WHERE i.id_list = l.id
+                    ) AS number_items
+                FROM lists AS l
+                WHERE l.id_user = ?
+                  AND l.id = ?
+                ORDER BY l.title
+            ", [$uid, $idList]
+        );
+
+        return ($row ? $row : []);
+    }
+
+    /**
      *  Изменение наименования списка
      */
     static function changeTitleList ($uid, $idList, $titleList) {

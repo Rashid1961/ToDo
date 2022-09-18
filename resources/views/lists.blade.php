@@ -6,9 +6,8 @@
         <meta charset="utf-8">
         <meta name="csrf-token" content="{{csrf_token()}}">
         <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
-
         <meta name="robots" content="noindex,nofollow">
-        <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+        <link rel="stylesheet" type="text/css" href="style.css">
 
         <title>ToDo (списки)</title>
         <!-- Fonts -->
@@ -27,7 +26,6 @@
         </style>
     </head>
     <body>
-        <div id='tabName'   hidden>todo</div>
         <!-- Шапка -->
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
@@ -72,6 +70,7 @@
                     </table>
                 </div>
             </form>
+
         <!-- JavaScripts -->
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"
@@ -83,6 +82,7 @@
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
             crossorigin="anonymous">
         </script>
+
         <script src="/js/jquery.notification.min.js"></script>
         <script src="/js/utils.js"></script>
         <script src="/js/appLists.js"></script>

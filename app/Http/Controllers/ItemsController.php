@@ -3,22 +3,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Lists;
 use App\Models\Items;
 
 class ItemsController extends Controller
 {
     // Вывод пунктов списка
-    public function expandList($idList, Request $request){
+    public function expandList($idList) { 
+        $list = (array)Lists::getOneList(auth()->user()->id, $idList);
         $data = [
-            'id'              => auth()->user()->id,
-            'name'            => auth()->user()->name,
-            'email'           => auth()->user()->email,
-            'image'           => auth()->user()->image,
-            'preview'         => auth()->user()->preview,
-            'idList'          => $idList,
-            'titleList'       => $request->input('titleList'),
-            'numberItemsList' => $request->input('numberItemsList'),
-            'hrefParent'      => $request->input('hrefParent'),
+            'id'           => auth()->user()->id,
+            'name'         => auth()->user()->name,
+            'email'        => auth()->user()->email,
+            'image'        => auth()->user()->image,
+            'preview'      => auth()->user()->preview,
+            'idList'       => $idList,
+            'titleList'    => $list['title'],
+            'number_items' => $list['number_items'],
         ];
         return view('items', $data);
     }

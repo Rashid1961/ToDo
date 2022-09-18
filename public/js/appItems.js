@@ -4,14 +4,15 @@ var noImageItemPreview = "/images/items/preview/noItemPreview.jpg";
 var items = [];
 var iCurI = '';
 
-var idList   = '';
-var titleList = '';
-var numberItemsList = '';
-var hrefParent = '';
+var idList       = '';
+var hrefLists    = ''
+var titleList    = '';
+var number_items = '';
+
 var idItem   = '';
 var imgPath  = '';
 var titleImg = '';
-var hrefParentForImage = '';
+var hrefItem = '';
 var filterTags = [
     {id:      []},
     {checked: []}
@@ -41,19 +42,19 @@ $(document).ready(function() {
     window.addEventListener('storage', (event) => {
         if (event.storageArea != localStorage) return;
         let lsKey = event.key;
-        if (lsKey === 'idItem') {
+        if (lsKey === 'idItemChangeImage') {
             let lsVal = storageGetItem(lsKey);
             changeImageItem(lsVal, idList);
             localStorage.removeItem(lsKey);
         }
     });
 
-    idList          = $('#idList').html();
-    titleList       = $('#titleList').html();
-    numberItemsList = $('#numberItemsList').html();
-    hrefParent      = $('#hrefParent').html();
-    hrefParentForImage = $(location).attr('href');/*hrefParent  + 'Items/expandList/' + idList + '?&titleList=' + titleList.replaceAll(' ', '%20') +
-    '&numberItemsList=' + numberItemsList*/ /*+ '&hrefParent=' + hrefParent;*/
+    idList       = $('#idList').html();
+    titleList    = $('#titleList').html();
+    number_items = $('#number_items').html();
+
+    hrefItems = $(location).attr('href');
+    hrefLists = hrefItems.substring(0, hrefItems.indexOf('Items/'));
 
     expandList(idList);
 });
@@ -79,7 +80,7 @@ function expandList(idList) {
 
     $("#one-item").empty();
     $("#footer-items").empty();
-    $('#form-items').show();
+    //$('#form-items').show();
     
     $("#list-name").html(titleList);
 
@@ -91,7 +92,7 @@ function expandList(idList) {
         $('#search-input').css("display", "none");
         $('#search-undo').css("display", "none");
         for (let i = 0; i < items.length; i++) {
-            addOneItemFromItems(i, idList, hrefParentForImage);
+            addOneItemFromItems(i, idList, hrefItems);
         }
     }
     $("#items").after(
@@ -107,18 +108,19 @@ function expandList(idList) {
                 '<button' +
                     ' class="btn btn-success"' +
                     ' id="append-item"' + 
-                    ' type="button"' +
                     ' style="display: inline; margin-right: 4;"' +
+                    ' type="button"' +
                     '>' +
+                    '<i class="fa fa-plus" style="margin-right: 5;"></i>' +
                     'Добавить пункт' +
                 '</button>' +
                 '<a' +
                     ' class="btn btn-primary"' +
-                    ' type="button"' +
                     ' style="display: inline; margin-left: 4;"' +
-                    ' href="' + hrefParent + '"' +
+                    ' type="button"' +
+                    ' href="' + hrefLists + '"' +
                 '>' +
-                    '<i class="glyphicon glyphicon-arrow-left"></i>' +
+                '   <i class="fa fa-reply" style="margin-right: 5;"></i>' +
                     'Вернуться к спискам' +
                 '</a>' +
             '</div>' +
@@ -221,7 +223,7 @@ function noItems(){
                 k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
                 filterTags.checked.push(false);
                 $('#ul-filter').append(
-                    '<li style="padding-left: 3; padding-right: 3;">' +
+                    '<li style="padding-left: 5; padding-right: 3;">' +
                         '<label class="form-check-label"  style="margin-bottom: 0">' +
                             '<input' +
                             ' type="checkbox"' +
@@ -239,23 +241,24 @@ function noItems(){
         $('#ul-filter').append(
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
-                    ' id="apply-filter"'+
-                    ' type="button"' +
                     ' class="btn btn-block btn-primary"' +
-                    'style="margin-bottom: 5;"' +
+                    ' id="apply-filter"'+
+                    ' style="margin-bottom: 5; text-align: left;"' +
+                    ' type="button"' +
                 '>' +
-                    '<i class="glyphicon glyphicon-ok" style="margin-right: 5;">' +
+                    '<i class="fa fa-check" style="margin-right: 5;">' +
                     '</i>' +
                     'Применить' +
                 '</button>' +
             '</li>' +
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
-                    ' id="undo-filter"'+
-                    ' type="button"' +
                     ' class="btn btn-block btn-danger"' +
+                    ' id="undo-filter"'+
+                    ' style="text-align: left;"' +
+                    ' type="button"' +
                 '>' +
-                    '<i class="glyphicon glyphicon-remove" style="margin-right: 5;">' +
+                    '<i class="fa fa-times" style="margin-right: 5;">' +
                     '</i>' +
                 'Сбросить' +
                 '</button>' +
@@ -334,7 +337,7 @@ $("#search-input").on("keyup", function() {
 /**
  *  Вывод одного пункта (существующего или нового)
  */
-function addOneItemFromItems(idxArr = -1, idList, hrefParentForImage) {
+function addOneItemFromItems(idxArr = -1, idList, hrefItems) {
     if (idxArr < 0 || idxArr >= items.length) {
         return false;
     }
@@ -346,8 +349,8 @@ function addOneItemFromItems(idxArr = -1, idList, hrefParentForImage) {
                         '&idList=' + idList   +
                         '&idItem=' + items[idxArr].id +
                         '&imgPath=' + items[idxArr].image + 
-                        '&titleImg='  + items[idxArr].title +
-                        '&hrefParent=' + hrefParentForImage + '"' +
+                        '&titleImg='  + items[idxArr].title.replace(' ', '%20') +
+                        '&hrefRet=' + hrefItems + '"' +
                     ' target="_blank"' +
                 '>' +
                     '<img' +
@@ -382,28 +385,34 @@ function addOneItemFromItems(idxArr = -1, idList, hrefParentForImage) {
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
                     '<button' +
-                    ' id="edit-item-' + idxArr + '"'+
-                    ' type="button"' +
-                    ' class="btn btn-block btn-primary"' +
+                        ' class="btn btn-block btn-primary"' +
+                        ' id="edit-item-' + idxArr + '"'+
+                        ' style="text-align: left"' +
+                        ' type="button"' +
                     '>' +
+                        '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
                         'Изменить наименование' +
                     '</button>' +
                 '</div>' +
                 '<div class="row" style="margin: 5 10 5 10;">' +
                     '<button' +
-                    ' id="edit-tags-' + idxArr + '"'+
-                    ' type="button"' +
-                    ' class="btn btn-block btn-primary"' +
+                        ' class="btn btn-block btn-primary"' +
+                        ' id="edit-tags-' + idxArr + '"'+
+                        ' style="text-align: left"' +
+                        ' type="button"' +
                     '>' +
+                        '<i class="fa fa-slack" style="margin-right: 5;"></i>' +
                         'Изменить теги' +
                     '</button>' +
                 '</div>' +
                 '<div class="row" style="margin: 5 10 10 10;">' +
                     '<button' +
-                        ' id="del-item-' + idxArr + '"' +
-                        ' type="button"' +
                         ' class="btn btn-block btn-danger"' +
+                        ' id="del-item-' + idxArr + '"' +
+                        ' style="text-align: left"' +
+                        ' type="button"' +
                     '>' +
+                        '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
                         'Удалить пункт' +
                     '</button>' +
                 '</div>' +
@@ -416,7 +425,6 @@ function addOneItemFromItems(idxArr = -1, idList, hrefParentForImage) {
  * Добавление пункта
  */
 function appendItem(idList) {
-    //let hrefParentForImage = $(location).attr('href');
     $('#footer-items').hide();
     iCurI = items.push({
         id:           -1,
@@ -434,8 +442,8 @@ function appendItem(idList) {
                         '&idList=' +    idList   +
                         '&idItem=' +    items[iCurI].id +
                         '&imgPath=' +   items[iCurI].image + 
-                        '&titleImg='  + items[iCurI].title +
-                        '&hrefParent=' + hrefParentForImage + '"' +
+                        '&titleImg='  + items[iCurI].title.replace(' ', '%20') +
+                        '&hrefRet=' + hrefItems + '"' +
                     ' target="_blank"' +
                 '>' +
                     '<img' +
@@ -470,19 +478,23 @@ function appendItem(idList) {
             '>' + 
                 '<div class="row" style="margin: 10 10 5 10;">' +
                     '<button' +
-                    ' id="save-item-' + iCurI + '"'+
-                    ' type="button"' +
-                    ' class="btn btn-block btn-primary"' +
+                        ' class="btn btn-block btn-primary"' +
+                        ' id="save-item-' + iCurI + '"'+
+                        ' style="text-align: left"' +
+                        ' type="button"' +
                     '>' +
+                        '<i class="fa fa-floppy-o" style="margin-right: 5;"></i>' +
                         'Сохранить пункт' +
                     '</button>' +
                 '</div>' +
                 '<div class="row" style="margin: 5 10 10 10;">' +
                     '<button' +
-                        ' id="cancel-item-' + iCurI + '"' +
-                        ' type="button"' +
                         ' class="btn btn-block btn-danger"' +
+                        ' id="cancel-item-' + iCurI + '"' +
+                        ' style="text-align: left"' +
+                        ' type="button"' +
                     '>' +
+                        '<i class="fa fa-times" style="margin-right: 5;"></i>' +
                         'Не добавлять' +
                     '</button>' +
                 '</div>' +
@@ -523,9 +535,8 @@ function saveNewItem(idList) {
                 items[iCurI].image = noImageItem;
                 items[iCurI].preview = noImageItemPreview;
                 addOneItemFromItems(iCurI, idList, $(location).attr('href'));
-                numberItemsList++;
-                changeNumberItems(iCur);
-                }
+                changeNumberItems(idList, ++number_items);
+            }
             else {
                 errAction('appendItem', retValue);
             }
@@ -713,8 +724,8 @@ function deleteItem(idList) {
             if (retValue == 0) {
                 items.splice(iCurI, 1);
                 $('#item-' + iCurI).remove();
-                numberItemsList--;
-                changeNumberItems(iCur);
+                
+                changeNumberItems(idList, --number_items);
                 if (items.length == 0) {
                     noItems();
                 }
@@ -725,6 +736,15 @@ function deleteItem(idList) {
         },
     });
 }
+
+/**
+ *  Изменение количества пунктов в списке при добавлении / удалении списка
+ *  для изменения в перечне списков
+ */
+function changeNumberItems(idList, counter) {
+    storageSetItem("idListChangeNumberItems", idList + ':' + counter);
+}
+
 
 /**
  * Изменение preview пункта на "основной" вкладке
@@ -757,7 +777,7 @@ function changeImageItem(idItem, idList) {
                         '&idList=' + idList   +
                         '&idItem=' + items[iChng].id +
                         '&imgPath=' + items[iChng].image + 
-                        '&titleImg='  + items[iChng].title
+                        '&titleImg='  + items[iChng].title.replace(' ', '%20')
                     );
                 }
                 if (newPreview.length > 0) {
