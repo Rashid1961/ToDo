@@ -212,7 +212,7 @@ function noItems(){
 /** 
  * Вывод фильтра
  */
- function formFilter() {
+function formFilter() {
     filterTags.id = [];
     filterTags.checked = [];
     $('#ul-filter').html('');
@@ -264,8 +264,24 @@ function noItems(){
                 '</button>' +
             '</li>'
         )
-        $('#filter').show();
     }
+    else {
+        $('#ul-filter').append(
+            '<li style="padding-left: 3; padding-right: 3;">' +
+                '<button' +
+                    ' class="btn btn-block btn-danger"' +
+                    ' id="undo-filter"'+
+                    ' style="text-align: left;"' +
+                    ' type="button"' +
+                '>' +
+                    '<i class="fa fa-times" style="margin-right: 5;">' +
+                    '</i>' +
+                'Тегов ещё нет' +
+                '</button>' +
+            '</li>'
+        )
+    }
+    $('#filter').show();
 }
 
 /**
