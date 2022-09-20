@@ -114,7 +114,7 @@
                 </div>
 
                 <!-- Изображение -->
-                <div class='img-preview' style='margin-bottom: 10px;'> 
+                <div class='img-view' style='margin-bottom: 10px;'> 
                     <img
                         id='upload-img'
                         src='{{$imgPath}}'
@@ -135,6 +135,7 @@
             integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS'
             crossorigin='anonymous'>
         </script>
+
         <script src="/js/jquery.notification.min.js"></script>
         <script src="/js/utils.js"></script>
         <script src="/js/appImages.js"></script>
@@ -142,7 +143,7 @@
 </html>
 
 <Style>
-    .img-preview img {
+    .img-view img {
     max-width: 100%;
     height: auto;
     max-height:100%

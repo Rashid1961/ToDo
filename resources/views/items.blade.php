@@ -72,7 +72,7 @@
         <div class="container" style="margin-top: 50; margin-left: auto;">
             <!-- Пункты списка -->
             <form class="form-horizontal" id="form-items">
-                <!-- Фильтр, Поиск, Наименование списка -->
+                <!-- Верхнее меню: Фильтр, Поиск, Наименование списка -->
                 <div class="form-group" id="items-head" style="margin-bottom: 0;">
                     <table class="table" width="100%">
                         <tbody>
@@ -109,6 +109,7 @@
                                         </ul>
                                     </div>
                                 </td>
+
                                 <!-- "Поиск" -->
                                 <td style="text-align: left; display: flex;">
                                     <button
@@ -155,6 +156,7 @@
                 <div class="form-group">
                     <table class="table" id="items" width="100%">
                         <tbody id="one-item">
+                        <!-- Здесь будет список пунктов и кнопки "Добавить пункт" и "Вернутьчя к спискам" -->
                         </tbody>
                     </table>
                 </div>
@@ -172,6 +174,7 @@
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
             crossorigin="anonymous">
         </script>
+        
         <script src="/js/jquery.notification.min.js"></script>
         <script src="/js/utils.js"></script>
         <script src="/js/appItems.js"></script>

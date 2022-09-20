@@ -66,6 +66,7 @@
                     <table class="table" id="lists" width="100%">
                         <caption style="font-size: 200%; color:#000;">Ваши списки</caption>
                         <tbody id="one-list">
+                        <!-- Здесь будет заголовок "Ваши списки", таблица со списками пользователя и кнопка "Добавить список"  -->
                         </tbody>
                     </table>
                 </div>

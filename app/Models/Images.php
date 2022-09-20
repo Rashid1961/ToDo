@@ -15,7 +15,7 @@ class Images
      * @param $idList id списка (0 - для изображения пользователя)
      * @param $idItem id пункта списка (0 - для изображений пользователя и списка)
      * 
-     * Структура имени файла:
+     * Структура имени формируемых файлов изображения и preview:
      *      uUUU_vVVV.jpg           - для пользователя
      *      uUUU_lLLL_vVVV.jpg      - для списка
      *      uUUU_lLLL_iIII_vVVV.jpg - для пункта списка
@@ -45,6 +45,7 @@ class Images
         $oldImage = '';
         $oldPrewview = '';
         
+        // Определение параметров в зависимости от типа загружаемого изображения (Плоьзователь, Список, Пункт)
         if ($idList == 0 && $idItem == 0) { // Пользователь
             $noImage = "/images/users/noUserImage.jpg";
             $noPreview = "/images/users/preview/noUserPreview.jpg";
@@ -67,14 +68,17 @@ class Images
             $params = [$idItem, $idList];
         }
 
+        // Проверка наличия текущих изображения и preview (для определения новой версии и имён файлов для удаления)
         $row = DB::selectOne(
             "
-                SELECT image, preview
+                SELECT
+                    image, preview
                 FROM {$table}
                 WHERE {$where}
             ", $params
         );
 
+        // Определение номера новой версии, если есть запись о текущих изображении и preview 
         if ($row) {
             $oldImage = $row->image;
             $oldPrewview = $row->preview;
@@ -89,7 +93,7 @@ class Images
             }
         }
 
-        $image = $user . $list . $item . $vers . '.jpg';
+        $image = $user . $list . $item . $vers . '.jpg';  // Формирование имени файла изображения и preview
         // Сохранение изображения
         if (Storage:: disk('images')->put('/' . $table . '/' . $image, (string)file_get_contents($file->getRealPath()), 'public')) {
             // Создание и сохранение preview
@@ -108,7 +112,7 @@ class Images
             );
         }
 
-        // Удалeние старых изображений и preview
+        // Удалeние старых изображения и preview
         if ($oldImage !== $noImage) {
             Storage:: disk('images')->delete(str_replace('/images', '', $oldImage));
         }
@@ -144,6 +148,7 @@ class Images
         $image = '';
         $preview = '';
 
+        // Определение параметров в зависимости от типа загружаемого изображения (Плоьзователь, Список, Пункт)
         if ($idList == 0 && $idItem == 0) { // Пользователь
             $noImage = "/images/users/noUserImage.jpg";
             $noPreview = "/images/users/preview/noUserPreview.jpg";
@@ -165,7 +170,8 @@ class Images
             $where = 'id = ? AND id_list = ?';
             $params = [$idItem, $idList];
         }
-        
+
+        // Проверка наличия текущих изображения и preview (для определения имён файлов для удаления)        
         $row = DB::selectOne(
             "
                 SELECT image, preview

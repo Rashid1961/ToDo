@@ -1,3 +1,4 @@
+/* ------------------ С П И С К И ------------------ */
 var noImageList = "/images/lists/noListImage.jpg";
 var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
 var lists = [];
@@ -24,16 +25,17 @@ $(document).ready(function() {
             }
         }
     });
+
+    // Прослушивание событий для обработки переменных из local storage
     window.addEventListener('storage', (event) => {
         if (event.storageArea != localStorage) return;
         let lsKey = event.key;
         let lsVal = storageGetItem(lsKey);
-        if (lsKey === 'idListChangeImage') {
-            // let lsVal = storageGetItem(lsKey);
+        if (lsKey === 'idListChangeImage') {  // Изменилось изображение списка - необходимо перерисовать preview
             changeImageList(lsVal);
             localStorage.removeItem(lsKey);
         }
-        else if (lsKey === 'idListChangeNumberItems') {
+        else if (lsKey === 'idListChangeNumberItems') { // Изменилось количество пунктов списка - необходимо перерисовать
             changeNumberItemsInList(lsVal);
             localStorage.removeItem(lsKey);
         }
@@ -44,7 +46,6 @@ $(document).ready(function() {
     showLists();
 });
 
-/* ------------------ С П И С К И ------------------ /
 /**
  *  Заполнение и отображение таблицы списков
  */
@@ -61,6 +62,7 @@ function showLists() {
 
     $("#one-list").empty();
 
+    // У пользователя нет списков
     if (lists.length == 0) {
         noLists();
     }

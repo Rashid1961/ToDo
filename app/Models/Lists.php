@@ -96,11 +96,10 @@ class Lists
         
                 DB::update(
                     "
-                    UPDATE lists
-                    SET   title = ?
-                    WHERE id = ?
-                    ",
-                    [$titleList, $idList]
+                        UPDATE lists
+                        SET   title = ?
+                        WHERE id = ?
+                    ", [$titleList, $idList]
                 );
                 return 0;
             }
@@ -125,6 +124,7 @@ class Lists
         );
         if ($row) {
             if ($row->id_user == $uid) {
+                // Удаленеие "ссылок" на теги всех пунктов удаляемого списка
                 DB::delete(
                     "
                         DELETE FROM tags_items
@@ -135,12 +135,16 @@ class Lists
                             )
                     ", [$idList]
                 );
+
+                // Удаленеие всех пунктов удаляемого списка
                 DB::delete(
                     "
                         DELETE FROM items
                         WHERE id_list = ?
                     ", [$idList]
                 );
+
+                // Удаленеие списка
                 DB::delete(
                     "
                         DELETE FROM lists
@@ -163,6 +167,7 @@ class Lists
         if(mb_strlen($titleList) < 5) {
             return -4;              // Длина наименования (меньше 5 символов)
         }
+
         $row = DB::selectOne(
             "
                 SELECT
@@ -172,21 +177,26 @@ class Lists
                     AND l.title = ?
             ", [$uid, $titleList]
         );
+
         if ($row) {
             return -3;              // Дублирование наименования списка
         }
+
+        // Добавление списка
         DB::insert(
             "
-            INSERT INTO lists
-                (id_user, title, image)
-            VALUES
-                (?, ?, ?)
+                INSERT INTO lists
+                    (id_user, title, image)
+                VALUES
+                    (?, ?, ?)
             ",            
             [$uid, $titleList, $image]
         );
+
+        // Получение id добавленного списка
         $row = DB::selectOne(
             "
-            SELECT LAST_INSERT_ID() AS id
+                SELECT LAST_INSERT_ID() AS id
             "
         );
         return $row->id;
