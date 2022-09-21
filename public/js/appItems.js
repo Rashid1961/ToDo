@@ -210,34 +210,36 @@ function noItems(){
 }
 
 /** 
- * Вывод фильтра
+ * Формирование и вывод фильтра
  */
 function formFilter() {
-    filterTags.id = [];
-    filterTags.checked = [];
+    filterTags.id = [];         // Массив id тегов для фильтра
+    filterTags.checked = [];    // Массив checkbox'ов для выбора тегов
     $('#ul-filter').html('');
-    let k = 0;
+    let k = -1;                 // текущий индекс массивов filterTags.id и filterTags.checked
     for (i = 0; i < items.length; i++) {
-        for (j = 0; j < items[i].ids_tag.id.length; j++) {
-            if (filterTags.id.indexOf(items[i].ids_tag.id[j]) == -1 ) {
-                k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
-                filterTags.checked.push(false);
-                $('#ul-filter').append(
-                    '<li style="padding-left: 5; padding-right: 3;">' +
-                        '<label class="form-check-label"  style="margin-bottom: 0">' +
-                            '<input' +
-                            ' type="checkbox"' +
-                            ' class="form-check-input"' +
-                            ' style="margin-right: 3;"' +
-                            ' onchange="filterTags.checked[' + k +'] = !filterTags.checked[' + k +']">' +
-                            items[i].ids_tag.name[j] +
-                        '</label>' +
-                    '</li>'
-                );
+        if ('ids_tag' in items[0]) {
+            for (j = 0; j < items[i].ids_tag.id.length; j++) {
+                if (filterTags.id.indexOf(items[i].ids_tag.id[j]) == -1 ) {
+                    k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
+                    filterTags.checked.push(false);
+                    $('#ul-filter').append(
+                        '<li style="padding-left: 5; padding-right: 3;">' +
+                            '<label class="form-check-label"  style="margin-bottom: 0">' +
+                                '<input' +
+                                ' type="checkbox"' +
+                                ' class="form-check-input"' +
+                                ' style="margin-right: 3;"' +
+                                ' onchange="filterTags.checked[' + k +'] = !filterTags.checked[' + k +']">' +
+                                items[i].ids_tag.name[j] +
+                            '</label>' +
+                        '</li>'
+                    );
+                }
             }
         }
     }
-    if (k > 0) {
+    if (k >= 0) {
         $('#ul-filter').append(
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
