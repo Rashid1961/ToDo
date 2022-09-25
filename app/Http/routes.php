@@ -49,4 +49,4 @@ Route::group(['middleware' => 'auth'], function () {
     });
 });
 
-Route::auth();
+Route::auth();  // Авторизация

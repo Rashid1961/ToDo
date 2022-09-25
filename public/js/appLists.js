@@ -6,26 +6,6 @@ var iCur = '';
 var hrefLists = '';
 
 $(document).ready(function() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },                
-        statusCode: { 
-            0: function(){ 
-                alert('Сеть недоступна.');
-            },
-            403: function(){
-              alert( 'Доступ запрещен (403).');
-            },
-            404: function(){ 
-                alert('Запрашиваемая страница не найдена (404).');
-            },
-            500: function(){
-                alert('Внутренняя ошибка сервера (500).');
-            }
-        }
-    });
-
     // Прослушивание событий для обработки переменных из local storage
     window.addEventListener('storage', (event) => {
         if (event.storageArea != localStorage) return;
@@ -64,7 +44,7 @@ function showLists() {
 
     // У пользователя нет списков
     if (lists.length == 0) {
-        noLists();
+        noData('list'); // noLists();
     }
     else {
         for (let i = 0; i < lists.length; i++) {
@@ -108,7 +88,7 @@ function showLists() {
 
 /** 
  * Строка таблицы при отсутствии списков
- */
+ * /
 function noLists(){
     $("#one-list").append(
         '<tr>' +
@@ -117,7 +97,7 @@ function noLists(){
             '</td>' +
         '</tr>'
     );
-}
+}*/
 
 /**
  *  Вывод одного списка (существующего или нового)
@@ -292,7 +272,10 @@ function deleteList() {
                 lists.splice(iCur, 1);
                 $('#list-' + iCur).remove();
                 if (lists.length == 0) {
-                    noLists();
+                    noData('list'); //noLists();
+                }
+                else {
+                    iCur--;
                 }
             }
             else {
@@ -434,8 +417,14 @@ function saveNewList() {
             }
             else {
                 errAction('appendList', retValue);
+                if (iCur > 0) {
+                    iCur--;
+                }
             }
-            if (iCur == 0) {
+            if (lists.length == 0) {
+                noData('list'); //noLists();
+            }
+            else {
                 $('#no-lists').remove();
             }
             $(':button').removeAttr('disabled', false);
@@ -450,6 +439,15 @@ function saveNewList() {
 function cancelNewList() {
     lists.pop();
     $('#list-' + iCur).remove();
+    if (iCur > 0) {
+        iCur--;
+    }
+    if (lists.length == 0) {
+        noData('list'); //noLists();
+    }
+    else {
+        $('#no-lists').remove();
+    }
     $('#append-list').show();
     $(':button').removeAttr('disabled', false);
 }

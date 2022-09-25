@@ -19,26 +19,6 @@ var filterTags = [
 ];
 
 $(document).ready(function() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },                
-        statusCode: { 
-            0: function(){ 
-                alert('Сеть недоступна.');
-            },
-            403: function(){
-              alert( 'Доступ запрещен (403).');
-            },
-            404: function(){ 
-                alert('Запрашиваемая страница не найдена (404).');
-            },
-            500: function(){
-                alert('Внутренняя ошибка сервера (500).');
-            }
-        }
-    });
-
     window.addEventListener('storage', (event) => {
         if (event.storageArea != localStorage) return;
         let lsKey = event.key;
@@ -85,7 +65,7 @@ function expandList(idList) {
     $("#list-name").html(titleList);
 
     if (items.length == 0) {
-        noItems();
+        noData('item'); // noItems();
     }
     else {
         $('#filter-search').show();
@@ -197,17 +177,17 @@ function expandList(idList) {
 
 /** 
  * Строка таблицы при отсутствии пунктов
- */
+ * /
 function noItems(){
     $('#filter-search').hide();
     $("#one-item").append(
         '<tr>' +
-            '<td colspan="3" id="no-item" style="font-size: 150%; text-align: center;">' +
+            '<td colspan="3" id="no-items" style="font-size: 150%; text-align: center;">' +
                 'В списке пока нет ни одного пункта' +
             '</td>' +
         '</tr>'
     );
-}
+}*/
 
 /** 
  * Формирование и вывод фильтра
@@ -559,14 +539,14 @@ function saveNewItem(idList) {
                 errAction('appendItem', retValue);
             }
             if (iCurI == 0) {
-                $('#no-item').remove();
+                $('#no-items').remove();
                 $('#filter-search').show();
                 $('#search-input').css("display", "none");
                 $('#search-undo').css("display", "none");
             }
-            if (iCurI == 0) {
-                $('#no-item').remove;
-            }
+            //if (iCurI == 0) {
+            //    $('#no-items').remove;
+            //}
             $(':button').removeAttr('disabled', false);
             $('#footer-items').show();
         },
@@ -745,7 +725,7 @@ function deleteItem(idList) {
                 
                 changeNumberItems(idList, --number_items);
                 if (items.length == 0) {
-                    noItems();
+                    noData('item'); // noItems();
                 }
             }
             else {
@@ -762,7 +742,6 @@ function deleteItem(idList) {
 function changeNumberItems(idList, counter) {
     storageSetItem("idListChangeNumberItems", idList + ':' + counter);
 }
-
 
 /**
  * Изменение preview пункта на "основной" вкладке

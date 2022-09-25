@@ -23,26 +23,6 @@ var filterTags = [
 ];
 
 $(document).ready(function() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },                
-        statusCode: { 
-            0: function(){ 
-                alert('Сеть недоступна.');
-            },
-            403: function(){
-              alert( 'Доступ запрещен (403).');
-            },
-            404: function(){ 
-                alert('Запрашиваемая страница не найдена (404).');
-            },
-            500: function(){
-                alert('Внутренняя ошибка сервера (500).');
-            }
-        }
-    });
-
     idUser    = $('#id').html();
     idList    = $('#idList').html();
     idItem    = $('#idItem').html();
