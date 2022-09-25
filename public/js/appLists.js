@@ -11,8 +11,8 @@ $(document).ready(function() {
         if (event.storageArea != localStorage) return;
         let lsKey = event.key;
         let lsVal = storageGetItem(lsKey);
-        if (lsKey === 'idListChangeImage') {  // Изменилось изображение списка - необходимо перерисовать preview
-            changeImageList(lsVal);
+        if (lsKey === 'idListChangeImage') {            // Изменилось изображение списка - необходимо перерисовать preview
+            changeImage(lists, lsVal, 0);
             localStorage.removeItem(lsKey);
         }
         else if (lsKey === 'idListChangeNumberItems') { // Изменилось количество пунктов списка - необходимо перерисовать
@@ -44,7 +44,7 @@ function showLists() {
 
     // У пользователя нет списков
     if (lists.length == 0) {
-        noData('list'); // noLists();
+        noData('list');
     }
     else {
         for (let i = 0; i < lists.length; i++) {
@@ -85,19 +85,6 @@ function showLists() {
         }
     });
 }
-
-/** 
- * Строка таблицы при отсутствии списков
- * /
-function noLists(){
-    $("#one-list").append(
-        '<tr>' +
-            '<td colspan="3" id= "no-lists" style="font-size: 150%; text-align: center;">' +
-                'У Вас пока нет ни одного списка' +
-            '</td>' +
-        '</tr>'
-    );
-}*/
 
 /**
  *  Вывод одного списка (существующего или нового)
@@ -272,7 +259,7 @@ function deleteList() {
                 lists.splice(iCur, 1);
                 $('#list-' + iCur).remove();
                 if (lists.length == 0) {
-                    noData('list'); //noLists();
+                    noData('list');
                 }
                 else {
                     iCur--;
@@ -422,7 +409,7 @@ function saveNewList() {
                 }
             }
             if (lists.length == 0) {
-                noData('list'); //noLists();
+                noData('list');
             }
             else {
                 $('#no-lists').remove();
@@ -443,54 +430,13 @@ function cancelNewList() {
         iCur--;
     }
     if (lists.length == 0) {
-        noData('list'); //noLists();
+        noData('list');
     }
     else {
         $('#no-lists').remove();
     }
     $('#append-list').show();
     $(':button').removeAttr('disabled', false);
-}
-
-/**
- * Изменение preview списка на "основной" вкладке
- * при изменении изображения на "дополнительной" вкладке
- */
-function changeImageList(idList) {
-    //let iChng = -1;
-    for (let i = 0; i < lists.length; i++) {
-        if (lists[i].id == idList) {
-            //iChng = i;
-            $.ajax({
-                url:      '/Lists/getImgList',
-                method:   'post',
-                dataType: 'json',
-                async:    true,
-                data: {
-                    'idList':  lists[i].id,
-                },
-                complete: function(response){
-                    let newImage = response.responseJSON.image;
-                    let newPreview = response.responseJSON.preview;
-                    if (newImage.length > 0) {
-                        lists[i].image = newImage;
-                        $('#image-list-' + i).attr('href',
-                            '/Images/showImage?' +
-                            '&idList=' +   lists[i].id +
-                            '&idItem=' + '0' +
-                            '&imgPath=' + lists[i].image + 
-                            '&titleImg='  + lists[i].title.replace(' ', '%20')
-                        );
-                    }
-                    if (newPreview.length > 0) {
-                        lists[i].preview = newPreview;
-                        $('#image-list-' + i).children('img').attr('src', lists[i].preview);
-                    }
-                },
-            });
-            break;
-        }
-    }
 }
 
 /**

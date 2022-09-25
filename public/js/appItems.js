@@ -1,3 +1,4 @@
+/* ------------------ П У Н К Т Ы   С П И С К О В ------------------ */
 var noImageItem = "/images/items/noItemImage.jpg";
 var noImageItemPreview = "/images/items/preview/noItemPreview.jpg";
 
@@ -22,9 +23,9 @@ $(document).ready(function() {
     window.addEventListener('storage', (event) => {
         if (event.storageArea != localStorage) return;
         let lsKey = event.key;
-        if (lsKey === 'idItemChangeImage') {
+        if (lsKey === 'idItemChangeImage') {        // Изменилось изображение пункта - необходимо перерисовать preview
             let lsVal = storageGetItem(lsKey);
-            changeImageItem(lsVal, idList);
+            changeImage(items, idList, lsVal);
             localStorage.removeItem(lsKey);
         }
     });
@@ -39,7 +40,6 @@ $(document).ready(function() {
     expandList(idList);
 });
 
-/* ------------------ П У Н К Т Ы   С П И С К О В ------------------ /
 /** 
  * Вывод пунктов списка
  */
@@ -60,12 +60,11 @@ function expandList(idList) {
 
     $("#one-item").empty();
     $("#footer-items").empty();
-    //$('#form-items').show();
     
     $("#list-name").html(titleList);
 
     if (items.length == 0) {
-        noData('item'); // noItems();
+        noData('item');
     }
     else {
         $('#filter-search').show();
@@ -174,20 +173,6 @@ function expandList(idList) {
         }
     });
 }
-
-/** 
- * Строка таблицы при отсутствии пунктов
- * /
-function noItems(){
-    $('#filter-search').hide();
-    $("#one-item").append(
-        '<tr>' +
-            '<td colspan="3" id="no-items" style="font-size: 150%; text-align: center;">' +
-                'В списке пока нет ни одного пункта' +
-            '</td>' +
-        '</tr>'
-    );
-}*/
 
 /** 
  * Формирование и вывод фильтра
@@ -544,9 +529,6 @@ function saveNewItem(idList) {
                 $('#search-input').css("display", "none");
                 $('#search-undo').css("display", "none");
             }
-            //if (iCurI == 0) {
-            //    $('#no-items').remove;
-            //}
             $(':button').removeAttr('disabled', false);
             $('#footer-items').show();
         },
@@ -725,7 +707,7 @@ function deleteItem(idList) {
                 
                 changeNumberItems(idList, --number_items);
                 if (items.length == 0) {
-                    noData('item'); // noItems();
+                    noData('item');
                 }
             }
             else {
@@ -741,49 +723,4 @@ function deleteItem(idList) {
  */
 function changeNumberItems(idList, counter) {
     storageSetItem("idListChangeNumberItems", idList + ':' + counter);
-}
-
-/**
- * Изменение preview пункта на "основной" вкладке
- * при изменении изображения на "дополнительной" вкладке
- */
-function changeImageItem(idItem, idList) {
-    let iChng = -1;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].id == idItem) {
-            iChng = i;
-            break;
-        }
-    }
-    if (iChng >= 0) {
-        $.ajax({
-            url:      '/Items/getImgItem',
-            method:   'post',
-            dataType: 'json',
-            async:    true,
-            data: {
-                'idItem':  items[iChng].id,
-            },
-            complete: function(response){
-                let newImage = response.responseJSON.image;
-                let newPreview = response.responseJSON.preview;
-                if (newImage.length > 0) {
-                    items[iChng].image = newImage;
-                    $('image-item-' + iChng).attr('href',
-                        '/Images/showImage?' +
-                        '&idList=' + idList   +
-                        '&idItem=' + items[iChng].id +
-                        '&imgPath=' + items[iChng].image + 
-                        '&titleImg='  + items[iChng].title.replace(' ', '%20')
-                    );
-                }
-                if (newPreview.length > 0) {
-                    items[iChng].preview = newPreview;
-                    $('#image-item-' + iChng).children('img').attr('src', items[iChng].preview);
-                }
-
-            },
-        });
-    
-    }
 }

@@ -1,26 +1,26 @@
 var noImageUser = "/images/users/noUserImage.jpg";
 var noImageList = "/images/lists/noListImage.jpg";
 var noImageItem = "/images/items/noItemImage.jpg";
-var noImageUserPreview = "/images/users/preview/noUserPreview.jpg";
-var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
-var noImageItemPreview = "/images/items/preview/noItemPreview.jpg";
+//var noImageUserPreview = "/images/users/preview/noUserPreview.jpg";
+//var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
+//var noImageItemPreview = "/images/items/preview/noItemPreview.jpg";
 
-var lists = [];
-var iCur = '';
+//var lists = [];
+//var iCur = '';
 
-var items = [];
-var iCurI = '';
-var idListForItem = '';
+//var items = [];
+//var iCurI = '';
+//var idListForItem = '';
 
 var idList   = '';
 var idItem   = '';
 var imgPath  = '';
 var titleImg = '';
-var file     = '';
-var filterTags = [
-    {id:      []},
-    {checked: []}
-];
+//var file     = '';
+//var filterTags = [
+//    {id:      []},
+//    {checked: []}
+//];
 
 $(document).ready(function() {
     idUser    = $('#id').html();

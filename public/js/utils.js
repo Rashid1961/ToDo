@@ -27,9 +27,9 @@ var errMess = $.notification.init({
 
 /** 
  * Строка таблицы при отсутствии данных (списков / пунктов)
-* 
-* @param {string} 'list' / 'item'
-*/
+ * 
+ * @param {String} 'list' / 'item'
+ */
 function noData(param){
     if (param === 'item') {
         $('#filter-search').hide();
@@ -43,31 +43,51 @@ function noData(param){
     );
 }
 
-/** 
- * Строка таблицы при отсутствии списков
- * /
- function noLists(){
-    $("#one-list").append(
-        '<tr>' +
-            '<td colspan="3" id= "no-lists" style="font-size: 150%; text-align: center;">' +
-                'У Вас пока нет ни одного списка' +
-            '</td>' +
-        '</tr>'
-    );
-}
+/**
+ * Изменение preview списка / пункта на "основной" вкладке
+ * при изменении изображения на "дополнительной" вкладке
+ * 
+ * @param {Array}   lists / items
+ * @param {Integer} idList
+ * @param {Integer} idItem (0 - для списка)
+ */
+function changeImage(arrData, idList, idItem) {
+    let idSearch    = idItem === 0 ? idList              : idItem;
+    let url         = idItem === 0 ? '/Lists/getImgList' : '/Items/getImgItem';
+    let data        = idItem === 0 ? {'idList': idList}  : {'idItem': idItem};
+    let htmlTagName = idItem === 0 ? '#image-list-'      : '#image-item-'; 
 
-/** 
- * Строка таблицы при отсутствии пунктов
- * /
- function noItems(){
-    $("#one-item").append(
-        '<tr>' +
-            '<td colspan="3" id="no-items" style="font-size: 150%; text-align: center;">' +
-                'В списке пока нет ни одного пункта' +
-            '</td>' +
-        '</tr>'
-    );
-}*/
+    for (let i = 0; i < arrData.length; i++) {
+        if (arrData[i].id == idSearch) {
+            $.ajax({
+                url:      url,
+                method:   'post',
+                dataType: 'json',
+                async:    true,
+                data:     data,
+                complete: function(response){
+                    let newImage = response.responseJSON.image;
+                    let newPreview = response.responseJSON.preview;
+                    if (newImage.length > 0) {
+                        arrData[i].image = newImage;
+                        $(htmlTagName + i).attr('href',
+                            '/Images/showImage?' +
+                            '&idList=' +  idList +
+                            '&idItem=' +  (idItem === 0 ? '0' : idItem) +
+                            '&imgPath=' + newImage + 
+                            '&titleImg='  + arrData[i].title.replace(' ', '%20')
+                        );
+                    }
+                    if (newPreview.length > 0) {
+                        arrData[i].preview = newPreview;
+                        $(htmlTagName + i).children('img').attr('src', newPreview);
+                    }
+                },
+            });
+            break;
+        }
+    }
+}
 
 
 
