@@ -43,19 +43,51 @@ function noData(param){
     );
 }
 
+
 /**
- * Изменение preview списка / пункта на "основной" вкладке
- * при изменении изображения на "дополнительной" вкладке
+ * Формирование ячейки таблицы с preview одного списка / пункта
+ * 
+ * @param {Array}   arrData - массив списков (lists) или пунктов (items)
+ * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
+ * @param {Integer} idList
+ * @param {Integer} idItem (0 - для списка)
+ * @param {Integer} hrefRet - ссылка для возврата
+ */
+function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
+    return  '<td style="text-align: center; width: 170px;">' + 
+                '<a id="preview-' + (idItem === 0 ? 'list' : 'item') + '-' + idxArr + '"' +
+                    ' href="/Images/showImage?' +
+                        '&idList=' + idList +
+                        '&idItem=' + idItem +
+                        '&imgPath=' + arrData[idxArr].image + 
+                        '&titleImg='  + arrData[idxArr].title.replace(' ', '%20') +
+                        '&hrefRet=' + hrefRet + '"' +
+                    ' target="_blank"' +
+                '>' +
+                    '<img' +
+                        ' src=' + arrData[idxArr].preview +
+                        ' width="150px"' +
+                        ' height="150px"' +
+                        ' alt="Изображения нет"' +
+                        ' title="Посмотреть в отдельной вкладке"' +
+                    '/>' +
+                '</a>' +
+            '</td>';
+}
+
+/**
+ * Изменение preview списка / пункта
+ * при изменении изображения
  * 
  * @param {Array}   lists / items
  * @param {Integer} idList
  * @param {Integer} idItem (0 - для списка)
  */
-function changeImage(arrData, idList, idItem) {
+function changePreview(arrData, idList, idItem) {
     let idSearch    = idItem === 0 ? idList              : idItem;
     let url         = idItem === 0 ? '/Lists/getImgList' : '/Items/getImgItem';
     let data        = idItem === 0 ? {'idList': idList}  : {'idItem': idItem};
-    let htmlTagName = idItem === 0 ? '#image-list-'      : '#image-item-'; 
+    let htmlTagName = idItem === 0 ? '#preview-list-'      : '#preview-item-'; 
 
     for (let i = 0; i < arrData.length; i++) {
         if (arrData[i].id == idSearch) {

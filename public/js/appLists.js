@@ -12,7 +12,7 @@ $(document).ready(function() {
         let lsKey = event.key;
         let lsVal = storageGetItem(lsKey);
         if (lsKey === 'idListChangeImage') {            // Изменилось изображение списка - необходимо перерисовать preview
-            changeImage(lists, lsVal, 0);
+            changePreview(lists, lsVal, 0);
             localStorage.removeItem(lsKey);
         }
         else if (lsKey === 'idListChangeNumberItems') { // Изменилось количество пунктов списка - необходимо перерисовать
@@ -95,25 +95,7 @@ function addOneListFromUserList(idxArr = -1, hrefLists) {
     }
     $("#one-list").append(
         '<tr id="list-' + idxArr + '">' +
-            '<td style="text-align: center; width: 170px;">' + 
-                '<a id="image-list-' + idxArr + '"' +
-                    ' href="/Images/showImage?' +
-                        '&idList=' +   lists[idxArr].id +
-                        '&idItem=' + '0' +
-                        '&imgPath=' + lists[idxArr].image + 
-                        '&titleImg='  + lists[idxArr].title.replace(' ', '%20') +
-                        '&hrefRet=' + hrefLists + '"' +
-                    ' target="_blank"' +
-                '>' +
-                    '<img' +
-                        ' src=' + lists[idxArr].preview +
-                        ' width="150px"' +
-                        ' height="150px"' +
-                        ' alt="Изображения нет"' +
-                        ' title="Посмотреть в отдельной вкладке"' +
-                    '/>' +
-                '</a>' +
-            '</td>' +
+            tdPreview(lists, idxArr, lists[idxArr].id, 0, hrefLists) +
             '<td' +
                 ' style="vertical-align: middle;"' +
             '>' +
@@ -286,25 +268,7 @@ function appendList() {
     }) - 1;
     $("#one-list").append(
         '<tr id="list-' + iCur + '">' +
-            '<td style="text-align: center; width: 170px;">' + 
-                '<a id="image-list-' + iCur + '"' +
-                ' href="/Images/showImage?' +
-                    'idList=' +   lists[iCur].id +
-                    '&idItem=' + '0' +
-                    '&imgPath=' + lists[iCur].image + 
-                    '&titleImg='  + lists[iCur].title.replace(' ', '%20') +
-                    '&hrefRet=' + hrefLists + '"' +
-                    ' target="_blank"' +
-                '>' +
-                    '<img' +
-                        ' src=' + lists[iCur].preview +
-                        ' width="150px"' +
-                        ' height="150px"' +
-                        ' alt="Изображения нет"' +
-                        ' title="Посмотреть в отдельной вкладке"' +
-                    '/>' +
-                '</a>' +
-            '</td>' +
+            tdPreview(lists, iCur, lists[iCur].id, 0, hrefLists) + 
             '<td' +
                 ' style="vertical-align: middle;"' +
             '>' +
