@@ -195,7 +195,7 @@ function formFilter() {
                                 ' type="checkbox"' +
                                 ' class="form-check-input"' +
                                 ' style="margin-right: 3;"' +
-                                ' onchange="filterTags.checked[' + k +'] = !filterTags.checked[' + k +']">' +
+                                ' onchange="filterTags.checked[' + k + '] = !filterTags.checked[' + k + ']">' +
                                 items[i].ids_tag.name[j] +
                             '</label>' +
                         '</li>'
@@ -327,24 +327,7 @@ function addOneItemFromItems(idxArr = -1, idList, hrefItems) {
     $("#one-item").append(
         '<tr id="item-' + idxArr + '">' +
             tdPreview(items, idxArr, idList, items[idxArr].id, hrefItems) +
-            '<td' +
-                ' style="vertical-align: middle;"' +
-            '>' +
-                '<div' +
-                    ' id="title-item-' + idxArr + '"' + 
-                    ' class="row text-break"'+
-                    ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
-                '>' +
-                    items[idxArr].title +
-                '</div>' +
-                '<div'+
-                    ' id="tags-item-' + idxArr + '"' +
-                    ' class="row"'+
-                    ' style="margin: 0; color: #2a5885; word-break: break-word;"' +
-                '>' +
-                    items[idxArr].tags + 
-                '</div>' +
-            '</td>' +
+            tdName(items, idxArr, idList, items[idxArr].id) +
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 

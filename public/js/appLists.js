@@ -95,25 +95,8 @@ function addOneListFromUserList(idxArr = -1, hrefLists) {
     }
     $("#one-list").append(
         '<tr id="list-' + idxArr + '">' +
-            tdPreview(lists, idxArr, lists[idxArr].id, 0, hrefLists) +
-            '<td' +
-                ' style="vertical-align: middle;"' +
-            '>' +
-                '<div' +
-                    ' id="title-list-' + idxArr + '"' + 
-                    ' class="row text-break"'+
-                    ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
-                '>' +
-                    lists[idxArr].title +
-                '</div>' +
-                '<div'+
-                    ' id="number-items-list-' + idxArr + '"' +
-                    ' class="row"'+
-                    ' style="margin: 0; color: #777;"' +
-                '>' +
-                    'Пунктов: ' + lists[idxArr].number_items +
-                '</div>' +
-            '</td>' +
+            tdPreview(lists, idxArr, lists[idxArr].id, 0, hrefLists) +  // Preview
+            tdName(lists, idxArr, lists[idxArr].id, 0) +                // Наименование
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 

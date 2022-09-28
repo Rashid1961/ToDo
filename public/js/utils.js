@@ -26,18 +26,22 @@ var errMess = $.notification.init({
 /* ------------------------------------------------------------- */
 
 /** 
- * Строка таблицы при отсутствии данных (списков / пунктов)
+ * Формирование строки таблицы при отсутствии данных (списков / пунктов)
  * 
  * @param {String} 'list' / 'item'
  */
-function noData(param){
+function noData(param) {
     if (param === 'item') {
         $('#filter-search').hide();
     }
     $("#one-" + param).append(
         '<tr>' +
             '<td colspan="3" id= "no-' + param +'s" style="font-size: 150%; text-align: center;">' +
-                (param === 'list' ? 'У Вас пока нет ни одного списка' : 'В списке пока нет ни одного пункта') +
+                (param === 'list' ?
+                    'У Вас нет ни одного списка'
+                :
+                    'В списке нет ни одного пункта'
+                ) +
             '</td>' +
         '</tr>'
     );
@@ -55,6 +59,7 @@ function noData(param){
  */
 function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
     return  '<td style="text-align: center; width: 170px;">' + 
+                // Ссылка на полноформатное изображение
                 '<a id="preview-' + (idItem === 0 ? 'list' : 'item') + '-' + idxArr + '"' +
                     ' href="/Images/showImage?' +
                         '&idList=' + idList +
@@ -64,6 +69,7 @@ function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
                         '&hrefRet=' + hrefRet + '"' +
                     ' target="_blank"' +
                 '>' +
+                    // Preview
                     '<img' +
                         ' src=' + arrData[idxArr].preview +
                         ' width="150px"' +
@@ -74,6 +80,145 @@ function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
                 '</a>' +
             '</td>';
 }
+
+/**
+ * Формирование ячейки таблицы с наименованием одного списка (иколичества списков) / пункта (и тегами)
+ * 
+ * @param {Array}   arrData - массив списков (lists) или пунктов (items)
+ * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
+ * @param {Integer} idList
+ * @param {Integer} idItem (0 - для списка)
+ */
+function tdName(arrData, idxArr, idList, idItem) {
+    return  '<td' +
+                ' style="vertical-align: middle;"' +
+                '>' +
+                '<div' +    // Наименование
+                    ' id="title-' + (idItem === 0 ? 'list' : 'item') + '-' + idxArr + '"' + 
+                    ' class="row text-break"'+
+                    ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
+                '>' +
+                    arrData[idxArr].title +
+                '</div>' +
+                (idItem === 0 ?
+                    (       // Количетсво пунктов для списков
+                        '<div' +
+                            ' id="number-items-list-' + idxArr + '"' +
+                            ' class="row"' +
+                            ' style="margin: 0; color: #777;"' +
+                        '>' +
+                            'Пунктов: ' + arrData[idxArr].number_items +
+                        '</div>'
+                    )
+                :
+                    (       // или  теги для пунктов
+                        '<div' +
+                            ' id="tags-item-' + idxArr + '"' +
+                            ' class="row"' +
+                            ' style="margin: 0; color: #2a5885; word-break: break-word;"' +
+                        '>' +
+                            arrData[idxArr].tags + 
+                        '</div>'
+                    )
+                ) +
+            '</td>';
+}
+
+
+/**
+ * Формирование ячейки таблицы кнопками меню одного списка / пункта
+ * 
+ * @param {Array}   arrData - массив списков (lists) или пунктов (items)
+ * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
+ * @param {Integer} idList
+ * @param {Integer} idItem (0 - для списка)
+ * @param {Array}   arrMenu - массив пунктов меню
+ */
+ function tdMenu(arrData, idxArr, idList, idItem) {
+
+
+// LIST
+'<td' +
+' style="text-align: right; vertical-align: middle; width: 150px;"'+
+'>' + 
+'<div class="row" style="margin: 10 10 5 10;">' +
+    '<a' +
+    ' class="btn btn-block btn-primary"' +
+    ' style="text-align: left"' +
+    ' type="button"' +
+    ' href="/Items/expandList/' + lists[idxArr].id + '"' +
+    '>' +
+    '<i class="fa fa-expand" style="margin-right: 5;"></i>' +
+        'Развернуть список' +
+    '</a>' +
+'</div>' +
+'<div class="row" style="margin: 5 10 5 10;">' +
+    '<button' +
+    ' class="btn btn-block btn-primary"' +
+    ' id="edit-list-' + idxArr + '"' +
+    ' style="text-align: left"' +
+    ' type="button"' +
+    '>' +
+    '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
+        'Изменить наименование' +
+    '</button>' +
+'</div>' +
+'<div class="row" style="margin: 5 10 10 10;">' +
+    '<button' +
+        ' class="btn btn-block btn-danger"' +
+        ' id="del-list-' + idxArr + '"' +
+        ' style="text-align: left"' +
+        ' type="button"' +
+    '>' +
+    '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
+        'Удалить список' +
+    '</button>' +
+'</div>' +
+'</td>' +
+
+
+// ITEM
+'<td' +
+' style="text-align: right; vertical-align: middle; width: 150px;"'+
+'>' + 
+'<div class="row" style="margin: 10 10 5 10;">' +
+    '<button' +
+        ' class="btn btn-block btn-primary"' +
+        ' id="edit-item-' + idxArr + '"'+
+        ' style="text-align: left"' +
+        ' type="button"' +
+    '>' +
+        '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
+        'Изменить наименование' +
+    '</button>' +
+'</div>' +
+'<div class="row" style="margin: 5 10 5 10;">' +
+    '<button' +
+        ' class="btn btn-block btn-primary"' +
+        ' id="edit-tags-' + idxArr + '"'+
+        ' style="text-align: left"' +
+        ' type="button"' +
+    '>' +
+        '<i class="fa fa-slack" style="margin-right: 5;"></i>' +
+        'Изменить теги' +
+    '</button>' +
+'</div>' +
+'<div class="row" style="margin: 5 10 10 10;">' +
+    '<button' +
+        ' class="btn btn-block btn-danger"' +
+        ' id="del-item-' + idxArr + '"' +
+        ' style="text-align: left"' +
+        ' type="button"' +
+    '>' +
+        '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
+        'Удалить пункт' +
+    '</button>' +
+'</div>' +
+'</td>' +
+
+
+
+
 
 /**
  * Изменение preview списка / пункта
