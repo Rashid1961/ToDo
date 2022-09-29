@@ -4,6 +4,46 @@ var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
 var lists = [];
 var iCur = '';
 var hrefLists = '';
+var arrListMenuShow = [             // Массив для формировария меню для каждого списка при выводе
+    {
+        type:  'a',
+        class: 'primary',
+        attr:  '/Items/expandList/',
+        icon:  'fa fa-expand',
+        name:  'Развернуть список',
+    },
+    {
+        type:  'button',
+        class: 'primary',
+        attr:  'edit-list-',
+        icon:  'fa fa-pencil',
+        name:  'Изменить наименование',
+    },
+    {
+        type:  'button',
+        class: 'danger',
+        attr:  '"del-list-',
+        icon:  'fa fa-trash-o',
+        name:  'Удалить список',
+    },
+];
+
+var arrListMenuAppend = [           // Массив для формировария при добавлении списка
+    {
+        type:  'button',
+        class: 'primary',
+        attr:  'save-list-',
+        icon:  'fa fa-floppy-o',
+        name:  'Сохранить список',
+    },
+    {
+        type:  'button',
+        class: 'danger',
+        attr:  '"cancel-list-',
+        icon:  'fa fa-times',
+        name:  'Не добавлять',
+    },
+];
 
 $(document).ready(function() {
     // Прослушивание событий для обработки переменных из local storage
@@ -93,10 +133,13 @@ function addOneListFromUserList(idxArr = -1, hrefLists) {
     if (idxArr < 0 || idxArr >= lists.length) {
         return false;
     }
+    arrListMenuShow[1].attr = '/Items/expandList/' + lists[idxArr].id;
     $("#one-list").append(
         '<tr id="list-' + idxArr + '">' +
             tdPreview(lists, idxArr, lists[idxArr].id, 0, hrefLists) +  // Preview
-            tdName(lists, idxArr, lists[idxArr].id, 0) +                // Наименование
+            tdName(lists, idxArr, 0, false) +                           // Наименование
+            tdMenu(idxArr, arrListMenuShow) +
+        /*
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
@@ -134,6 +177,7 @@ function addOneListFromUserList(idxArr = -1, hrefLists) {
                     '</button>' +
                 '</div>' +
             '</td>' +
+        */
         '</tr>'
     );
 }
@@ -249,9 +293,13 @@ function appendList() {
         preview:      noImageListPreview,
         number_items: 0,
     }) - 1;
+    
     $("#one-list").append(
         '<tr id="list-' + iCur + '">' +
-            tdPreview(lists, iCur, lists[iCur].id, 0, hrefLists) + 
+            tdPreview(lists, iCur, lists[iCur].id, 0, hrefLists) +  // Preview
+            tdName(lists, iCur, 0, true) +                          // Наименование
+            tdMenu(idxArr, arrListMenuAppend) +
+            /*
             '<td' +
                 ' style="vertical-align: middle;"' +
             '>' +
@@ -276,6 +324,8 @@ function appendList() {
                     '</div>' +
                 '</div>' +
             '</td>' +
+            */
+
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"' +
             '>' + 
@@ -304,6 +354,8 @@ function appendList() {
             '</td>' +
         '</tr>'
     );
+
+
     $("#title-list-new-" + iCur).focus()
 
     $("#title-list-new-" + iCur).keydown(function(event) {

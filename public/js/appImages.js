@@ -1,26 +1,11 @@
 var noImageUser = "/images/users/noUserImage.jpg";
 var noImageList = "/images/lists/noListImage.jpg";
 var noImageItem = "/images/items/noItemImage.jpg";
-//var noImageUserPreview = "/images/users/preview/noUserPreview.jpg";
-//var noImageListPreview = "/images/lists/preview/noListPreview.jpg";
-//var noImageItemPreview = "/images/items/preview/noItemPreview.jpg";
-
-//var lists = [];
-//var iCur = '';
-
-//var items = [];
-//var iCurI = '';
-//var idListForItem = '';
 
 var idList   = '';
 var idItem   = '';
 var imgPath  = '';
 var titleImg = '';
-//var file     = '';
-//var filterTags = [
-//    {id:      []},
-//    {checked: []}
-//];
 
 $(document).ready(function() {
     idUser    = $('#id').html();
@@ -75,14 +60,14 @@ $(document).ready(function() {
     $('#goBack').attr('href', hrefRet);
 
 
-    showImage(idList, idItem, imgPath, titleImg);
+    showImage(idList, idItem); //, imgPath, titleImg);
 });
 
 /* ------------------ И З О Б Р А Ж Е Н И Я ------------------ /
 /** 
  * Вывод изображения
  */
-function showImage(idList, idItem, imgPath, titleImg) {
+function showImage(idList, idItem) { //, imgPath, titleImg) {
     // Нажата кнопка "Изменить изображение"
     $('#change-img').click(function() {
         $('#select-file-form').removeClass('hide');

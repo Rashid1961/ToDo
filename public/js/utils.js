@@ -53,9 +53,9 @@ function noData(param) {
  * 
  * @param {Array}   arrData - массив списков (lists) или пунктов (items)
  * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
- * @param {Integer} idList
- * @param {Integer} idItem (0 - для списка)
- * @param {Integer} hrefRet - ссылка для возврата
+ * @param {Integer} idList  - id списка, для которого формируются данные
+ * @param {Integer} idItem  - id тега, для которого формируются данные (0 - для списка)
+ * @param {Integer} hrefRet - ссылка для возврата из просмотра полноформатного изображения
  */
 function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
     return  '<td style="text-align: center; width: 170px;">' + 
@@ -82,14 +82,14 @@ function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
 }
 
 /**
- * Формирование ячейки таблицы с наименованием одного списка (иколичества списков) / пункта (и тегами)
+ * Формирование ячейки таблицы с наименованием одного списка с количеством пунктов или пункта с тегами
  * 
  * @param {Array}   arrData - массив списков (lists) или пунктов (items)
  * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
- * @param {Integer} idList
- * @param {Integer} idItem (0 - для списка)
+ * @param {Integer} idItem  - id тега, для которого формируются данные (0 - для списка)
+ * @param {Boolean} editing - редактирование (true) или отображение (false)
  */
-function tdName(arrData, idxArr, idList, idItem) {
+function tdName(arrData, idxArr, idItem, editing) {
     return  '<td' +
                 ' style="vertical-align: middle;"' +
                 '>' +
@@ -98,6 +98,26 @@ function tdName(arrData, idxArr, idList, idItem) {
                     ' class="row text-break"'+
                     ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
                 '>' +
+                (editing === true ?
+                (                                                       // Редактирование
+                    '<div class="row" style="margin: 0">' + 
+                        '<input' + 
+                            ' id="title-' + (idItem === 0 ? 'list' : 'item') + '-new-' + idxArr + '"' + 
+                            ' type="text"' +
+                            ' style="margin: 0; width: 100%"' +
+                            ' value="' + arrData[idxArr].title + '"' +
+                            ' minlength="5"' +
+                            ' maxlength="100"' +
+                            ' required' +
+                        '/>' +
+                        '<div style="font-size: 50%; color: #777;">' +
+                            'От 5 до 100 символов' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+                )
+                :
+                (                                                       // Отображение
                     arrData[idxArr].title +
                 '</div>' +
                 (idItem === 0 ?
@@ -120,113 +140,64 @@ function tdName(arrData, idxArr, idList, idItem) {
                             arrData[idxArr].tags + 
                         '</div>'
                     )
-                ) +
+                ))) +
             '</td>';
 }
 
-
 /**
- * Формирование ячейки таблицы кнопками меню одного списка / пункта
+ * Формирование ячейки таблицы с кнопками меню одного списка / пункта
  * 
- * @param {Array}   arrData - массив списков (lists) или пунктов (items)
- * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
- * @param {Integer} idList
- * @param {Integer} idItem (0 - для списка)
- * @param {Array}   arrMenu - массив пунктов меню
+ * @param {Integer} idxArr  - индекс массива списков (lists) или пунктов (items)
+ * @param {Array}   arrMenu - массив пунктов меню, каждый элемент массива имеет формат:
+ *                              {
+ *                                  type:  'a' | 'button',                          // Тип элемента меню: ссылка ('a') или кнопка ('button')
+ *                                  class: 'primary' | 'danger' | 'success' | ...,  // Тип элементе
+ *                                  attr:  '<href>'  | 'id button',                 // Для ссылки ('a') - значение атрибута href,
+ *                                                                                  // для кнопки ('button') - значение атрибута id (без idxArr)
+ *                                  icon:  'fa fa-...',                             // Иконка на элементе
+ *                                  name:  '<наименование>'                         // Наименование элемента
+ *                              }
  */
- function tdMenu(arrData, idxArr, idList, idItem) {
-
-
-// LIST
-'<td' +
-' style="text-align: right; vertical-align: middle; width: 150px;"'+
-'>' + 
-'<div class="row" style="margin: 10 10 5 10;">' +
-    '<a' +
-    ' class="btn btn-block btn-primary"' +
-    ' style="text-align: left"' +
-    ' type="button"' +
-    ' href="/Items/expandList/' + lists[idxArr].id + '"' +
-    '>' +
-    '<i class="fa fa-expand" style="margin-right: 5;"></i>' +
-        'Развернуть список' +
-    '</a>' +
-'</div>' +
-'<div class="row" style="margin: 5 10 5 10;">' +
-    '<button' +
-    ' class="btn btn-block btn-primary"' +
-    ' id="edit-list-' + idxArr + '"' +
-    ' style="text-align: left"' +
-    ' type="button"' +
-    '>' +
-    '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
-        'Изменить наименование' +
-    '</button>' +
-'</div>' +
-'<div class="row" style="margin: 5 10 10 10;">' +
-    '<button' +
-        ' class="btn btn-block btn-danger"' +
-        ' id="del-list-' + idxArr + '"' +
-        ' style="text-align: left"' +
-        ' type="button"' +
-    '>' +
-    '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
-        'Удалить список' +
-    '</button>' +
-'</div>' +
-'</td>' +
-
-
-// ITEM
-'<td' +
-' style="text-align: right; vertical-align: middle; width: 150px;"'+
-'>' + 
-'<div class="row" style="margin: 10 10 5 10;">' +
-    '<button' +
-        ' class="btn btn-block btn-primary"' +
-        ' id="edit-item-' + idxArr + '"'+
-        ' style="text-align: left"' +
-        ' type="button"' +
-    '>' +
-        '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
-        'Изменить наименование' +
-    '</button>' +
-'</div>' +
-'<div class="row" style="margin: 5 10 5 10;">' +
-    '<button' +
-        ' class="btn btn-block btn-primary"' +
-        ' id="edit-tags-' + idxArr + '"'+
-        ' style="text-align: left"' +
-        ' type="button"' +
-    '>' +
-        '<i class="fa fa-slack" style="margin-right: 5;"></i>' +
-        'Изменить теги' +
-    '</button>' +
-'</div>' +
-'<div class="row" style="margin: 5 10 10 10;">' +
-    '<button' +
-        ' class="btn btn-block btn-danger"' +
-        ' id="del-item-' + idxArr + '"' +
-        ' style="text-align: left"' +
-        ' type="button"' +
-    '>' +
-        '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
-        'Удалить пункт' +
-    '</button>' +
-'</div>' +
-'</td>' +
-
+ function tdMenu(idxArr, arrMenu) {
+    retVal =
+        '<td' +
+            ' style="text-align: right; vertical-align: middle; width: 150px;"'+
+        '>'; 
+    for (let i = 0; i < arrMenu.length; i++) {
+        retVal +=
+            '<div class="row" style="margin: ' + 
+                (i === 0 ?                  '10 10  5 10' :            // Первый элемент меню
+                (i === arrMenu.length - 1 ?  '5 10 10 10' :            // Последний элемент меню
+                                             '5 10  5 10')) + ';"' +   // Средние элементы меню
+            '>' +
+                '<' + arrMenu[i].type +
+                    ' class="btn btn-block btn-' + + arrMenu[i].class + '"' +
+                    ' style="text-align: left"' +
+                    ' type="button"' +
+                    arrMenu[i].type === 'a' ?
+                    (' href="' + arrMenu[i].attr + '"')
+                    :
+                    (' id="' + arrMenu[i].attr + idxArr + '"') +
+                '>' +
+                '<i class="' + arrMenu[i].icon + '" style="margin-right: 5;"></i>' +
+                    arrMenu[i].name +
+                '</' + (arrMenu[i].type === 'a' ? 'a' : 'button') + '>' +
+            '</div>';
+    }
+    retVal +=
+        '</td>';
+    return retVal;
+ }
 
 
 
 
 /**
- * Изменение preview списка / пункта
- * при изменении изображения
+ * Изменение preview списка или пункта при изменении изображения
  * 
- * @param {Array}   lists / items
- * @param {Integer} idList
- * @param {Integer} idItem (0 - для списка)
+ * @param {Array}   lists  - массив списков (lists) или пунктов (items)
+ * @param {Integer} idList - id списка, для которого формируются данные
+ * @param {Integer} idItem - id тега, для которого формируются данные (0 - для списка)
  */
 function changePreview(arrData, idList, idItem) {
     let idSearch    = idItem === 0 ? idList              : idItem;
@@ -270,6 +241,10 @@ function changePreview(arrData, idList, idItem) {
 
 /**
  * Вывод сообщений при ошибках
+ * 
+ * @param {String}           action   - действие, при котором возникла ошибка
+ * @param {String | Integer} response - код ошибки
+ * @param {Boolean}          needExit - необходимость завершить работу (true) или продолжить (false)
  */
 function errAction(action, response, needExit = false) {
     let actions = [
@@ -313,6 +288,8 @@ function errAction(action, response, needExit = false) {
 
 /**
  * Записать значение в localStorage
+ * 
+ * key, value - пара ключ - значение
  */
 function storageSetItem(key, value) {
     const localStorage = window.localStorage;
@@ -323,31 +300,26 @@ function storageSetItem(key, value) {
 }
 
 /**
- * Получить значение из localStorage
+ * Получить значение из localStorage по ключу
  */
-function storageGetItem(key, defaultValue = null) {
+function storageGetItem(key) {
     const localStorage = window.localStorage;
     if (!localStorage) {
-        return defaultValue;
+        return null;
     }
     const value = localStorage.getItem(key);
     if (value === null) {
-        return defaultValue;
+        return null;
     }
     return JSON.parse(value);
 }
 
 /**
- * Удалить ключ из localStorage
+ * Удалить ключ (и значение, соответственно) из localStorage
  */
 function storageDelItem(key) {
     const localStorage = window.localStorage;
-    if (!localStorage) {
-        return defaultValue;
+    if (localStorage) {
+        localStorage.removeItem(key);
     }
-    const value = localStorage.removeItem(key);
-    if (value === null) {
-        return defaultValue;
-    }
-    return JSON.parse(value);
 }

@@ -326,8 +326,9 @@ function addOneItemFromItems(idxArr = -1, idList, hrefItems) {
     }
     $("#one-item").append(
         '<tr id="item-' + idxArr + '">' +
-            tdPreview(items, idxArr, idList, items[idxArr].id, hrefItems) +
-            tdName(items, idxArr, idList, items[idxArr].id) +
+            tdPreview(items, idxArr, idList, items[idxArr].id, hrefItems) +     // Preview
+            tdName(items, idxArr, items[idxArr].id, false) +                    // Наименование
+            /*
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
@@ -365,6 +366,7 @@ function addOneItemFromItems(idxArr = -1, idList, hrefItems) {
                     '</button>' +
                 '</div>' +
             '</td>' +
+            */
         '</tr>'
     );
 }
@@ -384,25 +386,34 @@ function appendItem(idList) {
     }) - 1;
     $("#one-item").append(
         '<tr id="item-' + iCurI + '">' +
-            tdPreview(items, iCurI, idList, items[iCurI].id, hrefItems) +
+            tdPreview(items, iCurI, idList, items[iCurI].id, hrefItems) +   // Preview
+            tdName(items, idxArr, items[iCurI].id, true) +                  // Наименование
+            /*
             '<td' +
                 ' style="vertical-align: middle;"' +
             '>' +
-                '<div class="row" style="margin: 0">' + 
-                    '<input' + 
-                        ' id="title-item-new-' + iCurI + '"' + 
-                        ' type="text"' +
-                        ' style="margi: 0; width: 100%"' +
-                        ' value="' + items[iCurI].title + '"' +
-                        ' minlength="5"' +
-                        ' maxlength="100"' +
-                        ' required' +
-                    '/>' +
-                    '<div style="font-size: 50%; color: #777;">' +
-                        'От 5 до 100 символов' +
-                    '</div>' +
+                '<div' +
+                    ' id="title-item-' + iCurI + '"' +
+                    ' class="row text-break"' +
+                    ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
+                '>' + 
+                    '<div class="row" style="margin: 0">' +
+                        '<input' + 
+                            ' id="title-item-new-' + iCurI + '"' + 
+                            ' type="text"' +
+                            ' style="margi: 0; width: 100%"' +
+                            ' value="' + items[iCurI].title + '"' +
+                            ' minlength="5"' +
+                            ' maxlength="100"' +
+                            ' required' +
+                        '/>' +
+                        '<div style="font-size: 50%; color: #777;">' +
+                            'От 5 до 100 символов' +
+                        '</div>' +
+                    '</div>' +    
                 '</div>' +
             '</td>' +
+            */
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
