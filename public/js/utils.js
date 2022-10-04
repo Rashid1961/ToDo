@@ -158,44 +158,40 @@ function tdName(arrData, idxArr, idItem, editing) {
  *                                  name:  '<наименование>'                         // Наименование элемента
  *                              }
  */
- function tdMenu(idxArr, arrMenu) {
+function tdMenu(idxArr, arrMenu) {
     console.log('idxArr = "' + idxArr + '"');
     console.log('arrMenu = ');
     console.log(arrMenu);
 
-    retVal =
+    let retVal =
         '<td' +
             ' style="text-align: right; vertical-align: middle; width: 150px;"'+
         '>'; 
     for (let i = 0; i < arrMenu.length; i++) {
         retVal +=
             '<div class="row" style="margin: ' + 
-                (i === 0 ?                  '10 10  5 10' :            // Первый элемент меню
-                (i === arrMenu.length - 1 ?  '5 10 10 10' :            // Последний элемент меню
-                                             '5 10  5 10')) + ';"' +   // Средние элементы меню
+                (i == 0 ?                  '10 10  5 10' :            // Первый элемент меню
+                (i == arrMenu.length - 1 ?  '5 10 10 10' :            // Последний элемент меню
+                                            '5 10  5 10')) + ';"' +   // Средние элементы меню
             '>' +
                 '<' + arrMenu[i].type +
-                    ' class="btn btn-block btn-' + + arrMenu[i].class + '"' +
+                    ' class="btn btn-block btn-' + arrMenu[i].class + '"' +
                     ' style="text-align: left"' +
                     ' type="button"' +
-                    arrMenu[i].type === 'a' ?
+                    (arrMenu[i].type === 'a' ?
                     (' href="' + arrMenu[i].attr + '"')
                     :
-                    (' id="' + arrMenu[i].attr + idxArr + '"') +
+                    (' id="' + arrMenu[i].attr + idxArr + '"')) +
                 '>' +
                 '<i class="' + arrMenu[i].icon + '" style="margin-right: 5;"></i>' +
                     arrMenu[i].name +
-                '</' + (arrMenu[i].type === 'a' ? 'a' : 'button') + '>' +
+                '</' + arrMenu[i].type + '>' +
             '</div>';
     }
     retVal +=
         '</td>';
-    console.log('retVal = "' + retVal + '"');
     return retVal;
- }
-
-
-
+}
 
 /**
  * Изменение preview списка или пункта при изменении изображения

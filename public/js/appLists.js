@@ -28,7 +28,7 @@ var arrListMenuShow = [             // Массив для формировар�
     },
 ];
 
-var arrListMenuAppend = [           // Массив для формировария при добавлении списка
+var arrListMenuAppend = [           // Массив для формировария меню при добавлении списка
     {
         type:  'button',
         class: 'primary',
@@ -133,51 +133,12 @@ function addOneListFromUserList(idxArr = -1, hrefLists) {
     if (idxArr < 0 || idxArr >= lists.length) {
         return false;
     }
-    arrListMenuShow[1].attr = '/Items/expandList/' + lists[idxArr].id;
+    arrListMenuShow[0].attr = '/Items/expandList/' + lists[idxArr].id;
     $("#one-list").append(
         '<tr id="list-' + idxArr + '">' +
             tdPreview(lists, idxArr, lists[idxArr].id, 0, hrefLists) +  // Preview
             tdName(lists, idxArr, 0, false) +                           // Наименование
-            tdMenu(idxArr, arrListMenuShow) +
-        /*
-            '<td' +
-                ' style="text-align: right; vertical-align: middle; width: 150px;"'+
-            '>' + 
-                '<div class="row" style="margin: 10 10 5 10;">' +
-                    '<a' +
-                    ' class="btn btn-block btn-primary"' +
-                    ' style="text-align: left"' +
-                    ' type="button"' +
-                    ' href="/Items/expandList/' + lists[idxArr].id + '"' +
-                    '>' +
-                    '<i class="fa fa-expand" style="margin-right: 5;"></i>' +
-                        'Развернуть список' +
-                    '</a>' +
-                '</div>' +
-                '<div class="row" style="margin: 5 10 5 10;">' +
-                    '<button' +
-                    ' class="btn btn-block btn-primary"' +
-                    ' id="edit-list-' + idxArr + '"' +
-                    ' style="text-align: left"' +
-                    ' type="button"' +
-                    '>' +
-                    '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
-                        'Изменить наименование' +
-                    '</button>' +
-                '</div>' +
-                '<div class="row" style="margin: 5 10 10 10;">' +
-                    '<button' +
-                        ' class="btn btn-block btn-danger"' +
-                        ' id="del-list-' + idxArr + '"' +
-                        ' style="text-align: left"' +
-                        ' type="button"' +
-                    '>' +
-                    '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
-                        'Удалить список' +
-                    '</button>' +
-                '</div>' +
-            '</td>' +
-        */
+            tdMenu(idxArr, arrListMenuShow) +                           // Кнопки меню
         '</tr>'
     );
 }
@@ -298,59 +259,7 @@ function appendList() {
         '<tr id="list-' + iCur + '">' +
             tdPreview(lists, iCur, lists[iCur].id, 0, hrefLists) +  // Preview
             tdName(lists, iCur, 0, true) +                          // Наименование
-            tdMenu(idxArr, arrListMenuAppend) +
-            /*
-            '<td' +
-                ' style="vertical-align: middle;"' +
-            '>' +
-                '<div' +
-                    ' id="title-list-' + iCur + '"' + 
-                    ' class="row text-break"'+
-                    ' style="margin: 0; font-size: 175%; word-break: break-word;"' +
-                '>' +
-                    '<div class="row" style="margin: 0">' + 
-                        '<input' + 
-                            ' id="title-list-new-' + iCur + '"' + 
-                            ' type="text"' +
-                            ' style="margi: 0; width: 100%"' +
-                            ' value="' + lists[iCur].title + '"' +
-                            ' minlength="5"' +
-                            ' maxlength="100"' +
-                            ' required' +
-                        '/>' +
-                        '<div style="font-size: 50%; color: #777;">' +
-                            'От 5 до 100 символов' +
-                        '</div>' +
-                    '</div>' +
-                '</div>' +
-            '</td>' +
-            '<td' +
-                ' style="text-align: right; vertical-align: middle; width: 150px;"' +
-            '>' + 
-                '<div class="row" style="margin: 10 10 5 10;">' +
-                    '<button' +
-                        ' class="btn btn-block btn-primary"' +
-                        ' id="save-list-' + iCur + '"'+
-                        ' style="text-align: left"' +
-                        ' type="button"' +
-                    '>' +
-                        '<i class="fa fa-floppy-o" style="margin-right: 5;"></i>' +
-                        'Сохранить список' +
-                    '</button>' +
-                '</div>' +
-                '<div class="row" style="margin: 5 10 10 10;">' +
-                    '<button' +
-                        ' class="btn btn-block btn-danger"' +
-                        ' id="cancel-list-' + iCur + '"' +
-                        ' style="text-align: left"' +
-                        ' type="button"' +
-                    '>' +
-                        '<i class="fa fa-times" style="margin-right: 5;"></i>' +
-                        'Не добавлять' +
-                    '</button>' +
-                '</div>' +
-            '</td>' +
-            */
+            tdMenu(idxArr, arrListMenuAppend) +                     // Кнопки меню
         '</tr>'
     );
 
