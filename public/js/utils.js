@@ -159,6 +159,10 @@ function tdName(arrData, idxArr, idItem, editing) {
  *                              }
  */
  function tdMenu(idxArr, arrMenu) {
+    console.log('idxArr = "' + idxArr + '"');
+    console.log('arrMenu = ');
+    console.log(arrMenu);
+
     retVal =
         '<td' +
             ' style="text-align: right; vertical-align: middle; width: 150px;"'+
@@ -186,6 +190,7 @@ function tdName(arrData, idxArr, idItem, editing) {
     }
     retVal +=
         '</td>';
+    console.log('retVal = "' + retVal + '"');
     return retVal;
  }
 

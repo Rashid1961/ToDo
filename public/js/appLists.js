@@ -324,8 +324,6 @@ function appendList() {
                     '</div>' +
                 '</div>' +
             '</td>' +
-            */
-
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"' +
             '>' + 
@@ -352,6 +350,7 @@ function appendList() {
                     '</button>' +
                 '</div>' +
             '</td>' +
+            */
         '</tr>'
     );
 
