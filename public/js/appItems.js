@@ -19,6 +19,50 @@ var filterTags = [
     {checked: []}
 ];
 
+var arrItemMenuShow = [             // Массив для формировария меню для каждого пункта списка при выводе
+    {
+        type:  'button',
+        class: 'primary',
+        attr:  'edit-item-',
+        icon:  'fa fa-pencil',
+        name:  'Изменить наименование',
+    },
+    {
+        type:  'button',
+        class: 'primary',
+        attr:  '"edit-tags-',
+        icon:  'fa fa-slack',
+        name:  'Изменить теги',
+    },
+,
+    {
+        type:  'button',
+        class: 'danger',
+        attr:  '"del-item-',
+        icon:  'fa fa-trash-o',
+        name:  'Удалить пункт',
+    },
+];
+
+
+var arrItemMenuAppend = [           // Массив для формировария меню при добавлении пункта списка
+    {
+        type:  'button',
+        class: 'primary',
+        attr:  'save-item-',
+        icon:  'fa fa-floppy-o',
+        name:  'Сохранить список',
+    },
+    {
+        type:  'button',
+        class: 'danger',
+        attr:  '"cancel-item-',
+        icon:  'fa fa-times',
+        name:  'Не добавлять',
+    },
+];
+
+
 $(document).ready(function() {
     window.addEventListener('storage', (event) => {
         if (event.storageArea != localStorage) return;
@@ -326,47 +370,9 @@ function addOneItemFromItems(idxArr = -1, idList, hrefItems) {
     }
     $("#one-item").append(
         '<tr id="item-' + idxArr + '">' +
-            tdPreview(items, idxArr, idList, items[idxArr].id, hrefItems) +     // Preview
-            tdName(items, idxArr, items[idxArr].id, false) +                    // Наименование
-            /*
-            '<td' +
-                ' style="text-align: right; vertical-align: middle; width: 150px;"'+
-            '>' + 
-                '<div class="row" style="margin: 10 10 5 10;">' +
-                    '<button' +
-                        ' class="btn btn-block btn-primary"' +
-                        ' id="edit-item-' + idxArr + '"'+
-                        ' style="text-align: left"' +
-                        ' type="button"' +
-                    '>' +
-                        '<i class="fa fa-pencil" style="margin-right: 5;"></i>' +
-                        'Изменить наименование' +
-                    '</button>' +
-                '</div>' +
-                '<div class="row" style="margin: 5 10 5 10;">' +
-                    '<button' +
-                        ' class="btn btn-block btn-primary"' +
-                        ' id="edit-tags-' + idxArr + '"'+
-                        ' style="text-align: left"' +
-                        ' type="button"' +
-                    '>' +
-                        '<i class="fa fa-slack" style="margin-right: 5;"></i>' +
-                        'Изменить теги' +
-                    '</button>' +
-                '</div>' +
-                '<div class="row" style="margin: 5 10 10 10;">' +
-                    '<button' +
-                        ' class="btn btn-block btn-danger"' +
-                        ' id="del-item-' + idxArr + '"' +
-                        ' style="text-align: left"' +
-                        ' type="button"' +
-                    '>' +
-                        '<i class="fa fa-trash-o" style="margin-right: 5;"></i>' +
-                        'Удалить пункт' +
-                    '</button>' +
-                '</div>' +
-            '</td>' +
-            */
+            tdPreview(items, idxArr, idList, items[idxArr].id, hrefItems) +  // Preview
+            tdName(items, idxArr, items[idxArr].id, false) +                 // Наименование
+            tdMenu(idxArr, arrItemMenuShow) +                                // Кнопки меню
         '</tr>'
     );
 }
@@ -386,8 +392,9 @@ function appendItem(idList) {
     }) - 1;
     $("#one-item").append(
         '<tr id="item-' + iCurI + '">' +
-            tdPreview(items, iCurI, idList, items[iCurI].id, hrefItems) +   // Preview
-            tdName(items, idxArr, items[iCurI].id, true) +                  // Наименование
+            tdPreview(items, iCurI, idList, items[iCurI].id, hrefItems) +  // Preview
+            tdName(items, iCurI, items[iCurI].id, true) +                  // Наименование
+            tdMenu(iCurI, arrItemMenuAppend) +                             // Кнопки меню
             /*
             '<td' +
                 ' style="vertical-align: middle;"' +
@@ -413,7 +420,6 @@ function appendItem(idList) {
                     '</div>' +    
                 '</div>' +
             '</td>' +
-            */
             '<td' +
                 ' style="text-align: right; vertical-align: middle; width: 150px;"'+
             '>' + 
@@ -440,6 +446,7 @@ function appendItem(idList) {
                     '</button>' +
                 '</div>' +
             '</td>' +
+            */
         '</tr>'
     );
     $("#title-item-new-" + iCurI).focus()
