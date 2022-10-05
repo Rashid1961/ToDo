@@ -34,7 +34,6 @@ var arrItemMenuShow = [             // Массив для формировар�
         icon:  'fa fa-slack',
         name:  'Изменить теги',
     },
-,
     {
         type:  'button',
         class: 'danger',

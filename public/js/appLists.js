@@ -259,7 +259,7 @@ function appendList() {
         '<tr id="list-' + iCur + '">' +
             tdPreview(lists, iCur, lists[iCur].id, 0, hrefLists) +  // Preview
             tdName(lists, iCur, 0, true) +                          // Наименование
-            tdMenu(idxArr, arrListMenuAppend) +                     // Кнопки меню
+            tdMenu(iCur, arrListMenuAppend) +                       // Кнопки меню
         '</tr>'
     );
 
