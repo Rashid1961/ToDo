@@ -22,21 +22,21 @@ var filterTags = [
 var arrItemMenuShow = [             // Массив для формировария меню для каждого пункта списка при выводе
     {
         type:  'button',
-        class: 'primary',
+        class: 'btn btn-block btn-primary',
         attr:  'edit-item-',
         icon:  'fa fa-pencil',
         name:  'Изменить наименование',
     },
     {
         type:  'button',
-        class: 'primary',
+        class: 'btn btn-block btn-primary',
         attr:  '"edit-tags-',
         icon:  'fa fa-slack',
         name:  'Изменить теги',
     },
     {
         type:  'button',
-        class: 'danger',
+        class: 'btn btn-block btn-danger',
         attr:  '"del-item-',
         icon:  'fa fa-trash-o',
         name:  'Удалить пункт',
@@ -47,14 +47,14 @@ var arrItemMenuShow = [             // Массив для формировар�
 var arrItemMenuAppend = [           // Массив для формировария меню при добавлении пункта списка
     {
         type:  'button',
-        class: 'primary',
+        class: 'btn btn-block btn-primary',
         attr:  'save-item-',
         icon:  'fa fa-floppy-o',
         name:  'Сохранить список',
     },
     {
         type:  'button',
-        class: 'danger',
+        class: 'btn btn-block btn-danger',
         attr:  '"cancel-item-',
         icon:  'fa fa-times',
         name:  'Не добавлять',

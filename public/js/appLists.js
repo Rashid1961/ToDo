@@ -7,21 +7,21 @@ var hrefLists = '';
 var arrListMenuShow = [             // Массив для формировария меню для каждого списка при выводе
     {
         type:  'a',
-        class: 'primary',
+        class: 'btn btn-block btn-primary',
         attr:  '/Items/expandList/',
         icon:  'fa fa-expand',
         name:  'Развернуть список',
     },
     {
         type:  'button',
-        class: 'primary',
+        class: 'btn btn-block btn-primary',
         attr:  'edit-list-',
         icon:  'fa fa-pencil',
         name:  'Изменить наименование',
     },
     {
         type:  'button',
-        class: 'danger',
+        class: 'btn btn-block btn-danger',
         attr:  '"del-list-',
         icon:  'fa fa-trash-o',
         name:  'Удалить список',
@@ -31,14 +31,14 @@ var arrListMenuShow = [             // Массив для формировар�
 var arrListMenuAppend = [           // Массив для формировария меню при добавлении списка
     {
         type:  'button',
-        class: 'primary',
+        class: 'btn btn-block btn-primary',
         attr:  'save-list-',
         icon:  'fa fa-floppy-o',
         name:  'Сохранить список',
     },
     {
         type:  'button',
-        class: 'danger',
+        class: 'btn btn-block btn-danger',
         attr:  '"cancel-list-',
         icon:  'fa fa-times',
         name:  'Не добавлять',

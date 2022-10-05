@@ -150,12 +150,12 @@ function tdName(arrData, idxArr, idItem, editing) {
  * @param {Integer} idxArr  - индекс массива списков (lists) или пунктов (items)
  * @param {Array}   arrMenu - массив пунктов меню, каждый элемент массива имеет формат:
  *                              {
- *                                  type:  'a' | 'button',                          // Тип элемента меню: ссылка ('a') или кнопка ('button')
- *                                  class: 'primary' | 'danger' | 'success' | ...,  // Тип элементе
- *                                  attr:  '<href>'  | 'id button',                 // Для ссылки ('a') - значение атрибута href,
- *                                                                                  // для кнопки ('button') - значение атрибута id (без idxArr)
- *                                  icon:  'fa fa-...',                             // Иконка на элементе
- *                                  name:  '<наименование>'                         // Наименование элемента
+ *                                  type:  'a' | 'button',         // Тип элемента меню: ссылка ('a') или кнопка ('button')
+ *                                  class: 'btn ...',              // Класс кнопки, определяющий её цвет
+ *                                  attr:  '<href>' | 'id button', // Для ссылки ('a') - значение атрибута href,
+ *                                                                 // для кнопки ('button') - значение атрибута id (без idxArr)
+ *                                  icon:  'fa fa-...',            // Иконка на элементе
+ *                                  name:  '<наименование>'        // Наименование элемента
  *                              }
  */
 function tdMenu(idxArr, arrMenu) {
@@ -175,7 +175,7 @@ function tdMenu(idxArr, arrMenu) {
                                             '5 10  5 10')) + ';"' +   // Средние элементы меню
             '>' +
                 '<' + arrMenu[i].type +
-                    ' class="btn btn-block btn-' + arrMenu[i].class + '"' +
+                    ' class="' + arrMenu[i].class + '"' +
                     ' style="text-align: left"' +
                     ' type="button"' +
                     (arrMenu[i].type === 'a' ?

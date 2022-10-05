@@ -1,3 +1,4 @@
+/* ------------------ И З О Б Р А Ж Е Н И Я ------------------ */
 var noImageUser = "/images/users/noUserImage.jpg";
 var noImageList = "/images/lists/noListImage.jpg";
 var noImageItem = "/images/items/noItemImage.jpg";
@@ -13,46 +14,31 @@ $(document).ready(function() {
     idItem    = $('#idItem').html();
     imgPath   = $('#imgPath').html();
     titleImg  = $('#titleImg').html();
-    hrefRet = $('#hrefRet').html();
+    hrefRet   = $('#hrefRet').html();
 
     if (idList == 0 && idItem == 0) {
         $('#title-image').html('Пользователь: ' + titleImg);
     }
-    else if (idList < 0)  {             // Новый (несохранённый) список
+    else if (idList < 0 || idItem < 0)  {
+        // Новый (несохранённый) список (idList < 0) или пункт (idItem < 0)
+        let itIsList = idList < 0 ? true : false;
         $('#change-img').css('display', 'none');
         $('#goBack').html(
             '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
-            'Вернуться к спискам'
+            'Вернуться к ' + (itIsList ? 'спискам' : 'пунктам')
         );
         $('#del-img').css('display', 'none');
-        $('#title-image').html('Изменение изображения возможно только после сохранения нового списка');
+        $('#title-image').html('Изменение изображения возможно только после сохранения нового ' + (itIsList ? 'списка' : 'пункта'));
     }
-    else if (idItem < 0) {              // Новый (несохранённый) пункт
-        $('#change-img').css('display', 'none');
+    else if (idItem == 0) {
+        // Существующий список (idItem == 0) или пункт
+        let itIsList = idItem == 0 ? true : false;
+        $('#title-image').html((itIsList ? 'Список' : 'Пункт') + ' "' + titleImg + '"');
         $('#goBack').html(
             '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
-            'Вернуться к пунктам'
+            'Вернуться к ' + (itIsList ? 'спискам' : 'пунктам')
         );
-        $('#del-img').css('display', 'none');
-        $('#title-image').html('Изменение изображения возможно только после сохранения нового пункта');
-    }
-    else if (idItem == 0) {             // Существующий список
-        $('#title-image').html('Список "' + titleImg + '"');
-        $('#goBack').html(
-            '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
-            'Вернуться к спискам'
-        );
-        if (imgPath == noImageList) {
-            $('#del-img').css('display', 'none');
-        }
-    }
-    else {                              // Существующий пункт
-        $('#title-image').html('Пункт "' +titleImg + '"');
-        $('#goBack').html(
-            '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
-            'Вернуться к пунктам'
-        );
-        if (imgPath == noImageItem) {
+        if (imgPath == (itIsList ? noImageList : noImageItem)) {
             $('#del-img').css('display', 'none');
         }
     }
@@ -60,14 +46,13 @@ $(document).ready(function() {
     $('#goBack').attr('href', hrefRet);
 
 
-    showImage(idList, idItem); //, imgPath, titleImg);
+    showImage(idList, idItem); 
 });
 
-/* ------------------ И З О Б Р А Ж Е Н И Я ------------------ /
 /** 
  * Вывод изображения
  */
-function showImage(idList, idItem) { //, imgPath, titleImg) {
+function showImage(idList, idItem) {
     // Нажата кнопка "Изменить изображение"
     $('#change-img').click(function() {
         $('#select-file-form').removeClass('hide');
