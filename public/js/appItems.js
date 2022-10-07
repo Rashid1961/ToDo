@@ -30,14 +30,14 @@ var arrItemMenuShow = [             // Массив для формировар�
     {
         type:  'button',
         class: 'btn btn-block btn-primary',
-        attr:  '"edit-tags-',
+        attr:  'edit-tags-',
         icon:  'fa fa-slack',
         name:  'Изменить теги',
     },
     {
         type:  'button',
         class: 'btn btn-block btn-danger',
-        attr:  '"del-item-',
+        attr:  'del-item-',
         icon:  'fa fa-trash-o',
         name:  'Удалить пункт',
     },
@@ -55,7 +55,7 @@ var arrItemMenuAppend = [           // Массив для формировар�
     {
         type:  'button',
         class: 'btn btn-block btn-danger',
-        attr:  '"cancel-item-',
+        attr:  'cancel-item-',
         icon:  'fa fa-times',
         name:  'Не добавлять',
     },

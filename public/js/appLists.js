@@ -22,7 +22,7 @@ var arrListMenuShow = [             // Массив для формировар�
     {
         type:  'button',
         class: 'btn btn-block btn-danger',
-        attr:  '"del-list-',
+        attr:  'del-list-',
         icon:  'fa fa-trash-o',
         name:  'Удалить список',
     },
@@ -39,7 +39,7 @@ var arrListMenuAppend = [           // Массив для формировар�
     {
         type:  'button',
         class: 'btn btn-block btn-danger',
-        attr:  '"cancel-list-',
+        attr:  'cancel-list-',
         icon:  'fa fa-times',
         name:  'Не добавлять',
     },

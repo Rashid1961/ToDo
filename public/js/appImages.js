@@ -19,29 +19,28 @@ $(document).ready(function() {
     if (idList == 0 && idItem == 0) {
         $('#title-image').html('Пользователь: ' + titleImg);
     }
-    else if (idList < 0 || idItem < 0)  {
-        // Новый (несохранённый) список (idList < 0) или пункт (idItem < 0)
-        let itIsList = idList < 0 ? true : false;
-        $('#change-img').css('display', 'none');
-        $('#goBack').html(
-            '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
-            'Вернуться к ' + (itIsList ? 'спискам' : 'пунктам')
-        );
-        $('#del-img').css('display', 'none');
-        $('#title-image').html('Изменение изображения возможно только после сохранения нового ' + (itIsList ? 'списка' : 'пункта'));
-    }
-    else if (idItem == 0) {
-        // Существующий список (idItem == 0) или пункт
-        let itIsList = idItem == 0 ? true : false;
-        $('#title-image').html((itIsList ? 'Список' : 'Пункт') + ' "' + titleImg + '"');
-        $('#goBack').html(
-            '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
-            'Вернуться к ' + (itIsList ? 'спискам' : 'пунктам')
-        );
-        if (imgPath == (itIsList ? noImageList : noImageItem)) {
+    else {
+        let itIsList;
+        if (idList < 0 || idItem < 0)  {
+            // Новый (несохранённый) список (idList < 0) или пункт (idItem < 0)
+            itIsList = idList < 0 ? true : false;
+            $('#change-img').css('display', 'none');
             $('#del-img').css('display', 'none');
+            $('#title-image').html('Изменение изображения возможно только после сохранения нового ' + (itIsList ? 'списка' : 'пункта'));
         }
-    }
+        else {
+            // Существующий список (idItem == 0) или пункт
+            itIsList = idItem == 0 ? true : false;
+            $('#title-image').html((itIsList ? 'Список' : 'Пункт') + ' "' + titleImg + '"');
+            if (imgPath == (itIsList ? noImageList : noImageItem)) {
+                $('#del-img').css('display', 'none');
+            }
+        }
+        $('#goBack').html(
+            '<i class="fa fa-reply" style="margin-right: 5;"></i>' +
+            'Вернуться к ' + (itIsList ? 'спискам' : 'пунктам')
+        );
+}
 
     $('#goBack').attr('href', hrefRet);
 
