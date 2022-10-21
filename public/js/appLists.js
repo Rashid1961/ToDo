@@ -21,6 +21,13 @@ var arrListMenuShow = [             // Массив для формировар�
     },
     {
         type:  'button',
+        class: 'btn btn-block btn-success',
+        attr:  'share-list-',
+        icon:  'fa fa-share',
+        name:  'Поделиться',
+    },
+    {
+        type:  'button',
         class: 'btn btn-block btn-danger',
         attr:  'del-list-',
         icon:  'fa fa-trash-o',

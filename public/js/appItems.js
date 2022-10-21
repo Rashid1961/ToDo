@@ -34,6 +34,13 @@ var arrItemMenuShow = [             // Массив для формировар�
     },
     {
         type:  'button',
+        class: 'btn btn-block btn-success',
+        attr:  'share-item-',
+        icon:  'fa fa-share',
+        name:  'Поделиться',
+    },
+    {
+        type:  'button',
         class: 'btn btn-block btn-danger',
         attr:  'del-item-',
         icon:  'fa fa-trash-o',

@@ -47,7 +47,6 @@ function noData(param) {
     );
 }
 
-
 /**
  * Формирование ячейки строки таблицы с preview одного списка / пункта
  * 
@@ -234,6 +233,93 @@ function changePreview(arrData, idList, idItem) {
         }
     }
 }
+
+
+
+/** 
+ * Формирование и вывод списка пользователей
+ * для выбора по нажатию кнопки "Поделиться"
+ * 
+ * @param {Integer} idList - id списка, для которого формируются данные
+ * @param {Integer} idItem - id тега, для которого формируются данные (0 - для списка)
+*/
+ function usersForShare() {
+    users.id = [];         // Массив id тегов пользователей
+    users.checked = [];    // Массив checkbox'ов для выбора пользователей
+    $('#ul-filter').html('');
+    let k = -1;                 // текущий индекс массивов users.id и users.checked
+    for (i = 0; i < items.length; i++) {
+        if ('ids_tag' in items[0]) {
+            for (j = 0; j < items[i].ids_tag.id.length; j++) {
+                if (filterTags.id.indexOf(items[i].ids_tag.id[j]) == -1 ) {
+                    k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
+                    filterTags.checked.push(selectedIdTags.indexOf(filterTags.id[k]) >= 0);
+                    $('#ul-filter').append(
+                        '<li style="padding-left: 5; padding-right: 3;">' +
+                            '<label class="form-check-label"  style="margin-bottom: 0">' +
+                                '<input' +
+                                ' type="checkbox"' +
+                                ' class="form-check-input"' +
+                                ' style="margin-right: 3;"' +
+                                (filterTags.checked[k] ? ' checked' : '') +
+                                ' onchange="filterTags.checked[' + k + '] = !filterTags.checked[' + k + ']">' +
+                                items[i].ids_tag.name[j] +
+                            '</label>' +
+                        '</li>'
+                    );
+                }
+            }
+        }
+    }
+    if (k >= 0) {
+        $('#ul-filter').append(
+            '<li style="padding-left: 3; padding-right: 3;">' +
+                '<button' +
+                    ' class="btn btn-block btn-primary"' +
+                    ' id="apply-filter"'+
+                    ' style="margin-bottom: 5; text-align: left;"' +
+                    ' type="button"' +
+                '>' +
+                    '<i class="fa fa-check" style="margin-right: 5;">' +
+                    '</i>' +
+                    'Применить' +
+                '</button>' +
+            '</li>' +
+            '<li style="padding-left: 3; padding-right: 3;">' +
+                '<button' +
+                    ' class="btn btn-block btn-danger"' +
+                    ' id="undo-filter"'+
+                    ' style="text-align: left;"' +
+                    ' type="button"' +
+                '>' +
+                    '<i class="fa fa-times" style="margin-right: 5;">' +
+                    '</i>' +
+                'Сбросить' +
+                '</button>' +
+            '</li>'
+        )
+    }
+    else {
+        $('#ul-filter').append(
+            '<li style="padding-left: 3; padding-right: 3;">' +
+                '<button' +
+                    ' class="btn btn-block btn-danger"' +
+                    ' id="undo-filter"'+
+                    ' style="text-align: left;"' +
+                    ' type="button"' +
+                '>' +
+                    '<i class="fa fa-times" style="margin-right: 5;">' +
+                    '</i>' +
+                'Тегов ещё нет' +
+                '</button>' +
+            '</li>'
+        )
+    }
+    $('#filter').show();
+}
+
+
+
 
 
 
