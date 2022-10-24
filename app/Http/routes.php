@@ -24,6 +24,10 @@ Route::group(['middleware' => 'auth'], function () {
         return view('lists', $user);
     });
 
+    Route::group(['prefix' => '/Users/'], function () {  //------------------- Пользователи
+        Route::post('/getUsers/{idUser}', 'UsersController@geUsers')->where('idUser', '[0-9]+');    // Получение информации о пользователе / пользователях
+    });
+
     Route::group(['prefix' => '/Lists/'], function () {  //------------------- Списки
         Route::post('/getLists',        'ListsController@getLists');        // Получение списков пользователя
         Route::post('/changeTitleList', 'ListsController@changeTitleList'); // Переименование списка

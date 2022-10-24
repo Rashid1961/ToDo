@@ -10,7 +10,7 @@ class Items
      */
     static function getItems($idList)
     {
-        // Массив пунктов списка тегов, привязанных к ним
+        // Массив пунктов списка и тегов, привязанных к ним
         $items = [
             'items' => [],
             'tags'  => [],  // $items['tags']['id_tag'] = title_tag

@@ -10,6 +10,8 @@ class Lists
      */
     static function getLists($uid)
     {
+        $lists = [];
+
         $rows = DB::select(
             "
                 SELECT
@@ -22,15 +24,45 @@ class Lists
                             count(*)
                         FROM items AS i
                         WHERE i.id_list = l.id
-                    ) AS number_items
+                    ) AS number_items,              # Количество пунктов в списке
+                    (
+                        SELECT
+                            MIN(sii.id_item)
+                        FROM shared_items AS sii
+                        WHERE sii.id_user_owner = l.id_user
+                          AND sii.id_list  = l.id
+                    ) AS shared_items,              # Есть ли расшаренные пункты в списке (если вернёт 0 - расшарен весь список)
+                    (
+                        SELECT
+                            MIN(sir.id_user_reader)
+                        FROM shared_items AS sir
+                        WHERE sir.id_user_owner = l.id
+                          AND sir.id_list = l.id
+                    ) AS shared_for_users           # Рашарено ли для пользователей (если вернёт 0 - расшарен для всех пользователей)
                 FROM lists AS l
                 WHERE l.id_user = ?
                 ORDER BY l.title
             ", [$uid]
         );
 
-        if (count($rows) == 0) return [];
-        else return $rows;
+        if ($rows) {
+            foreach ($rows as $row) {
+                $lists[] = [
+                    'id'               => $row->id,
+                    'title'            => $row->title,
+                    'image'            => $row->image,
+                    'preview'          => $row->preview,
+                    'number_items'     => $row->number_items,   // Количество пунктов в списке
+                    'shared_items'     => (is_null($row->shared_items) ? -1 :               // -1 нет расшаренных пунктов
+                                                                       $row->shared_items), // есть расшаренные пункты (если 0 - расшарен весь список)
+                    'shared_for_users' => (is_null($row->shared_for_users) ? -1 :                       // -1 не расшарено для пользователей
+                                                                             $row->shared_for_users),   // есть для пользователей (если 0 - для всех пользователей)
+                    // если $lists[i]['shared_items'
+                ];
+            }
+        }
+
+        return $lists;
     }
 
     /**
