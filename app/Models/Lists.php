@@ -14,40 +14,59 @@ class Lists
 
         $rows = DB::select(
             "
-                SELECT
-                    l.id,
-                    l.title,
-                    l.image,
-                    l.preview,
-                    (
-                        SELECT
-                            count(*)
-                        FROM items AS i
-                        WHERE i.id_list = l.id
-                    ) AS number_items,              # Количество пунктов в списке
-                    (
-                        SELECT
-                            MIN(sii.id_item)
-                        FROM shared_items AS sii
-                        WHERE sii.id_user_owner = l.id_user
-                          AND sii.id_list  = l.id
-                    ) AS shared_items,              # Есть ли расшаренные пункты в списке (если вернёт 0 - расшарен весь список)
-                    (
-                        SELECT
-                            MIN(sir.id_user_reader)
-                        FROM shared_items AS sir
-                        WHERE sir.id_user_owner = l.id
-                          AND sir.id_list = l.id
-                    ) AS shared_for_users           # Рашарено ли для пользователей (если вернёт 0 - расшарен для всех пользователей)
-                FROM lists AS l
-                WHERE l.id_user = ?
-                ORDER BY l.title
-            ", [$uid]
+                (       #  Собственные списки
+                    SELECT
+                        '0'         AS reader,
+                        l.id,
+                        l.title,
+                        l.image,
+                        l.preview,
+                        (
+                            SELECT
+                                count(*)
+                            FROM items AS i
+                            WHERE i.id_list = l.id
+                        ) AS number_items,              # Количество пунктов в списке
+                        (
+                            SELECT
+                                MIN(sii.id_item)
+                            FROM shared_items AS sii
+                            WHERE sii.id_user_owner = l.id_user
+                              AND sii.id_list  = l.id
+                        ) AS shared_items,              # Есть ли расшаренные пункты в списке (если вернёт 0 - расшарен весь список)
+                        (
+                            SELECT
+                                MIN(sir.id_user_reader)
+                            FROM shared_items AS sir
+                            WHERE sir.id_user_owner = l.id
+                              AND sir.id_list = l.id
+                        ) AS shared_for_users           # Расшарено ли для пользователей (если вернёт 0 - расшарен для всех пользователей)
+                    FROM lists AS l
+                    WHERE l.id_user = ?
+                    ORDER BY l.title
+                )
+                UNION
+                (       #  Списки, расшаренные другими пользователями
+                    SELECT
+                        '1'         AS reader,
+                        l.id,
+                        l.title,
+                        l.image,
+                        l.preview,
+                        '0'         AS number_items,              #
+                        '0'         AS shared_items,              # Для расшаренных не используется
+                        '0'         AS shared_for_users           #
+                        FROM lists AS l
+                            INNER JOIN shared_items AS si ON si.id_user_reader = ?
+                                                          OR (si.id_user_reader = 0 AND si.id_user_reader != ?)
+                )
+            ", [$uid, $uid, $uid]
         );
 
         if ($rows) {
             foreach ($rows as $row) {
                 $lists[] = [
+                    'reader'           => $row->reader,
                     'id'               => $row->id,
                     'title'            => $row->title,
                     'image'            => $row->image,
@@ -57,7 +76,8 @@ class Lists
                                                                        $row->shared_items), // есть расшаренные пункты (если 0 - расшарен весь список)
                     'shared_for_users' => (is_null($row->shared_for_users) ? -1 :                       // -1 не расшарено для пользователей
                                                                              $row->shared_for_users),   // есть для пользователей (если 0 - для всех пользователей)
-                    // если $lists[i]['shared_items' = 0 && $lists[i]['shared_for_users' = 0, значит расшарен весь список для всех рользователей
+                                        // если $lists[i]['shared_items' = 0 && $lists[i]['shared_for_users' = 0, значит расшарен весь список для всех рользователей
+                
                 ];
             }
         }
