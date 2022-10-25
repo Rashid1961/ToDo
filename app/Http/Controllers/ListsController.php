@@ -4,19 +4,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Lists;
-use App\Models\Users;
+//use App\Models\Users;
 
 class ListsController extends Controller
 {
     // Получение списков пользователя
     public function getLists() {
         $uid = auth()->user()->id;
-        $lists = Lists::getLists($uid);
-        if ($lists === []) {
-            return $lists;
-        }
-        $users = Users::getUsers(0);  // Список всех пользователей
-        //return Lists::getLists($uid);
+        return Lists::getLists($uid);
     }
 
     // Переименование списка

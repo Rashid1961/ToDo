@@ -57,7 +57,7 @@ class Lists
                                                                        $row->shared_items), // есть расшаренные пункты (если 0 - расшарен весь список)
                     'shared_for_users' => (is_null($row->shared_for_users) ? -1 :                       // -1 не расшарено для пользователей
                                                                              $row->shared_for_users),   // есть для пользователей (если 0 - для всех пользователей)
-                    // если $lists[i]['shared_items'
+                    // если $lists[i]['shared_items' = 0 && $lists[i]['shared_for_users' = 0, значит расшарен весь список для всех рользователей
                 ];
             }
         }
