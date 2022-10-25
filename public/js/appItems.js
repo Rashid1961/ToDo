@@ -53,7 +53,7 @@ var arrItemMenuAppend = [           // Массив для формировар�
         class: 'btn btn-block btn-primary',
         attr:  'save-item-',
         icon:  'fa fa-floppy-o',
-        name:  'Сохранить список',
+        name:  'Сохранить пункт',
     },
     {
         type:  'button',
