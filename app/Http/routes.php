@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix' => '/Users/'], function () {  //------------------- Пользователи
-        Route::post('/getUsers/{idUser}', 'UsersController@geUsers')->where('idUser', '[0-9]+');    // Получение информации о пользователе / пользователях
+        Route::post('/getUsers/{idUser}', 'UsersController@getUsers')->where('idUser', '[0-9]+');    // Получение информации о пользователе / пользователях
     });
 
     Route::group(['prefix' => '/Lists/'], function () {  //------------------- Списки
