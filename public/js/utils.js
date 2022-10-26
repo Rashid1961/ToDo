@@ -240,13 +240,14 @@ function changePreview(arrData, idList, idItem) {
  * Формирование и вывод списка пользователей
  * для выбора по нажатию кнопки "Поделиться"
  * 
- * @param {Integer} idList - id списка, для которого формируются данные
- * @param {Integer} idItem - id тега, для которого формируются данные (0 - для списка)
+ * @param {Integer} idList - id списка
+ * @param {Integer} idItem - id тега (0 - для списка)
+ * @param {Integer} idx    - индекс массива lists (для списка) или items (для пункта)
 */
- function usersForShare() {
+function usersFilter(idList, idItem, idx) {
     users.id = [];         // Массив id тегов пользователей
     users.checked = [];    // Массив checkbox'ов для выбора пользователей
-    $('#ul-filter').html('');
+    $('#ul-users-filter').html('');
     let k = -1;                 // текущий индекс массивов users.id и users.checked
     for (i = 0; i < items.length; i++) {
         if ('ids_tag' in items[0]) {
@@ -254,7 +255,7 @@ function changePreview(arrData, idList, idItem) {
                 if (filterTags.id.indexOf(items[i].ids_tag.id[j]) == -1 ) {
                     k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
                     filterTags.checked.push(selectedIdTags.indexOf(filterTags.id[k]) >= 0);
-                    $('#ul-filter').append(
+                    $('#ul-users-filter').append(
                         '<li style="padding-left: 5; padding-right: 3;">' +
                             '<label class="form-check-label"  style="margin-bottom: 0">' +
                                 '<input' +
@@ -272,7 +273,7 @@ function changePreview(arrData, idList, idItem) {
         }
     }
     if (k >= 0) {
-        $('#ul-filter').append(
+        $('#ul-users-filter').append(
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
                     ' class="btn btn-block btn-primary"' +
@@ -300,7 +301,7 @@ function changePreview(arrData, idList, idItem) {
         )
     }
     else {
-        $('#ul-filter').append(
+        $('#ul-users-filter').append(
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
                     ' class="btn btn-block btn-danger"' +

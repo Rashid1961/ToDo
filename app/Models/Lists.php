@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\DB;
 class Lists
 {
     /**
-     *  Списки пользователя и количество пунктов в них
+     *  Списки пользователя и 
+     *  расшаренных другими пользователями
      */
     static function getLists($uid)
     {
@@ -65,19 +66,15 @@ class Lists
 
         if ($rows) {
             foreach ($rows as $row) {
-                $lists[] = [
-                    'reader'           => $row->reader,
-                    'id'               => $row->id,
-                    'title'            => $row->title,
-                    'image'            => $row->image,
-                    'preview'          => $row->preview,
-                    'number_items'     => $row->number_items,   // Количество пунктов в списке
-                    'shared_items'     => (is_null($row->shared_items) ? -1 :               // -1 нет расшаренных пунктов
-                                                                       $row->shared_items), // есть расшаренные пункты (если 0 - расшарен весь список)
-                    'shared_for_users' => (is_null($row->shared_for_users) ? -1 :                       // -1 не расшарено для пользователей
-                                                                             $row->shared_for_users),   // есть для пользователей (если 0 - для всех пользователей)
-                                        // если $lists[i]['shared_items' = 0 && $lists[i]['shared_for_users' = 0, значит расшарен весь список для всех рользователей
-                
+                $lists[] = [                                                            // Массив списков пользователя и расшаренных другими пользователями
+                    'reader'           => $row->reader,                                 // 0 - владелец списка, 1 - "читатель" (в списке есть расшаренные для пользователя пункты)
+                    'id'               => $row->id,                                     // id списка
+                    'title'            => $row->title,                                  // наименование списка
+                    'image'            => $row->image,                                  // изображение списка
+                    'preview'          => $row->preview,                                // preview списка
+                    'number_items'     => $row->number_items,                           // Количество пунктов в списке
+                    'shared_items'     => (is_null($row->shared_items) ? 0 : 1),        // 0 - нет расшаренных пунктов; 1 - есть
+                    'shared_for_users' => (is_null($row->shared_for_users) ? 0 : 1),    // 0 - нет пользователей "читателей"; 1 - есть
                 ];
             }
         }

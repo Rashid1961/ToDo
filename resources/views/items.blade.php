@@ -87,7 +87,7 @@
                                         <button 
                                             class="btn btn-primary dropdown-toggle" 
                                             type="button" 
-                                            id="dropdown-filter" 
+                                            id="tags-filter" 
                                             data-toggle="dropdown" 
                                             aria-haspopup="true"
                                             aria-expanded="true"
@@ -102,7 +102,7 @@
                                         </button>
                                         <ul 
                                             class="dropdown-menu checkbox-menu allow-focus" 
-                                            id="ul-filter" 
+                                            id="ul-tags-filter" 
                                             aria-labelledby="dropdownMenu1"
                                         >
                                             <!-- Здесь будут теги для выбора фильтра -->

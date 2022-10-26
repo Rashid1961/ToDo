@@ -156,8 +156,8 @@ function expandList(idList) {
     $('body').on('click', ':button', function() {
         let clickId = this.id;
         // Сформировать список фильтра
-        if (clickId === 'dropdown-filter') {
-            formFilter();
+        if (clickId === 'tags-filter') {
+            tagsFilter();
         }
         // Применить фильтр
         else if (clickId === 'apply-filter') {
@@ -221,12 +221,13 @@ function expandList(idList) {
 }
 
 /** 
- * Формирование и вывод фильтра
+ * Формирование и вывод списка тегов
+ * для выбора по нажатию кнопки "Фильтр по тегам"
  */
-function formFilter() {
+function tagsFilter() {
     filterTags.id = [];         // Массив id тегов для фильтра
     filterTags.checked = [];    // Массив checkbox'ов для выбора тегов
-    $('#ul-filter').html('');
+    $('#ul-tags-filter').html('');
     let k = -1;                 // текущий индекс массивов filterTags.id и filterTags.checked
     for (i = 0; i < items.length; i++) {
         if ('ids_tag' in items[0]) {
@@ -234,7 +235,7 @@ function formFilter() {
                 if (filterTags.id.indexOf(items[i].ids_tag.id[j]) == -1 ) {
                     k = filterTags.id.push(items[i].ids_tag.id[j]) - 1;
                     filterTags.checked.push(selectedIdTags.indexOf(filterTags.id[k]) >= 0);
-                    $('#ul-filter').append(
+                    $('#ul-tags-filter').append(
                         '<li style="padding-left: 5; padding-right: 3;">' +
                             '<label class="form-check-label"  style="margin-bottom: 0">' +
                                 '<input' +
@@ -252,7 +253,7 @@ function formFilter() {
         }
     }
     if (k >= 0) {
-        $('#ul-filter').append(
+        $('#ul-tags-filter').append(
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
                     ' class="btn btn-block btn-primary"' +
@@ -280,7 +281,7 @@ function formFilter() {
         )
     }
     else {
-        $('#ul-filter').append(
+        $('#ul-tags-filter').append(
             '<li style="padding-left: 3; padding-right: 3;">' +
                 '<button' +
                     ' class="btn btn-block btn-danger"' +
