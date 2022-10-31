@@ -9726,3 +9726,6 @@
 127.0.0.1 - - [26/Oct/2022:13:46:57 +0600] "POST /Lists/getLists HTTP/1.1" 200 1484 "http://todo.test/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 127.0.0.1 - - [26/Oct/2022:13:52:20 +0600] "GET /Items/expandList/43 HTTP/1.1" 200 3396 "http://todo.test/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 127.0.0.1 - - [26/Oct/2022:13:52:21 +0600] "POST /Items/getItems HTTP/1.1" 200 1996 "http://todo.test/Items/expandList/43" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+127.0.0.1 - - [30/Oct/2022:21:49:11 +0600] "GET /js/appLists.js HTTP/1.1" 200 3458 "http://todo.test/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+127.0.0.1 - - [30/Oct/2022:21:49:11 +0600] "GET /js/utils.js HTTP/1.1" 200 5251 "http://todo.test/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+127.0.0.1 - - [30/Oct/2022:21:49:11 +0600] "POST /Lists/getLists HTTP/1.1" 500 20400 "http://todo.test/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"

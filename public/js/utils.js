@@ -159,29 +159,68 @@ function tdName(arrData, idxArr, idItem, editing) {
  *      }
  */
 function tdMenu(idxArr, arrMenu) {
+    let dropDownList;
     let retVal =
         '<td' +
             ' style="text-align: right; vertical-align: middle; width: 150px;"'+
         '>'; 
     for (let i = 0; i < arrMenu.length; i++) {
+        dropDownList = arrMenu[i].type.includes('dropdown-toggle');
         retVal +=
-            '<div class="row" style="margin: ' + 
-                (i == 0 ?                  '10 10  5 10' :            // Первый элемент меню
-                (i == arrMenu.length - 1 ?  '5 10 10 10' :            // Последний элемент меню
-                                            '5 10  5 10')) + ';"' +   // Средние элементы меню
+            '<div' +
+                ' class=' + (dropDownList ? '"dropdown"' : '"row"') +
+                ' style="margin: ' + 
+                    (i == 0 ?                  '10 10  5 10' :            // Первый элемент меню
+                    (i == arrMenu.length - 1 ?  '5 10 10 10' :            // Последний элемент меню
+                                                '5 10  5 10')) + ';"' +   // Средние элементы меню
+                (dropDownList ?
+                    'id="shared-users-' + idxArr + '"'
+                 :
+                    ''
+                ) +
             '>' +
                 '<' + arrMenu[i].type +
                     ' class="' + arrMenu[i].class + '"' +
                     ' style="text-align: left"' +
                     ' type="button"' +
                     (arrMenu[i].type === 'a' ?
-                    (' href="' + arrMenu[i].attr + '"')
-                    :
-                    (' id="' + arrMenu[i].attr + idxArr + '"')) +
+                        (' href="' + arrMenu[i].attr + '"')
+                     :
+                        (
+                            ' id="' + arrMenu[i].attr + idxArr + '"' +
+                            (dropDownList ?
+                                (
+                                    ' data-toggle="dropdown"' +
+                                    ' aria-haspopup="true"' +
+                                    ' aria-expanded="true"'
+                                )
+                             :
+                                ''
+                            )
+                        )
+                    ) +
                 '>' +
-                '<i class="' + arrMenu[i].icon + '" style="margin-right: 5;"></i>' +
+                    '<i class="' + arrMenu[i].icon + '" style="margin-right: 5;"></i>' +
                     arrMenu[i].name +
+                    (dropDownList ?
+                        '<span class="caret"></span>'
+                     :
+                        ''
+                    ) +
                 '</' + arrMenu[i].type + '>' +
+                (dropDownList ?
+                    (
+                        '<ul' +
+                            ' class="dropdown-menu checkbox-menu allow-focus"' + 
+                            ' id="ul-shared-users-' + idxArr + '"' +
+                            ' aria-labelledby="dropdownMenu1"' +
+                        '>' +
+                            // Здесь будут пользователи для выбора 
+                        '</ul>'
+                    )
+                 :
+                    ''
+                ) +
             '</div>';
     }
     retVal +=
