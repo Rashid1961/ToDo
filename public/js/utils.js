@@ -1,3 +1,9 @@
+var users = [      // Массив доступных тегов для формирования фильтра
+    {id:      []},
+    {name:    []},
+    {checked: []}
+];
+
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -82,11 +88,11 @@ function tdPreview(arrData, idxArr, idList, idItem, hrefRet) {
 
 /**
  * Формирование ячейки строки таблицы с наименованием одного списка (с количеством пунктов)
- * или пункта (с тегами)
+ * или пункта (с перечнем тегов)
  * 
  * @param {Array}   arrData - массив списков (lists) или пунктов (items)
  * @param {Integer} idxArr  - индекс массива, указанного в качестве первого параметра
- * @param {Integer} idItem  - id тега, для которого формируются данные (0 - для списка)
+ * @param {Integer} idItem  - id пункта, для которого формируются данные (0 - для списка)
  * @param {Boolean} editing - редактирование (true) или отображение (false)
  */
 function tdName(arrData, idxArr, idItem, editing) {
@@ -165,7 +171,7 @@ function tdMenu(idxArr, arrMenu) {
             ' style="text-align: right; vertical-align: middle; width: 150px;"'+
         '>'; 
     for (let i = 0; i < arrMenu.length; i++) {
-        dropDownList = arrMenu[i].type.includes('dropdown-toggle');
+        dropDownList = arrMenu[i].class.includes('dropdown-toggle');
         retVal +=
             '<div' +
                 ' class=' + (dropDownList ? '"dropdown"' : '"row"') +
@@ -203,7 +209,7 @@ function tdMenu(idxArr, arrMenu) {
                     '<i class="' + arrMenu[i].icon + '" style="margin-right: 5;"></i>' +
                     arrMenu[i].name +
                     (dropDownList ?
-                        '<span class="caret"></span>'
+                        '<span class="caret" style="margin-left: 10;"></span>'
                      :
                         ''
                     ) +
@@ -213,7 +219,6 @@ function tdMenu(idxArr, arrMenu) {
                         '<ul' +
                             ' class="dropdown-menu checkbox-menu allow-focus"' + 
                             ' id="ul-shared-users-' + idxArr + '"' +
-                            ' aria-labelledby="dropdownMenu1"' +
                         '>' +
                             // Здесь будут пользователи для выбора 
                         '</ul>'
@@ -280,12 +285,39 @@ function changePreview(arrData, idList, idItem) {
  * для выбора по нажатию кнопки "Поделиться"
  * 
  * @param {Integer} idList - id списка
- * @param {Integer} idItem - id тега (0 - для списка)
+ * @param {Integer} idItem - id пункта (0 - для списка)
  * @param {Integer} idx    - индекс массива lists (для списка) или items (для пункта)
 */
-function usersFilter(idList, idItem, idx) {
-    users.id = [];         // Массив id тегов пользователей
+function usersSharedFilter(idList, idItem, idx) {
+    users.id      = [];    // Массив id пользователей
+    users.name    = [];    // Массив наименований пользователей
     users.checked = [];    // Массив checkbox'ов для выбора пользователей
+
+    $.ajax({
+        url:    '/Users/getUsers/0',
+        method: 'post',
+        dataType: 'json',
+        async:   false,
+        success: function(response){
+            users.id = response.id;
+            users.name = response.name;
+        },
+    });
+
+    $.ajax({
+        url:    '/Items/getUsers/0',
+        method: 'post',
+        dataType: 'json',
+        async:   false,
+        success: function(response){
+            users.id = response.id;
+            users.name = response.name;
+        },
+    });
+
+
+/*
+
     $('#ul-users-filter').html('');
     let k = -1;                 // текущий индекс массивов users.id и users.checked
     for (i = 0; i < items.length; i++) {
@@ -356,6 +388,7 @@ function usersFilter(idList, idItem, idx) {
         )
     }
     $('#filter').show();
+*/
 }
 
 

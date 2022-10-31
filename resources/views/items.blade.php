@@ -103,7 +103,6 @@
                                         <ul 
                                             class="dropdown-menu checkbox-menu allow-focus" 
                                             id="ul-tags-filter" 
-                                            aria-labelledby="dropdownMenu1"
                                         >
                                             <!-- Здесь будут теги для выбора фильтра -->
                                         </ul>

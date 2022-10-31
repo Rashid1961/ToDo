@@ -20,11 +20,11 @@ var arrListMenuShow = [             // Массив для формировар�
         name:  'Изменить наименование',
     },
     {  
-        type:          'button',
-        class:         'btn btn-block btn-success dropdown-toggle',
-        attr:          'share-list-',
-        icon:          'fa fa-share',
-        name:          'Поделиться',
+        type:  'button',
+        class: 'btn btn-block btn-success dropdown-toggle',
+        attr:  'share-list-',
+        icon:  'fa fa-share',
+        name:  'Поделиться',
     },
     {
         type:  'button',
@@ -129,7 +129,7 @@ function showLists() {
         else if(clickId.substring(0, 11) === "share-list-") {
             iCur = clickId.substring(11);
             $(':button').attr('disabled', true);
-            shareList();
+            usersSharedFilter(lists[iCur].id, 0, iCur);
         }
         // Удалить список
         else if(clickId.substring(0, 9) === "del-list-") {

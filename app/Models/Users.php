@@ -12,7 +12,14 @@ class Users
      */
     static function getUsers($idUser)
     {
-        $where = $idUser == 0 ? '' : ' WHERE u.id = ' . $idUser;
+        $users = [
+            'id' => [],
+            'name' => [],
+            'email' => [],
+            'image' => [],
+            'preview' => [],
+        ];
+        $where = $idUser == 0 ? '' : (' WHERE u.id = ' . $idUser);
         $rows = DB::select(
             "
                 SELECT
@@ -27,8 +34,17 @@ class Users
             ", []
         );
 
-        if (count($rows) == 0) return [];
-        else return $rows;
+
+        if ($rows) {
+            foreach ($rows as $row) {
+                $users['id'][] = $row->id;
+                $users['name'][] = $row->name;
+                $users['email'][] = $row->email;
+                $users['image'][] = $row->image;
+                $users['preview'][] = $row->preview;
+            }
+        }
+        return $users;
     }
 
 }

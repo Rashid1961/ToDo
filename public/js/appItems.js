@@ -34,7 +34,7 @@ var arrItemMenuShow = [             // Массив для формировар�
     },
     {
         type:  'button',
-        class: 'btn btn-block btn-success',
+        class: 'btn btn-block btn-success dropdown-toggle',
         attr:  'share-item-',
         icon:  'fa fa-share',
         name:  'Поделиться',
@@ -237,7 +237,7 @@ function tagsFilter() {
                     filterTags.checked.push(selectedIdTags.indexOf(filterTags.id[k]) >= 0);
                     $('#ul-tags-filter').append(
                         '<li style="padding-left: 5; padding-right: 3;">' +
-                            '<label class="form-check-label"  style="margin-bottom: 0">' +
+                            '<label class="form-check-label" style="margin-bottom: 0">' +
                                 '<input' +
                                 ' type="checkbox"' +
                                 ' class="form-check-input"' +
