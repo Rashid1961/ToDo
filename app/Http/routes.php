@@ -25,22 +25,21 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix' => '/Users/'], function () {  //------------------- Пользователи
-        Route::post('/getUsers/{idUser}', 'UsersController@getUsers')->where('idUser', '[0-9]+');    // Получение информации о пользователе / пользователях
-        Route::post('/getUserswhithWhoomShared')
+        Route::post('/getUsers/{idUser}', 'UsersController@getUsers')->where('idUser', '[0-9]+'); // Информации о пользователе / пользователях
     });
 
     Route::group(['prefix' => '/Lists/'], function () {  //------------------- Списки
-        Route::post('/getLists',        'ListsController@getLists');        // Получение списков пользователя
+        Route::post('/getLists',        'ListsController@getLists');        // Списки пользователя
         Route::post('/changeTitleList', 'ListsController@changeTitleList'); // Переименование списка
         Route::post('/deleteList',      'ListsController@deleteList');      // Удаление списка и всех его пунктов
         Route::post('/appendList',      'ListsController@appendList');      // Добавление списка
-        Route::post('/getImgList',      'ListsController@getImgList');      // Получение image и preview списка
+        Route::post('/getImgList',      'ListsController@getImgList');      // Image и preview списка
     });
     
     Route::group(['prefix' => '/Items/'], function () {  //--------------------------------------- Пункты списков
         Route::get('expandList/{idList}', 'ItemsController@expandList')->where('idList', '[0-9]+'); // Вывод пунктов списка
-        Route::post('/getItems',          'ItemsController@getItems');                              // Получение пунктов списка
-        Route::post('/getImgItem',        'ItemsController@getImgItem');                            // Получение image и preview пункта
+        Route::post('/getItems',          'ItemsController@getItems');                              // Пункты списка
+        Route::post('/getImgItem',        'ItemsController@getImgItem');                            // Image и preview пункта
         Route::post('/appendItem',        'ItemsController@appendItem');                            // Добавление пункта
         Route::post('/changeTitleItem',   'ItemsController@changeTitleItem');                       // Переименование пункта
         Route::post('/deleteItem',        'ItemsController@deleteItem');                            // Удаление пункта
@@ -52,6 +51,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/uploadImage', 'ImagesController@uploadImage'); // Загрузка нового изображения при изменении
         Route::post('/delImage',    'ImagesController@delImage');    // Удаление изображения (замена дефолтным)
     });
+
+    Route::group(['prefix' => '/Sharing/'], function () {  //------------------- Предоставление доступа другим пользователям
+        // Пользователи для которых расшарен пункт / пункты списка / списков
+        Route::post('/getWithWhomShared/{idList}/{idItem}', 'SharingController@getWithWhomShared')->where(['idList', '[0-9]+', 'idItem', '[0-9]+']);
+    });
+
 });
 
 Route::auth();  // Авторизация
