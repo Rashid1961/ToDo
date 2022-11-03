@@ -23,20 +23,20 @@ class ImagesController extends Controller
 
     // Загрузка изображения
     public function uploadImage(Request $request) {
-        $uid = auth()->user()->id;
+        $idUser = auth()->user()->id;
         $file = $request->file('selected-image');
         $idList = $request->idList;
         $idItem = $request->idItem;
 
-        return Images::uploadImage($uid, $file, $idList, $idItem);
+        return Images::uploadImage($idUser, $file, $idList, $idItem);
     }
 
     // Удаление изображения
     public function delImage(Request $request) {
-        $uid = auth()->user()->id;
+        $idUser = auth()->user()->id;
         $idList = $request->idList;
         $idItem = $request->idItem;
 
-        return Images::delImage($uid, $idList, $idItem);
+        return Images::delImage($idUser, $idList, $idItem);
     }
 }

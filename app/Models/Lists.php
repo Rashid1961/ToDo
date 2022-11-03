@@ -9,7 +9,7 @@ class Lists
      *  Списки пользователя и 
      *  расшаренных другими пользователями
      */
-    static function getLists($uid)
+    static function getLists($idUser)
     {
         $lists = [];
 
@@ -61,7 +61,7 @@ class Lists
                             INNER JOIN shared_items AS si ON si.id_user_reader = ?
                                                           OR (si.id_user_reader = 0 AND si.id_user_reader != ?)
                 )
-            ", [$uid, $uid, $uid]
+            ", [$idUser, $idUser, $idUser]
         );
 
         if ($rows) {
@@ -85,7 +85,7 @@ class Lists
     /**
      *  Один список пользователя и количество пунктов в нём
      */
-    static function getOneList($uid, $idList)
+    static function getOneList($idUser, $idList)
     {
         $row = DB::selectOne(
             "
@@ -104,7 +104,7 @@ class Lists
                 WHERE l.id_user = ?
                   AND l.id = ?
                 ORDER BY l.title
-            ", [$uid, $idList]
+            ", [$idUser, $idList]
         );
 
         return ($row ? $row : []);
@@ -113,7 +113,7 @@ class Lists
     /**
      *  Изменение наименования списка
      */
-    static function changeTitleList ($uid, $idList, $titleList) {
+    static function changeTitleList ($idUser, $idList, $titleList) {
         $titleList = trim($titleList);
         if (mb_strlen($titleList) < 5) {
             return -4;              // Длина наименования (меньше 5 символов)
@@ -127,7 +127,7 @@ class Lists
             ", [$idList]
         );
         if ($row) {
-            if ($row->id_user == $uid) {
+            if ($row->id_user == $idUser) {
                 $rowDup = DB::selectOne(
                     "
                         SELECT
@@ -137,7 +137,7 @@ class Lists
                           AND l.title = ?
                           AND l.id != ?
 
-                    ", [$uid, $titleList, $idList]
+                    ", [$idUser, $titleList, $idList]
                 );
                 if ($rowDup) {
                     return -3;      // Дублирование наименования списка
@@ -153,7 +153,7 @@ class Lists
                 return 0;
             }
             else {
-                return -1;          // Список не принадлежит пользователю $uid
+                return -1;          // Список не принадлежит пользователю $idUser
             }
         }
         return -2;          // Список отсутствует в таблице lists
@@ -162,7 +162,7 @@ class Lists
     /**
      * Удаление списка
      */
-    static function deleteList ($uid, $idList) {
+    static function deleteList ($idUser, $idList) {
         $row = DB::selectOne(
             "
                 SELECT
@@ -172,7 +172,7 @@ class Lists
             ", [$idList]
         );
         if ($row) {
-            if ($row->id_user == $uid) {
+            if ($row->id_user == $idUser) {
                 // Удаленеие "ссылок" на теги всех пунктов удаляемого списка
                 DB::delete(
                     "
@@ -203,7 +203,7 @@ class Lists
                 return 0;
             }
             else {
-                return -1;          // Список не принадлежит пользователю $uid
+                return -1;          // Список не принадлежит пользователю $idUser
             }
         }
         return -2;                  // Список отсутствует в таблице lists
@@ -212,7 +212,7 @@ class Lists
     /**
      * Добавление списка
      */
-    static function appendList ($uid, $titleList, $image) {
+    static function appendList ($idUser, $titleList, $image) {
         if(mb_strlen($titleList) < 5) {
             return -4;              // Длина наименования (меньше 5 символов)
         }
@@ -224,7 +224,7 @@ class Lists
                 FROM lists AS l
                 WHERE   l.id_user = ?
                     AND l.title = ?
-            ", [$uid, $titleList]
+            ", [$idUser, $titleList]
         );
 
         if ($row) {
@@ -239,7 +239,7 @@ class Lists
                 VALUES
                     (?, ?, ?)
             ",            
-            [$uid, $titleList, $image]
+            [$idUser, $titleList, $image]
         );
 
         // Получение id добавленного списка

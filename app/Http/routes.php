@@ -54,7 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => '/Sharing/'], function () {  //------------------- Предоставление доступа другим пользователям
         // Пользователи для которых расшарен пункт / пункты списка / списков
-        Route::post('/getWithWhomShared/{idList}/{idItem}', 'SharingController@getWithWhomShared')->where(['idList', '[0-9]+', 'idItem', '[0-9]+']);
+        Route::post('/getForWhomShared/{idList}/{idItem}', 'SharingController@getForWhomShared')->where(['idList', '[0-9]+', 'idItem', '[0-9]+']);
     });
 
 });

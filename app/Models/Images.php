@@ -10,7 +10,7 @@ class Images
     /**
      *  Загрузка изображения
      * 
-     * @param $uid  id пользователя
+     * @param $idUser  id пользователя
      * @param $file загружаемый файл
      * @param $idList id списка (0 - для изображения пользователя)
      * @param $idItem id пункта списка (0 - для изображений пользователя и списка)
@@ -26,13 +26,13 @@ class Images
      * 
      * @return 0/1
      */
-    static function uploadImage($uid, $file, $idList, $idItem)
+    static function uploadImage($idUser, $file, $idList, $idItem)
     {
-        if ($uid == 0) { // Не определён пользователь
+        if ($idUser == 0) { // Не определён пользователь
             return 0;
         }
 
-        $user = 'u'  . substr(('00' . (string)$uid), -3);                          // id пользователя
+        $user = 'u'  . substr(('00' . (string)$idUser), -3);                          // id пользователя
         $list = $idList == 0 ? '' : ('_l' . substr(('00' . (string)$idList), -3)); // id списка
         $item = $idItem == 0 ? '' : ('_i' . substr(('00' . (string)$idItem), -3)); // id пункта
         $vers = '_v000';                                                           // версия
@@ -51,14 +51,14 @@ class Images
             $noPreview = "/images/users/preview/noUserPreview.jpg";
             $table = 'users';
             $where = 'id = ?';
-            $params = [$uid];
+            $params = [$idUser];
         }
         else if ($idItem == 0) {            // Список
             $noImage = "/images/lists/noListImage.jpg";
             $noPreview = "/images/lists/preview/noListPreview.jpg";
             $table = 'lists';
             $where = 'id = ? AND id_user = ?';
-            $params = [$idList, $uid];
+            $params = [$idList, $idUser];
         }
         else {                              // Пункт
             $noImage = "/images/items/noItemImage.jpg";
@@ -127,14 +127,14 @@ class Images
     /**
      *  Удаление изображения и preview
      * 
-     * @param $uid  id пользователя
+     * @param $idUser  id пользователя
      * @param $idList id списка (0 - для изображения пользователя)
      * @param $idItem id пункта списка (0 - для изображений пользователя и списка)
      * 
      */
-    static function delImage($uid, $idList, $idItem)
+    static function delImage($idUser, $idList, $idItem)
     {
-        if ($uid == 0) { // Не определён пользователь
+        if ($idUser == 0) { // Не определён пользователь
             return 0;
         }
 
@@ -154,14 +154,14 @@ class Images
             $noPreview = "/images/users/preview/noUserPreview.jpg";
             $table = 'users';
             $where = 'id = ?';
-            $params = [$uid];
+            $params = [$idUser];
         }
         else if ($idItem == 0) {            // Список
             $noImage = "/images/lists/noListImage.jpg";
             $noPreview = "/images/lists/preview/noListPreview.jpg";
             $table = 'lists';
             $where = 'id = ? AND id_user = ?';
-            $params = [$idList, $uid];
+            $params = [$idList, $idUser];
         }
         else {                              // Пункт
             $noImage = "/images/items/noItemImage.jpg";
