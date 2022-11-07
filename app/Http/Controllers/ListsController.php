@@ -8,13 +8,17 @@ use App\Models\Lists;
 
 class ListsController extends Controller
 {
-    // Получение списков пользователя
+    /**
+     * Получение списков пользователя
+    */
     public function getLists() {
         $idUser = auth()->user()->id;
         return Lists::getLists($idUser);
     }
 
-    // Переименование списка
+    /**
+     *  Переименование списка
+    */
     public function changeTitleList(Request $request) {
         $idUser = auth()->user()->id;
         $idList = $request->input('idList', 0);
@@ -22,22 +26,28 @@ class ListsController extends Controller
         return Lists::changeTitleList($idUser, $idList, $titleList);
     }
 
-    // Удаление списка
+    /** 
+     * Удаление списка
+    */ 
     public function deleteList(Request $request) {
         $idUser = auth()->user()->id;
         $idList = $request->input('idList', 0);
         return Lists::deleteList($idUser, $idList);
     }
 
-    // Добавление списка
+    /** 
+     * Добавление списка
+    */
     public function appendList(Request $request) {
         $idUser = auth()->user()->id;
         $title = $request->input('title', '');
-        $image = $request->input('image', '');
-        return Lists::appendList($idUser, $title, $image);
+        $imageList = $request->input('image', '');
+        return Lists::appendList($idUser, $title, $imageList);
     }
 
-    // Получение image и preview списка
+    /**
+     *  Получение image и preview списка
+    */
     public function getImgList(Request $request) {
         $idList = $request->input('idList', '');
         return Lists::getImgList($idList);

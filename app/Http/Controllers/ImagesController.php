@@ -8,7 +8,9 @@ use App\Models\Images;
 
 class ImagesController extends Controller
 {
-    // Вывод изображения
+    /**
+     * Вывод изображения
+    */
     public function showImage(Request $request) {
         $data = [
             'id'         => auth()->user()->id,
@@ -21,7 +23,9 @@ class ImagesController extends Controller
         return view('image', $data);
     }
 
-    // Загрузка изображения
+    /**
+     * Загрузка изображения
+    */
     public function uploadImage(Request $request) {
         $idUser = auth()->user()->id;
         $file = $request->file('selected-image');
@@ -31,7 +35,9 @@ class ImagesController extends Controller
         return Images::uploadImage($idUser, $file, $idList, $idItem);
     }
 
-    // Удаление изображения
+    /**
+     * Удаление изображения
+    */
     public function delImage(Request $request) {
         $idUser = auth()->user()->id;
         $idList = $request->idList;

@@ -7,6 +7,8 @@ class Items
 {
     /**
      *  Пункты списка
+     * 
+     * @param $idList  id списка
      */
     static function getItems($idList)
     {
@@ -86,9 +88,11 @@ class Items
     }
     
     /**
-     * Получение image и preview списка
+     * Получение image и preview пункта
+     * 
+     * @param $idItem  id пункта
      */
-    static function getImgItem($itemId) {
+    static function getImgItem($idItem) {
         $images = [
             'image'   => '',
             'preview' => ''
@@ -100,7 +104,7 @@ class Items
                     i.preview
                 FROM items AS i
                 WHERE i.id = ?
-            ", [$itemId]
+            ", [$idItem]
         );
         if ($row) {
             $images['image'] =$row->image;
@@ -111,9 +115,13 @@ class Items
 
     /**
      * Добавление пункта
+     * 
+     * @param $idList     id списка
+     * @param $titleItem  наименование пункта
+     * @param $imageItem  спецификация файла с изображением пункта
      */
-    static function appendItem($idList, $title, $image) {
-        if(mb_strlen($title) < 5) {
+    static function appendItem($idList, $titleItem, $imageItem) {
+        if(mb_strlen($titleItem) < 5) {
             return -4;              // Длина наименования меньше 5 символов
         }
         $row = DB::selectOne(
@@ -123,10 +131,10 @@ class Items
                 FROM items AS i
                 WHERE   i.id_list = ?
                     AND i.title = ?
-            ", [$idList, $title]
+            ", [$idList, $titleItem]
         );
         if ($row) {
-            return -3;              // Дублирование наименования списка
+            return -3;              // Дублирование наименования пункта
         }
 
         // Добавление пункта списка
@@ -137,7 +145,7 @@ class Items
                 VALUES
                     (?, ?, ?)
             ",            
-            [$idList, $title, $image]
+            [$idList, $titleItem, $imageItem]
         );
 
         // Получение id добавленного пункта списка
@@ -151,10 +159,14 @@ class Items
 
     /**
      *  Изменение наименования пункта
-     */
-    static function changeTitleItem($idList, $itemId, $title) {
-        $title = trim($title);
-        if (mb_strlen($title) < 5) {
+     * 
+     * @param $idList     id списка
+     * @param $idItem     id пункта
+     * @param $titleItem  новое наименование пункта
+    */
+    static function changeTitleItem($idList, $idItem, $titleItem) {
+        $titleItem = trim($titleItem);
+        if (mb_strlen($titleItem) < 5) {
             return -4;              // Длина наименования меньше 5 символов
         }
         $rowDup = DB::selectOne(
@@ -165,7 +177,7 @@ class Items
                 WHERE i.id_list = ?
                   AND i.title = ?
                   AND i.id != ?
-            ", [$idList, $title, $itemId]
+            ", [$idList, $titleItem, $idItem]
         );
         if ($rowDup) {
             return -3;      // Дублирование наименования
@@ -177,21 +189,24 @@ class Items
                 SET   title = ?
                 WHERE id = ?
                   AND id_list = ?
-            ", [$title, $itemId, $idList]
+            ", [$titleItem, $idItem, $idList]
         );
         return 0;
     }
     
     /**
      * Удаление пункта
+     * 
+     * @param $idList  id списка
+     * @param $idItem  id пункта
      */
-    static function deleteItem($idList, $itemId) {
+    static function deleteItem($idList, $idItem) {
         // Удаленеие "ссылок" на теги пункта
         DB::delete(
             "
                 DELETE FROM tags_items
                 WHERE id_item = ?
-            ", [$itemId]
+            ", [$idItem]
         );
 
         // Удаление пункта
@@ -200,22 +215,25 @@ class Items
                 DELETE FROM items
                 WHERE id_list = ?
                   AND id = ?
-            ", [$idList, $itemId]
+            ", [$idList, $idItem]
         );
         return 0;
     }
 
     /**
      * Изменение тегов пункта
+     * 
+     * @param $idItem  id пункта
+     * @param $tags    новый список тегов пункта
      */
-    static function changeTagsItem($itemId, $tags) {
+    static function changeTagsItem($idItem, $tags) {
         // Удаленеие "ссылок" на теги пункта, если новый список тегов пустой
         if (strlen($tags) == 0) {
             DB::delete(
                 "
                     DELETE FROM tags_items
                     WHERE id_item = ?
-                ", [$itemId]
+                ", [$idItem]
             );
             return 0;
         }
@@ -227,7 +245,7 @@ class Items
                 SELECT ti.id_tag
                 FROM tags_items AS ti
                 WHERE ti.id_item = ?
-            ", [$itemId]
+            ", [$idItem]
         );
         if ($rows) {
             foreach ($rows as $row) {
@@ -296,7 +314,7 @@ class Items
                     VALUES
                         (?, ?)
                 ",            
-                [$idCurTag, $itemId]
+                [$idCurTag, $idItem]
             );
         }
         
@@ -307,7 +325,7 @@ class Items
                 DELETE FROM tags_items
                 WHERE id_item = ?
                   AND id_tag in ("  . implode(',', $arrCurTags) . ")",
-                [$itemId]
+                [$idItem]
             );
         }
     

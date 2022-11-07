@@ -8,6 +8,8 @@ class Lists
     /**
      *  Списки пользователя и 
      *  расшаренных другими пользователями
+     * 
+     * @param $idUser  id пользователя
      */
     static function getLists($idUser)
     {
@@ -84,6 +86,9 @@ class Lists
 
     /**
      *  Один список пользователя и количество пунктов в нём
+     * 
+     * @param $idUser  id пользователя
+     * @param $idList  id списка
      */
     static function getOneList($idUser, $idList)
     {
@@ -112,6 +117,10 @@ class Lists
 
     /**
      *  Изменение наименования списка
+     * 
+     * @param $idUser     id пользователя
+     * @param $idList     id списка
+     * @param $titleList  новое наименование списка
      */
     static function changeTitleList ($idUser, $idList, $titleList) {
         $titleList = trim($titleList);
@@ -161,6 +170,9 @@ class Lists
 
     /**
      * Удаление списка
+     * 
+     * @param $idUser  id пользователя
+     * @param $idList  id списка
      */
     static function deleteList ($idUser, $idList) {
         $row = DB::selectOne(
@@ -211,8 +223,12 @@ class Lists
 
     /**
      * Добавление списка
+     * 
+     * @param $idUser     id пользователя
+     * @param $titleList  наименование списка
+     * @param $imageList  спецификация файла с изображением списка
      */
-    static function appendList ($idUser, $titleList, $image) {
+    static function appendList ($idUser, $titleList, $imageList) {
         if(mb_strlen($titleList) < 5) {
             return -4;              // Длина наименования (меньше 5 символов)
         }
@@ -239,7 +255,7 @@ class Lists
                 VALUES
                     (?, ?, ?)
             ",            
-            [$idUser, $titleList, $image]
+            [$idUser, $titleList, $imageList]
         );
 
         // Получение id добавленного списка
@@ -253,6 +269,8 @@ class Lists
 
     /**
      * Получение image и preview списка
+     * 
+     * @param $idList  id списка
      */
     static function getImgList($idList) {
         $images = [
