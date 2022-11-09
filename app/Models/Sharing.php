@@ -10,16 +10,16 @@ use App\Models\Users;
 class Sharing
 {
     /**
-     *  Удаление изображения и preview
+     * Пункт/пункты списка/списков, расшаренные для других пользователей
      * 
-     * Пользователи для которых расшарен пункт/пункты списка/списков
+     * @param $idUser  id пользователя, чьи пункты расшарены 
      * @param $idList  id списка пользователя (0 - все списки, значение $idItem неважно)
      * @param $idItem  id пункта списка (имеет смысл только если указан конкретный id списка, 0 - все пункты списка)
      * 
      */
-    static function getForWhomShared($idUser, $idList, $idItem)
+    static function sharedItemsForOther($idUser, $idList, $idItem)
     {
-        // Массив расшаренных списков
+        // Массив расшаренных пунктов списков
         $sharedItems = [
             'id_list' => 0,    // id списка
             'items'  => []     // Расшаренные пункты списка
@@ -27,7 +27,7 @@ class Sharing
 
         // Шаблон одного расшаренного пункта
         $item = [
-            'id_item' => 0,     // id пункта
+            'id_item' => 0,         // id пункта
             'readers' => [          // Пользователи, для которых расшарен пункт списка
                 'id_user' => 0,     // id пользователя
                 'name'  => '',      // имя пользователя
@@ -48,12 +48,15 @@ class Sharing
 
         $rows = DB::select(
             "
-                SELECT id_user_reader, id_list, id_item
+                SELECT
+                    id_user_reader,
+                    id_list,
+                    id_item
                 FROM shared_items 
-                WHERE id_user_owner=?" . $where . "
+                WHERE id_user_owner = ?" . $where . "
                 ORDER BY id_list, id_item, id_user_reader
-            "
-            , [$idUser]
+            ",
+            [$idUser]
         );
 
         if ($rows) {
@@ -72,5 +75,64 @@ class Sharing
         }
 
         return $sharedItems;
-    }    
+    }
+
+    /**
+     * Пункты списков, расшаренные для пользователя
+     * 
+     * @param $idUser  id пользователя 
+     * 
+     */
+    static function getSharedForUser($idUser)
+    {
+        // Массив расшаренных пунктов списков
+        $sharedItems = [
+            'list'  => [    // Расшаренные списки
+                'id'      => 0,     // id списка
+                'title'   => '',    // Наименование списка
+                'image'   => '',    // Спецификация файла с изображением списка
+                'preview' => '',    // Спецификация файла с превью списка
+                'owner'   => [      // Пользователь, расшаривший пункты списка
+                    'id'   => 0,        // id пользователя
+                    'name' => '',       // Имя пользователя
+                ],
+            ],
+            'items' => [    // Расшаренные пункты списка
+            ],
+        ];
+
+        // Шаблон одного расшаренного пункта
+        $item = [
+            'id'      => 0,     // id пункта
+            'title'   => '',    // Наименование пункта
+            'image'   => '',    // Спецификация файла с изображением пункта
+            'preview' => '',    // Спецификация файла с превью пункта
+        ];
+
+        if ($idUser == 0) { // Не определён пользователь
+            return $sharedItems;
+        }
+
+        $rows = DB::select(
+            "
+                SELECT
+                    si.id_user_owner,
+                    si.id_list,
+                    si.id_item,
+                    u.name,
+                    l.title     AS title_list,
+                    l.image     AS image_list,
+                    l.preview   AS preview_list,
+                FROM shared_items   AS si
+                    LEFT JOIN users AS u  ON u.id = si.id_user_owner
+                    LEFT JOIN lists AS l  ON l.id = si.id_list
+                    LEFT JOIN items AS i  ON i.id = si.id_item
+                WHERE si.id_user_reader = ?
+                ORDER BY si.id_user_reader, si.id_list, si.id_item
+            ",
+            [$idUser]
+        );
+
+    }
+
 }

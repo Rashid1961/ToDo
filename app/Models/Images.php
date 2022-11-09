@@ -10,8 +10,8 @@ class Images
     /**
      *  Загрузка изображения
      * 
-     * @param $idUser  id пользователя
-     * @param $file загружаемый файл
+     * @param $idUser id пользователя
+     * @param $file   загружаемый файл
      * @param $idList id списка (0 - для изображения пользователя)
      * @param $idItem id пункта списка (0 - для изображений пользователя и списка)
      * 
@@ -32,10 +32,10 @@ class Images
             return 0;
         }
 
-        $user = 'u'  . substr(('00' . (string)$idUser), -3);                          // id пользователя
+        $user = 'u'  . substr(('00' . (string)$idUser), -3);                       // id пользователя
         $list = $idList == 0 ? '' : ('_l' . substr(('00' . (string)$idList), -3)); // id списка
         $item = $idItem == 0 ? '' : ('_i' . substr(('00' . (string)$idItem), -3)); // id пункта
-        $vers = '_v000';                                                           // версия
+        $vers = '_v000';                                                           // версия файла
 
         $table = '';
         $where = '';
@@ -116,7 +116,6 @@ class Images
         if ($oldImage !== $noImage) {
             Storage:: disk('images')->delete(str_replace('/images', '', $oldImage));
         }
-
         if ($oldPrewview !== $noPreview) {
             Storage:: disk('images')->delete(str_replace('/images', '', $oldPrewview));
         }

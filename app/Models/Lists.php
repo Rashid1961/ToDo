@@ -68,15 +68,15 @@ class Lists
 
         if ($rows) {
             foreach ($rows as $row) {
-                $lists[] = [                                                            // Массив списков пользователя и расшаренных другими пользователями
-                    'reader'           => $row->reader,                                 // 0 - владелец списка, 1 - "читатель" (в списке есть расшаренные для пользователя пункты)
-                    'id'               => $row->id,                                     // id списка
-                    'title'            => $row->title,                                  // наименование списка
-                    'image'            => $row->image,                                  // изображение списка
-                    'preview'          => $row->preview,                                // preview списка
-                    'number_items'     => $row->number_items,                           // Количество пунктов в списке
-                    'shared_items'     => (is_null($row->shared_items) ? 0 : 1),        // 0 - нет расшаренных пунктов; 1 - есть
-                    'shared_for_users' => (is_null($row->shared_for_users) ? 0 : 1),    // 0 - нет пользователей "читателей"; 1 - есть
+                $lists[] = [          // Массив списков пользователя и расшаренных другими пользователями
+                    'reader'           => $row->reader,                              // 0 - владелец списка, 1 - "читатель" (в списке есть расшаренные для пользователя пункты)
+                    'id'               => $row->id,                                  // id списка
+                    'title'            => $row->title,                               // наименование списка
+                    'image'            => $row->image,                               // изображение списка
+                    'preview'          => $row->preview,                             // preview списка
+                    'number_items'     => $row->number_items,                        // Количество пунктов в списке
+                    'shared_items'     => (is_null($row->shared_items) ? 0 : 1),     // 0 - нет расшаренных пунктов; 1 - есть
+                    'shared_for_users' => (is_null($row->shared_for_users) ? 0 : 1), // 0 - нет пользователей "читателей"; 1 - есть
                 ];
             }
         }

@@ -8,13 +8,13 @@ use App\Models\Sharing;
 class SharingController extends Controller
 {
     /**
-     * Пользователи для которых расшарен пункт/пункты списка/списков
+     * Пункт/пункты списка/списков, расшаренные для других пользователей
      * 
      * @param $idList id списка пользователя (0 - все списки, значение $idItem неважно)
      * @param $idItem id пункта списка (имеет смысл только если указан конкретный id списка, 0 - все пункты списка)
     */
-    public function getForWhomShared($idList, $idItem) {
+    public function sharedItemsForOther($idList, $idItem) {
         $idUser = auth()->user()->id;
-        return Sharing::getForWhomShared($idUser, $idList, $idItem);
+        return Sharing::sharedItemsForOther($idUser, $idList, $idItem);
     }
 }
